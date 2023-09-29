@@ -1,0 +1,30 @@
+.welcomeBackImg{
+    width: 250px;
+}
+
+.welcomebackBanner{
+    width: 90%;
+}
+
+.iconHome{
+    width: 25px;
+}
+
+.bgIconHome{
+    background-color: var(--blue-color1);
+    width: 40px;
+    height: 40px;
+}
+
+.textBlue2{
+    color: var(--blue-color2);
+}
+
+.cardHome{
+    height: fit-content;
+    width: 155px !important;
+}
+
+.fs-16{
+    font-size: 16px !important;
+}

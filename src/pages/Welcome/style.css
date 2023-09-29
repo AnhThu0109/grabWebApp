@@ -1,0 +1,16 @@
+.welcomeImg{
+    width:  600px;
+}
+
+.progressBar{
+    width: 70%;
+}
+
+.progressBar>span{
+    height: 10px;
+    border-radius: 5px;
+}
+
+.css-5xe99f-MuiLinearProgress-bar1{
+    background-color: var(--blue-color2) !important;
+}

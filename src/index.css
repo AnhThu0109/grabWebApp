@@ -1,0 +1,26 @@
+:root {
+  --bg-color1: #F6F1F1;
+  --green-color1: #00D6BB;
+  --green-color2: #BFEBE3;
+  --blue-color1: #DAE8F3;
+  --blue-color2: #146C94;
+  --blue-color3: #295B7F;
+  --grey-color1: #A5A9AB;
+  --grey-color2: #808080;
+  --grey-color3: #D9D9D9;
+}
+
+html{
+  height: 100vh;
+}
+
+:root, .App {
+  background-color: var(--bg-color1);
+  height: 100vh;
+}
+
+body{
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box !important;
+}

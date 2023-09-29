@@ -1,0 +1,156 @@
+.allAcountContent{
+    height: -webkit-fill-available;
+    background-color: #f2f2f2;
+    /* display: flex;
+    justify-content: space-between;
+    flex-direction: column; */
+}
+
+/* .searchForm{
+    width: 45%;
+    background-color: hsla(0, 0%, 87%, 0.689);
+}
+
+input#search {
+    background-color: hsla(0, 0%, 90%, 0.516);
+    width: 90%;
+}
+
+.searchForm button{
+    background-color: transparent;
+    color: grey;
+} */
+
+.accountTable .ant-table-content{
+    box-shadow: 0 6px 10px -4px rgba(0,0,0,.15);
+}
+
+.accountTable .ant-table-wrapper th{
+    font-weight: bolder !important;
+    color: #51cbce !important;
+}
+
+tbody, td, tfoot, th, thead, tr {
+    border-color: lightgrey !important;
+}
+
+/* .allAcountContent ul.ant-pagination.text-center.pb-2.paginateBar.css-dev-only-do-not-override-1me4733 {
+    background-color: #f2f2f2 !important;
+} */
+
+.accountTable{
+    background-color: #f2f2f2
+}
+
+.avatar{
+    width: 100px !important;
+    height: 100px !important;
+}
+
+.avatarUserChosen{
+    margin-top: -80%;
+    width: 80px !important;
+    height: 80px !important;
+}
+
+.okBtnModal{
+    background-color: #51cbce;
+    border: 0px;
+    color: white;
+    padding: 0px 30px;
+}
+
+.okBtnModal:hover{
+    background-color: #4ca2a4;
+    color: white !important;
+}
+
+.modalIcon {
+    width: 40px;
+    margin-bottom: -20px;
+    color: #51cbce;
+}
+
+.avatarAllAccount{
+    width: 40px !important;
+    height: 40px !important;
+    margin-bottom: -10%;
+}
+
+.ant-popover.ant-popconfirm.css-dev-only-do-not-override-1me4733.css-dev-only-do-not-override-1me4733{
+    position: fixed;
+    left: 35% !important;
+    top: 10% !important;
+    width: 40%;
+}
+
+.titleEdit{
+    color: #51cbce;
+}
+
+.addUser{
+    width: 30px;
+    height: 30px;
+    margin-top: 20px;
+    margin-right: 15px;
+    color: grey;
+}
+
+.ant-message.ant-message-top.css-dev-only-do-not-override-1me4733 {
+    top: 10% !important;
+}
+
+.navigationCollapsed button{
+    margin-left: 10px !important;
+}
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+    body {
+        font-size: 8px;
+    }
+
+    .modalSeeInfo .ant-modal-content{
+        padding: 5px;
+    }
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+    #menu .logo{
+        font-size: 25px !important;
+    }
+    table td:last-child {
+        width: 20%;
+      }
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+    #menu .logo{
+        font-size: 25px !important;
+    }
+
+    table td:last-child {
+        width: 20%;
+      }
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+    #menu .logo{
+        font-size: 25px !important;
+    }
+
+    .accountTable table{
+        width: 100% !important;
+    }
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {
+
+    #menu .logo{
+        font-size: 25px !important;
+    }
+}

@@ -1,0 +1,35 @@
+.loginPage{
+    margin: 0px;
+    padding: 0px;
+}
+
+.loginForm{
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    border-radius: 10px;
+    font-size: 15px;
+    background-color: var(--bg-color1);
+}
+
+.formLoginBtn{
+    width: 100%;
+    border-radius: 8px !important;
+    background-color: var(--grey-color3);
+    color: var(--grey-color1);
+}
+
+.loginImg{
+    width: 400px !important;
+}
+
+.textGrey1{
+    color: var(--grey-color1);
+}
+
+.textBlue3{
+    color: var(--blue-color3);
+}
+
+.textGrey2{
+    color: var(--grey-color2) !important;
+}
+
