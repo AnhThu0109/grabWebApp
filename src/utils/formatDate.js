@@ -1,20 +1,39 @@
-const changeFormatDate = (date) => {
-    let newDate = new Date(date);
-    let options = {
-      month: "short",
-      day: "2-digit",
-      year: "numeric",
-      hour12 : false,
-      hour:  "2-digit",
-      minute:  "2-digit",
-    };
-    return newDate.toLocaleDateString("en-us", options);
+const changeFormatDate1 = (date) => {
+  let newDate = new Date(date);
+  let options = {
+    weekday: "long",
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+    hour12: false,
+    hour: "2-digit",
+    minute: "2-digit",
   };
+  return newDate.toLocaleDateString("en-us", options);
+};
 
-  const changeFormatDate1 = (date) => {
-    let newDate = new Date(date);
-    let options = { weekday: 'short', day: 'numeric' };
-    return newDate.toLocaleDateString("en-us", options);
-  };
+const changeFormatDate = (inputDate) => {
+  if (inputDate) {
+    // Replace hyphens with slashes for proper parsing
+    const parsedDate = new Date(inputDate.replace(/-/g, '/'));
+  
+    // Check if the parsed date is valid
+    if (!isNaN(parsedDate.getTime())) {
+      // Date is valid, proceed with formatting
+      const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  
+      const formattedDate = `${daysOfWeek[parsedDate.getDay()]}, ${months[parsedDate.getMonth()]} ${String(parsedDate.getDate()).padStart(2, '0')}, ${parsedDate.getFullYear()}, ${String(parsedDate.getHours()).padStart(2, '0')}:${String(parsedDate.getMinutes()).padStart(2, '0')}`;
+  
+      return formattedDate;
+    } else {
+      // Invalid date, handle the error (e.g., set a default date)
+      return -1;
+    }
+  } else {
+    // Date variable is undefined, handle the error (e.g., set a default date)
+    return -1;
+  }
+};
 
-export {changeFormatDate, changeFormatDate1};
+export { changeFormatDate, changeFormatDate1 };

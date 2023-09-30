@@ -32,18 +32,20 @@ import {
 } from "@ant-design/icons";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Badge } from "@mui/material";
+import { useEffect } from "react";
 
 export default function Layout() {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const id = localStorage.getItem("id");
   const [active, setActive] = useState({
-    activeHome: true,
+    activeHome: false,
     activeBooking: false,
     activeHistory: false,
     activePeople: false,
     activeMyAcc: false,
   });
+  const activeItem = localStorage.getItem("active");
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -62,7 +64,9 @@ export default function Layout() {
       activePeople: item === 4,
       activeMyAcc: item === 5,
     });
+    localStorage.setItem("active", item);
   };
+
   return (
     <div className="ps-3 pt-3" style={{ height: "100vh" }}>
       <Box className="mx-4 d-flex align-items-center justify-content-between text-center">
@@ -156,13 +160,13 @@ export default function Layout() {
             onClick={() => handleMenuItemClick(1)}
           >
             <MenuItem
-              className={
+              className={ activeItem === null || activeItem === "1" ||
                 active.activeHome === true
                   ? "menuActive my-2"
                   : "menuInactive my-2"
               }
             >
-              {active.activeHome === true ? (
+              {activeItem === null || activeItem === "1" || active.activeHome === true ? (
                 <HomeFilled className="iconColor" />
               ) : (
                 <HomeOutlined className="iconColor" />
@@ -176,14 +180,14 @@ export default function Layout() {
             onClick={() => handleMenuItemClick(2)}
           >
             <MenuItem
-              className={
+              className={ activeItem === "2" || 
                 active.activeBooking === true
                   ? "menuActive my-2"
                   : "menuInactive my-2"
               }
             >
               <FontAwesomeIcon
-                icon={
+                icon={ activeItem === "2" || 
                   active.activeBooking === true
                     ? faSolidCalendar
                     : faRegularCalendar
@@ -199,12 +203,12 @@ export default function Layout() {
             onClick={() => handleMenuItemClick(3)}
           >
             <MenuItem
-              className={
+              className={ activeItem === "3" || 
                 active.activeHistory === true ? "menuActive" : "menuInactive"
               }
             >
               {/* <FontAwesomeIcon icon={faLocationDot} className="iconColor" /> */}
-              {active.activeHistory === true ? (
+              {activeItem === "3" || active.activeHistory === true ? (
                 <EnvironmentFilled className="iconColor" />
               ) : (
                 <EnvironmentOutlined className="iconColor" />
@@ -218,13 +222,13 @@ export default function Layout() {
             onClick={() => handleMenuItemClick(4)}
           >
             <MenuItem
-              className={
+              className={ activeItem === "4" ||
                 active.activePeople === true
                   ? "menuActive my-2"
                   : "menuInactive my-2"
               }
             >
-              {active.activePeople === true ? (
+              {activeItem === "4" || active.activePeople === true ? (
                 <FontAwesomeIcon icon={faUserGroup} className="iconColor" />
               ) : (
                 <TeamOutlined className="iconColor" />
@@ -239,14 +243,14 @@ export default function Layout() {
             onClick={() => handleMenuItemClick(5)}
           >
             <MenuItem
-              className={
+              className={activeItem === "5" || 
                 active.activeMyAcc === true
                   ? "menuActive my-2"
                   : "menuInactive my-2"
               }
             >
               <FontAwesomeIcon
-                icon={active.activeMyAcc === true ? faSolidUser : faRegularUser}
+                icon={activeItem === "5" || active.activeMyAcc === true ? faSolidUser : faRegularUser}
                 className="iconColor"
               />
               <span className="ms-1 textColor">My Account</span>
@@ -254,7 +258,7 @@ export default function Layout() {
           </Link>
         </MenuList>
         <div className="col outlet ms-3 mt-2" style={{ height: "100vh" }}>
-          <Outlet />
+          <Outlet/>
         </div>
       </div>
     </div>

@@ -28,3 +28,46 @@
 .fs-16{
     font-size: 16px !important;
 }
+
+.fs-14{
+    font-size: 14px !important;
+}
+
+.bgBlue4{
+    background-color: var(--blue-color4);
+}
+
+.bgBlue2{
+    background-color: var(--blue-color2);
+}
+
+.bgGrey1{
+    background-color: var(--grey-color1);
+}
+
+.searchFormLocation input, .searchFormContact input{
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.searchFormLocation button, .searchFormContact button{
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.searchFormContact input{
+    width: 80px;
+}
+
+.weatherIcon{
+    width: 100px;
+}
+
+.textGrey4{
+    color: var(--grey-color4);
+}
+
+.contactList{
+    height: 210px;
+    overflow-y: auto;
+}
