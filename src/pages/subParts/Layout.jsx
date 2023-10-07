@@ -32,7 +32,6 @@ import {
 } from "@ant-design/icons";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Badge } from "@mui/material";
-import { useEffect } from "react";
 
 export default function Layout() {
   const [anchorEl, setAnchorEl] = useState(null);

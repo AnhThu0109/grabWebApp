@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./style.css";
 import { Divider } from "antd";
 import { fetchDataWeather, showIcon } from "../../utils/weather";
@@ -12,10 +12,48 @@ const Home = () => {
     localStorage.getItem(isAdmin) === "true" ? setAdmin(true) : setAdmin(false);
   };
 
+  const peopleList = [
+    {
+      username: "Huy Nguyen",
+      avatarPath:
+        "https://lh3.googleusercontent.com/ED85u6aQ2oseaV3Zi4ff-DyLnQpc-02EbG328ilQChGqg-4OkQuDzfirfuCnRP_Sv9DWwkI3iG_DALmWPVRr-SxO",
+      onlineTime: "4 minutes ago",
+    },
+    {
+      username: "Anh Ly",
+      avatarPath:
+        "https://lh3.googleusercontent.com/0V6XGdiudZ_0TBKUwchdxyPQZ5maRryBxhZRUG6mI-QhL9VG8kEWrzNy7tYbT352KCkrlhAQkzVXlUFaiBSV1wIPo4o",
+      onlineTime: "Online",
+    },
+    {
+      username: "Ngoc Tran",
+      avatarPath:
+        "https://lh3.googleusercontent.com/PSBfmOl_5jv97zDydSaV0FYEOFaU279KK4EKxGj5yzMMHMim8501-dToq_kD4sMfZ-niDUYtywSoNgwnUdP02hsfnQ",
+      onlineTime: "Online",
+    },
+    {
+      username: "Duy Tran",
+      avatarPath:
+        "https://lh3.googleusercontent.com/ED85u6aQ2oseaV3Zi4ff-DyLnQpc-02EbG328ilQChGqg-4OkQuDzfirfuCnRP_Sv9DWwkI3iG_DALmWPVRr-SxO",
+      onlineTime: "1 hour ago",
+    },
+    {
+      username: "Bao Nguyen",
+      avatarPath:
+        "https://lh3.googleusercontent.com/CXJ89PcCSDQAdqL1xpyAhwfdz8nsICwJQRnuZ6Qq_2j5rgFUlezb40rt6EsR-7lJTfE2tWiZn5vLj4WA6VG2bxoBQA",
+      onlineTime: "Offline",
+    },
+    {
+      username: "Huong Ly",
+      avatarPath:
+        "https://lh3.googleusercontent.com/3mpmhWQkYgEBm2tDbLsBQL67O2qHsrI9Bn18nCueKC3YP6pnwg9RUxMtKsggN72RD63fLptVu_05_AiPGrsuzssp",
+      onlineTime: "Offline",
+    },
+  ];
+
   //Fetching weather in 3 days
   const [weather, setWeather] = useState();
   const [currentIcon, setCurrentIcon] = useState();
-  const [displayDate, setDisplayDate] = useState([]);
   const [keyWord, setKeyWord] = useState("");
   const [isError, setIsError] = useState(false);
   const [errorMess, setErrorMess] = useState("");
@@ -32,12 +70,6 @@ const Home = () => {
             console.log("weather data", json);
             setWeather(json);
             setCurrentIcon(showIcon(json.current.condition.text));
-            // let newArr = [];
-            //Take condition text of days
-            // json.forecast.forecastday.map((item) => {
-            //   let source = showIcon(item.day.condition.text);
-            //   newArr.push(source);
-            // });
           })
           .catch((error) => {
             setIsError(true);
@@ -49,12 +81,6 @@ const Home = () => {
         .then((json) => {
           setWeather(json);
           setCurrentIcon(showIcon(json.current.condition.text));
-          //   let newArr = [];
-          //   json.forecast.forecastday.map((item) => {
-          //     let source = showIcon(item.day.condition.text);
-          //     newArr.push(source);
-          //   });
-          //   setDisplayIcon(newArr);
         })
         .catch((error) => {
           setIsError(true);
@@ -74,8 +100,6 @@ const Home = () => {
   useEffect(() => {
     isAdminLogin();
     fetchWeather();
-    let date = changeFormatDate(weather?.current?.last_updated);
-    setDisplayDate(date);
   }, [keyWord]);
 
   return (
@@ -204,12 +228,13 @@ const Home = () => {
           </p>
         </div>
 
-        <div className="bg-white col rounded-4 pb-2 pt-3" style={{height: "310px"}}>
+        <div
+          className="bg-white col rounded-4 pb-2 pt-3"
+          style={{ height: "310px" }}
+        >
           <div className="d-flex justify-content-between">
             <h5 className="fw-bolder textGrey1">Contact</h5>
-            <form
-              className="searchFormContact"
-            >
+            <form className="searchFormContact">
               <input
                 className="border-0 fs-14 bgBlue4 textGrey1 py-1 px-2"
                 type="text"
@@ -226,12 +251,24 @@ const Home = () => {
               </button>
             </form>
           </div>
-          <hr className="textGrey4"/>
+          <hr className="textGrey4" />
           <div className="contactList">
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quibusdam
-            eveniet libero, omnis labore voluptatem et, sunt nihil repudiandae
-            atque blanditiis nostrum impedit quaerat ex expedita eum, rerum
-            veniam! Odit, aut.
+            {peopleList.map((item, index) => (
+              <div className="row pb-3" key={index}>
+                <div className="col-3">
+                  <img
+                    src={item.avatarPath}
+                    alt="avatar"
+                    className="rounded-circle avatarContact"
+                  />
+                </div>
+
+                <div className="col">
+                  <b>{item.username}</b>
+                  <div className="fs-14 textGrey1">{item.onlineTime}</div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
