@@ -16,33 +16,9 @@
     height: 40px;
 }
 
-.textBlue2{
-    color: var(--blue-color2);
-}
-
 .cardHome{
     height: fit-content;
     width: 155px !important;
-}
-
-.fs-16{
-    font-size: 16px !important;
-}
-
-.fs-14{
-    font-size: 14px !important;
-}
-
-.bgBlue4{
-    background-color: var(--blue-color4);
-}
-
-.bgBlue2{
-    background-color: var(--blue-color2);
-}
-
-.bgGrey1{
-    background-color: var(--grey-color1);
 }
 
 .searchFormLocation input, .searchFormContact input{
@@ -61,10 +37,6 @@
 
 .weatherIcon{
     width: 100px;
-}
-
-.textGrey4{
-    color: var(--grey-color4);
 }
 
 .contactList{

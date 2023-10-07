@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import "./style.css";
+import "./../style.css";
 import { Divider } from "antd";
 import { fetchDataWeather, showIcon } from "../../utils/weather";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

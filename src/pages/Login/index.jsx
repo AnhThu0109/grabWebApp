@@ -4,6 +4,7 @@ import loginUser from '../../utils/loginUser';
 import { Input, Checkbox } from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import './style.css'; 
+import "./../style.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Login = () => {

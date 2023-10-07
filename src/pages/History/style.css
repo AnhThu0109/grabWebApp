@@ -1,0 +1,22 @@
+.bookingsTable .ant-table{
+    border-bottom-left-radius: 10px !important;
+    border-bottom-right-radius: 10px !important;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.bookingsTable th.ant-table-cell{
+    color: var(--blue-color2) !important;
+    font-weight: bolder !important;
+}
+
+.addNewBtn a{
+    color: white !important;
+    text-decoration: none !important;
+    font-weight: bolder;
+}
+
+span.ant-tag {
+    padding: 5px 10px !important;
+}
+
+

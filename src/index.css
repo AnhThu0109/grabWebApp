@@ -26,3 +26,44 @@ body{
   padding: 0px;
   box-sizing: border-box !important;
 }
+
+.textBlue2{
+  color: var(--blue-color2);
+}
+
+.fs-16{
+  font-size: 16px !important;
+}
+
+.fs-14{
+  font-size: 14px !important;
+}
+
+.bgBlue4{
+  background-color: var(--blue-color4);
+}
+
+.bgBlue2{
+  background-color: var(--blue-color2);
+}
+
+.bgGrey1{
+  background-color: var(--grey-color1);
+}
+
+.textGrey4{
+  color: var(--grey-color4);
+}
+
+.textGrey1{
+  color: var(--grey-color1) !important;
+}
+
+.textBlue3{
+  color: var(--blue-color3);
+}
+
+.textGrey2{
+  color: var(--grey-color2) !important;
+}
+

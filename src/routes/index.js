@@ -3,6 +3,8 @@ import Login from "../pages/Login";
 import MyAccount from "../pages/MyAccount";
 import Welcome from "../pages/Welcome";
 import Home from "../pages/Home";
+import Booking from "../pages/Booking";
+import History from "../pages/History";
 
 const publicRoutes = [
     {
@@ -26,11 +28,11 @@ const publicRoutes = [
         path: "/people"
     },
     {
-        element: <Users/>,
+        element: <Booking/>,
         path: "/booking"
     },
     {
-        element: <Users/>,
+        element: <History/>,
         path: "/history"
     },
 ]
