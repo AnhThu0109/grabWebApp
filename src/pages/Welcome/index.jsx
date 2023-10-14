@@ -29,7 +29,7 @@ const Welcome = () => {
       }, []);
     return(
         <div className="d-flex align-items-center flex-column">
-            <img alt="welcomeImage" src="https://assets.materialup.com/uploads/dcb15c3c-52ef-4c2a-a5ab-8d9f08cf19ce/animated_teaser.gif" className="welcomeImg"/>
+            <img alt="welcomeImage" src="/images/gifDriver.gif" className="welcomeImg"/>
             <Box className="progressBar mt-3">
                 <LinearProgress variant="determinate" value={progress} />
             </Box>

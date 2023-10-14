@@ -92,7 +92,11 @@ export default function Layout() {
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
           >
-            <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+            <Avatar
+              sx={{ width: 32, height: 32 }}
+              src="https://lh3.googleusercontent.com/ED85u6aQ2oseaV3Zi4ff-DyLnQpc-02EbG328ilQChGqg-4OkQuDzfirfuCnRP_Sv9DWwkI3iG_DALmWPVRr-SxO"
+              alt="avatar"
+            />
           </IconButton>
         </div>
       </Box>
@@ -159,13 +163,17 @@ export default function Layout() {
             onClick={() => handleMenuItemClick(1)}
           >
             <MenuItem
-              className={ activeItem === null || activeItem === "1" ||
+              className={
+                activeItem === null ||
+                activeItem === "1" ||
                 active.activeHome === true
                   ? "menuActive my-2"
                   : "menuInactive my-2"
               }
             >
-              {activeItem === null || activeItem === "1" || active.activeHome === true ? (
+              {activeItem === null ||
+              activeItem === "1" ||
+              active.activeHome === true ? (
                 <HomeFilled className="iconColor" />
               ) : (
                 <HomeOutlined className="iconColor" />
@@ -179,15 +187,15 @@ export default function Layout() {
             onClick={() => handleMenuItemClick(2)}
           >
             <MenuItem
-              className={ activeItem === "2" || 
-                active.activeBooking === true
+              className={
+                activeItem === "2" || active.activeBooking === true
                   ? "menuActive my-2"
                   : "menuInactive my-2"
               }
             >
               <FontAwesomeIcon
-                icon={ activeItem === "2" || 
-                  active.activeBooking === true
+                icon={
+                  activeItem === "2" || active.activeBooking === true
                     ? faSolidCalendar
                     : faRegularCalendar
                 }
@@ -202,8 +210,10 @@ export default function Layout() {
             onClick={() => handleMenuItemClick(3)}
           >
             <MenuItem
-              className={ activeItem === "3" || 
-                active.activeHistory === true ? "menuActive" : "menuInactive"
+              className={
+                activeItem === "3" || active.activeHistory === true
+                  ? "menuActive"
+                  : "menuInactive"
               }
             >
               {/* <FontAwesomeIcon icon={faLocationDot} className="iconColor" /> */}
@@ -221,8 +231,8 @@ export default function Layout() {
             onClick={() => handleMenuItemClick(4)}
           >
             <MenuItem
-              className={ activeItem === "4" ||
-                active.activePeople === true
+              className={
+                activeItem === "4" || active.activePeople === true
                   ? "menuActive my-2"
                   : "menuInactive my-2"
               }
@@ -242,14 +252,18 @@ export default function Layout() {
             onClick={() => handleMenuItemClick(5)}
           >
             <MenuItem
-              className={activeItem === "5" || 
-                active.activeMyAcc === true
+              className={
+                activeItem === "5" || active.activeMyAcc === true
                   ? "menuActive my-2"
                   : "menuInactive my-2"
               }
             >
               <FontAwesomeIcon
-                icon={activeItem === "5" || active.activeMyAcc === true ? faSolidUser : faRegularUser}
+                icon={
+                  activeItem === "5" || active.activeMyAcc === true
+                    ? faSolidUser
+                    : faRegularUser
+                }
                 className="iconColor"
               />
               <span className="ms-1 textColor">My Account</span>
@@ -257,7 +271,7 @@ export default function Layout() {
           </Link>
         </MenuList>
         <div className="col outlet ms-3 mt-2" style={{ height: "100vh" }}>
-          <Outlet/>
+          <Outlet />
         </div>
       </div>
     </div>

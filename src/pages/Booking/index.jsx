@@ -178,7 +178,7 @@ function Booking() {
   const itemNormalbooking = (
     <Menu>
       <Menu.Item key="1">
-        <Link rel="noopener noreferrer" className="nav-link" to="/">
+        <Link rel="noopener noreferrer" className="nav-link" to="/booking/tracking">
           See Detail
         </Link>
       </Menu.Item>

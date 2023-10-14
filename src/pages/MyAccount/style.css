@@ -1,84 +1,25 @@
-.userTitle img{
-    width: 100px ;
+.avatarImg {
+  width: 120px !important;
+  height: 120px !important;
+  border: 1px solid white;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
+    rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
 }
 
-button.savechangeBtn{
-    background-color: #51cbce;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+.changeAvatarBtn {
+  color: var(--green-color2);
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
 }
 
-button.savechangeBtn:hover{
-    background-color: #3da0a1;
+.imgDriver {
+  width: 300px;
 }
 
-.deleteBtnAccount{
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+.updateAvatarBtn {
+  background-color: var(--green-color3);
+  height: 45px;
 }
 
-.deleteBtnAccount:hover{
-    background-color: rgb(175, 19, 19) !important;
-}
-
-div.userInfo{
-    height: fit-content;
-    background-color: #f2f2f2;
-    margin: 0px;
-}
-
-.userInfo .bgInfoImg{
-    border-top-right-radius: 20px;
-    border-top-left-radius: 20px;
-}
-
-.userInfo .firstCol .avatar{
-    margin-top: -60%;
-    width: 90px;
-    height: 90px;
-}
-
-.userInfo .firstColInfo h3{
-    color: #51cbce;
-}
-
-.userInfo form .ant-space.css-dev-only-do-not-override-1me4733.ant-space-horizontal.ant-space-align-center {
-    float: right;
-}
-
-.inconInfo{
-    width: 30px;
-}
-
-.avatar-uploader {
-    width: 128px;
-    height: 128px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-.activeImg{
-    border: 3px solid black;
-}
-
-.firstColInfo button svg{
-    margin-bottom: 6px;
-}
-
-.firstColInfo button {
-    border: 0px;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-}
-
-.image-gallery img{
-    width: 100px;
-}
-
-.btnTitleImages{
-    margin-left: -10px;
-}
-
-.uploader__modal.show {
-    width: 80%;
-    height: 70%;
-    border-radius: 10px;
+.updateAvatarBtn:hover {
+  color: rgba(0, 0, 0, 0.338) !important;
 }

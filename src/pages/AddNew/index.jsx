@@ -8,12 +8,13 @@ export default function Add() {
   const [form] = Form.useForm();
 
   const onFinishForm = () => {
-    if(form.getFieldValue("Name") !== undefined &&
-    form.getFieldValue("PhoneNumber") !== undefined &&
-    !!form
-      .getFieldsError()
-      .filter(({ errors }) => errors.length).length === false){
-        navigate("/booking/tracking");
+    if (
+      form.getFieldValue("Name") !== undefined &&
+      form.getFieldValue("PhoneNumber") !== undefined &&
+      !!form.getFieldsError().filter(({ errors }) => errors.length).length ===
+        false
+    ) {
+      navigate("/booking/tracking");
     }
     message.success("Submit success form 1!");
   };

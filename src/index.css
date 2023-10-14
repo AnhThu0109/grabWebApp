@@ -83,3 +83,10 @@ body{
   color: var(--orange-color1) !important;
 }
 
+.textGreen3{
+  color: var(--green-color3) !important;
+}
+
+.bgGreen2{
+  background-color: var(--green-color2) !important;
+}
