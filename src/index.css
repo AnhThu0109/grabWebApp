@@ -9,6 +9,7 @@
   --blue-color3: #295B7F;
   --blue-color4: #E6F0F7;
   --blue-color5: #0070BB;
+  --blue-color6: #C0D8EA;
   --grey-color1: #A5A9AB;
   --grey-color2: #808080;
   --grey-color3: #D9D9D9;
@@ -73,6 +74,10 @@ body{
 
 .textBlue5{
   color: var(--blue-color5) !important;
+}
+
+.bgBlue1{
+  background-color: var(--blue-color1) !important;
 }
 
 .textGrey2{

@@ -72,7 +72,7 @@ const MyAccount = () => {
     setItemChange(initialItemChange);
   };
   return (
-    <div>
+    <div className="myAcc">
       <div className="row bgGreen2">
         <div className="col d-flex justify-content-center align-items-center">
           <Avatar
@@ -131,7 +131,7 @@ const MyAccount = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input Destination",
+                  message: "Please input your Last Name",
                 },
                 {
                   type: "string",

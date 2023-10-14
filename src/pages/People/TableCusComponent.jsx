@@ -1,20 +1,21 @@
 import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsis, faPlus } from "@fortawesome/free-solid-svg-icons";
-import { Dropdown, Button, Space, Menu, Table, Input, Tag } from "antd";
+import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
+import { Dropdown, Button, Space, Menu, Table, Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import "./style.css";
 import "./../style.css";
 
-function Booking() {
-  const [bookingId, setbookingId] = useState();
+function TableCusComponent() {
+  const [peopleId, setpeopleId] = useState();
+  const id = localStorage.getItem("peopleChosenId");
 
   //Get id of chosen booking for showing modal see detail
-  const bookingChosen = (id) => {
-    localStorage.setItem("bookingChosenId", id);
-    setbookingId(id);
+  const peopleChosen = (id) => {
+    localStorage.setItem("peopleChosenId", 123);
+    setpeopleId(id);
   };
 
   //For table using ant design
@@ -122,50 +123,80 @@ function Booking() {
       ),
   });
 
-  let bookings = [
+  let people = [
     {
-      id: "B00110",
-      createdAt: "Mar 20, 2023, 10:37",
-      status: "Running",
+      id: "CUS0010",
+      fullName: "Hoang Tran",
+      phone: "0793784663",
     },
     {
-      id: "B00109",
-      createdAt: "Mar 20, 2023, 10:20",
-      status: "Running",
+      id: "CUS0011",
+      fullName: "Duy Nguyen",
+      phone: "0793784345",
     },
     {
-      id: "B00108",
-      createdAt: "Mar 20, 2023, 09:15",
-      status: "Running",
+      id: "CUS0012",
+      fullName: "Bao Le",
+      phone: "9679769563",
     },
     {
-      id: "B00107",
-      createdAt: "Mar 19, 2023, 17:41",
-      status: "Running",
+      id: "CUS0013",
+      fullName: "Hoang Ly",
+      phone: "0123456789",
     },
     {
-      id: "B0016",
-      createdAt: "Mar 19, 2023, 10:37",
-      status: "Running",
+      id: "CUS0014",
+      fullName: "Minh Ly",
+      phone: "4545455465",
     },
     {
-      id: "B00105",
-      createdAt: "Mar 18, 2023, 20:20",
-      status: "Running",
+      id: "CUS0015",
+      fullName: "Mai Nguyen",
+      phone: "6776775578",
     },
     {
-      id: "B00104",
-      createdAt: "Mar 17, 2023, 09:15",
-      status: "Running",
+      id: "CUS0016",
+      fullName: "Hoa Le",
+      phone: "3454556456",
     },
     {
-      id: "B00103",
-      createdAt: "Mar 17, 2023, 08:41",
-      status: "Running",
-    },
+        id: "CUS0017",
+        fullName: "Minh Dang",
+        phone: "6767676423",
+      },
+      {
+        id: "CUS0018",
+        fullName: "Hieu Le",
+        phone: "9897769876",
+      },
+      {
+        id: "CUS0019",
+        fullName: "Trung Tran",
+        phone: "7346754764",
+      },
+      {
+        id: "CUS0020",
+        fullName: "Ngan Tran",
+        phone: "4989659743",
+      },
+      {
+        id: "CUS0021",
+        fullName: "Tu Nguyen",
+        phone: "4356567898",
+      },
+      {
+        id: "CUS0022",
+        fullName: "Ty Le",
+        phone: "9706778745",
+      },
+      {
+        id: "CUS0023",
+        fullName: "Phuc Le",
+        phone: "5576768795",
+      },
   ];
 
-  bookings = bookings.map((item, index) => {
+  people = people.map((item, index) => {
     return { ...item, key: index + 1 };
   });
 
@@ -178,7 +209,7 @@ function Booking() {
   const itemNormalbooking = (
     <Menu>
       <Menu.Item key="1">
-        <Link rel="noopener noreferrer" className="nav-link" to="/booking/tracking">
+        <Link rel="noopener noreferrer" className="nav-link" to={`/people/detail/${id}`}>
           See Detail
         </Link>
       </Menu.Item>
@@ -204,25 +235,26 @@ function Booking() {
       className: "ps-5",
     },
     {
-      title: "CREATED AT",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
+      title: "FULL NAME",
+      dataIndex: "fullName",
+      key: "fullName",
+      sorter: (a, b) => a.fullName.localeCompare(b.fullName),
       sortDirections: ["ascend", "descend"],
-      ...getColumnSearchProps("createdAt"),
+      ...getColumnSearchProps("fullName"),
       className: "ps-5",
     },
     {
-      title: "STATUS",
-      key: "status",
-      dataIndex: "status",
+      title: "PHONE NUMBER",
+      key: "phone",
+      dataIndex: "phone",
+      ...getColumnSearchProps("phone"),
       className: "ps-5",
       render: (_, item) => (
         <div className="d-flex justify-content-between">
-          <Tag bordered={false} color="green">{item.status}</Tag>
+          <div>{item.phone}</div>
           <Dropdown overlay={itemNormalbooking} trigger={["click"]}>
             <Button
-              onClick={() => bookingChosen(item._id)}
+              onClick={() => peopleChosen(item._id)}
               className="border-0"
             >
               <Space>
@@ -236,27 +268,13 @@ function Booking() {
   ];
 
   return (
-    <>
-      <div className="d-flex justify-content-between pt-4">
-        <h5 className="px-3 mt-2 textGrey1">{bookings?.length} in total.</h5>
-
-        <button className="border-0 bgBlue2 addNewBtn px-3 py-2 me-3 rounded-3">
-          <Link to="/booking/add">
-            <FontAwesomeIcon icon={faPlus} className="me-2"></FontAwesomeIcon>
-            Add New
-          </Link>
-        </button>
-      </div>
-
-      {/* Table all bookings */}
       <Table
         columns={columns}
-        dataSource={bookings}
+        dataSource={people}
         onChange={onChangeTable}
         pagination={{ pageSize: 6 }}
-        className="p-3 rounded-4 bookingsTable"
+        className="p-3 rounded-4 peopleTable"
       />
-    </>
   );
 }
-export default Booking;
+export default TableCusComponent;

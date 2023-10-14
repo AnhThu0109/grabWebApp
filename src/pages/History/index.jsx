@@ -222,9 +222,9 @@ function History() {
       title: "CREATED AT",
       dataIndex: "createdAt",
       key: "createdAt",
-      sorter: (a, b) => a.id.localeCompare(b.id),
+      sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
       sortDirections: ["ascend", "descend"],
-      ...getColumnSearchProps("id"),
+      ...getColumnSearchProps("createdAt"),
       className: "ps-5",
     },
     {

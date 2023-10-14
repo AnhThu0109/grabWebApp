@@ -1,25 +1,27 @@
-.avatarImg {
-  width: 120px !important;
-  height: 120px !important;
-  border: 1px solid white;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
-    rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
-}
+.myAcc {
+  .avatarImg {
+    width: 120px !important;
+    height: 120px !important;
+    border: 1px solid white;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
+      rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  }
 
-.changeAvatarBtn {
-  color: var(--green-color2);
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
-}
+  .changeAvatarBtn {
+    color: var(--green-color2);
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  }
 
-.imgDriver {
-  width: 300px;
-}
+  .imgDriver {
+    width: 300px;
+  }
 
-.updateAvatarBtn {
-  background-color: var(--green-color3);
-  height: 45px;
-}
+  .updateAvatarBtn {
+    background-color: var(--green-color3);
+    height: 45px;
+  }
 
-.updateAvatarBtn:hover {
-  color: rgba(0, 0, 0, 0.338) !important;
+  .updateAvatarBtn:hover {
+    color: rgba(0, 0, 0, 0.338) !important;
+  }
 }
