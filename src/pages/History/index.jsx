@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsis, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { Dropdown, Button, Space, Menu, Table, Input, Tag } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";

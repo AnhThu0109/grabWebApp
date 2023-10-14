@@ -5,6 +5,8 @@ import Welcome from "../pages/Welcome";
 import Home from "../pages/Home";
 import Booking from "../pages/Booking";
 import History from "../pages/History";
+import Add from "../pages/AddNew";
+import Tracking from "../pages/Tracking";
 
 const publicRoutes = [
     {
@@ -30,6 +32,14 @@ const publicRoutes = [
     {
         element: <Booking/>,
         path: "/booking"
+    },
+    {
+        element: <Add/>,
+        path: "/booking/add"
+    },
+    {
+        element: <Tracking/>,
+        path: "/booking/tracking"
     },
     {
         element: <History/>,

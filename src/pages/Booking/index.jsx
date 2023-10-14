@@ -241,7 +241,7 @@ function Booking() {
         <h5 className="px-3 mt-2 textGrey1">{bookings?.length} in total.</h5>
 
         <button className="border-0 bgBlue2 addNewBtn px-3 py-2 me-3 rounded-3">
-          <Link>
+          <Link to="/booking/add">
             <FontAwesomeIcon icon={faPlus} className="me-2"></FontAwesomeIcon>
             Add New
           </Link>

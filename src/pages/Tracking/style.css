@@ -1,0 +1,17 @@
+.returnBtn:where(.css-dev-only-do-not-override-1me4733).ant-btn-primary.ant-btn-background-ghost {
+    color: var(--green-color3) !important;
+    border-color: var(--green-color3) !important;
+    border-width: 2px !important;
+}
+
+.firstColumn{
+    border-right: 1px solid rgb(204, 203, 203);
+}
+
+.secondColumn{
+    line-height: 25px;
+}
+
+.locationIcon{
+    height: 18px;
+}
