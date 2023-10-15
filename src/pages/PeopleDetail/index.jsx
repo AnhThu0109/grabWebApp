@@ -1,27 +1,64 @@
-import {
-  Avatar,
-  Button,
-  DatePicker,
-  Form,
-  Input,
-  Select,
-  TimePicker,
-} from "antd";
+import { Avatar, Button, DatePicker, Form, Input, Select } from "antd";
 import { Option } from "antd/es/mentions";
 import "./style.css";
 import { SearchOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { useEffect, useState } from "react";
 
-export default function PeopleDetail() {
+export default function PeopleDetail(props) {
   const [form] = Form.useForm();
-  let initialValue = {
-    fullName: "Hoang Tran",
-    gender: "male",
-    license: "51A-34221",
-    phone: "0893874889",
-  };
+  const { id } = useParams();
+  const [isCus, setIsCus] = useState(false);
+
+  const historyList = [
+    {
+      id: "TR0123",
+      pickup: "Centec Tower",
+      destination: "Gigamall Thu Duc",
+      arrivedTime: "14:00, Sep 15th 2023",
+      total: "54.000 vnd",
+    },
+    {
+      id: "TR0124",
+      pickup: "123 Nguyen Trai Street, District 1, Ho Chi Minh city",
+      destination: "32 Nguyen Thi Minh Khai, District 3, Ho Chi Minh city",
+      arrivedTime: "17:02, Sep 15th 2023",
+      total: "63.500 vnd",
+    },
+    {
+      id: "TR0125",
+      pickup: "Diamond Plaza, Ho Chi Minh city",
+      destination: "Gigamall Thu Duc",
+      arrivedTime: "09:20, Sep 17th 2023",
+      total: "72.000 vnd",
+    },
+    {
+      id: "TR0126",
+      pickup: "Etown 2",
+      destination: "Gigamall Thu Duc",
+      arrivedTime: "16:33, Sep 18th 2023",
+      total: "135.000 vnd",
+    },
+  ];
+  useEffect(() => {
+    if (id.includes("CUS")) {
+      form.setFieldsValue({
+        fullName: "Ms. Hoa",
+        phone: "0893874889",
+      });
+      setIsCus(true);
+    } else {
+      form.setFieldsValue({
+        fullName: "Hoang Tran",
+        gender: "male",
+        license: "51A-34221",
+        phone: "0893874889",
+      });
+      setIsCus(false);
+    }
+  }, []);
   return (
     <div className="peopleDetail">
       <div className="row p-3">
@@ -32,8 +69,8 @@ export default function PeopleDetail() {
             className="avatarImg me-5"
           />
           <div>
-            <h4>DRIVER</h4>
-            <div>DR1023</div>
+            <h4>{isCus ? "CUSTOMER" : "DRIVER"}</h4>
+            <div>{id}</div>
           </div>
         </div>
         <div className="col">
@@ -45,13 +82,16 @@ export default function PeopleDetail() {
             className="me-2"
             autoComplete="off"
             requiredMark={false}
-            initialValues={initialValue}
           >
             <div className="row">
               <div className="col">
                 <Form.Item
                   name="fullName"
-                  label={<div className="textBlue3">Full Name</div>}
+                  label={
+                    <div className="textBlue3">
+                      {isCus ? "Name" : "Full Name"}
+                    </div>
+                  }
                   rules={[
                     {
                       required: true,
@@ -78,35 +118,37 @@ export default function PeopleDetail() {
               </div>
             </div>
 
-            <div className="row">
-              <div className="col">
-                <Form.Item
-                  name="gender"
-                  label={<div className="textBlue3">Gender</div>}
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please select your Gender",
-                    },
-                  ]}
-                  //   hasFeedback={hasFeedback && itemChange.gender}
-                >
-                  <Select disabled>
-                    <Option value="male">Male</Option>
-                    <Option value="female">Female</Option>
-                    <Option value="others">Other</Option>
-                  </Select>
-                </Form.Item>
+            {!isCus && (
+              <div className="row">
+                <div className="col">
+                  <Form.Item
+                    name="gender"
+                    label={<div className="textBlue3">Gender</div>}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select your Gender",
+                      },
+                    ]}
+                    //   hasFeedback={hasFeedback && itemChange.gender}
+                  >
+                    <Select disabled>
+                      <Option value="male">Male</Option>
+                      <Option value="female">Female</Option>
+                      <Option value="others">Other</Option>
+                    </Select>
+                  </Form.Item>
+                </div>
+                <div className="col">
+                  <Form.Item
+                    name="license"
+                    label={<div className="textBlue3">License Plate</div>}
+                  >
+                    <Input disabled />
+                  </Form.Item>
+                </div>
               </div>
-              <div className="col">
-                <Form.Item
-                  name="license"
-                  label={<div className="textBlue3">License Plate</div>}
-                >
-                  <Input disabled />
-                </Form.Item>
-              </div>
-            </div>
+            )}
 
             {/* <Form.Item shouldUpdate style={{ textAlign: "right" }}>
           {() => (
@@ -140,59 +182,35 @@ export default function PeopleDetail() {
             <Button shape="circle" icon={<SearchOutlined />} className="ms-3" />
           </Form.Item>
         </Form>
-        <div>
-          <div className="d-flex justify-content-between mb-5">
-            <div className="d-flex">
-              <img
-                src="/images/motorcycle.png"
-                className="iconCar me-4"
-                alt="icon"
-              />
-              <div>
-                <div className="fs-14 textGrey2">
-                  Trip from Centec Tower to Gigamall Thu Duc
+        <div className={isCus ? "historyCusList" : "historyDriverList"}>
+          {historyList?.map((item, index) => (
+            <div className="row mb-5" key={index}>
+              <div className="col-10 d-flex">
+                <img
+                  src="/images/motorcycle.png"
+                  className="iconCar me-4"
+                  alt="icon"
+                />
+                <div>
+                  <div className="fs-14 textGrey2">
+                    Trip from {item.pickup} to {item.destination}
+                  </div>
+                  <div className="fs-11 textGrey1 mb-3">{item.arrivedTime}</div>
+                  <Link
+                    className="textBlue5 fs-14 fw-bolder text-decoration-none"
+                    to="/"
+                  >
+                    See Detail
+                    <FontAwesomeIcon
+                      icon={faArrowRight}
+                      className="ms-2 bgBlue1 p-2 rounded-circle iconArrow"
+                    />
+                  </Link>
                 </div>
-                <div className="fs-11 textGrey1 mb-3">14:00, Sep 15th 2023</div>
-                <Link
-                  className="textBlue5 fs-14 fw-bolder text-decoration-none"
-                  to="/"
-                >
-                  See Detail
-                  <FontAwesomeIcon
-                    icon={faArrowRight}
-                    className="ms-2 bgBlue1 p-2 rounded-circle iconArrow"
-                  />
-                </Link>
               </div>
+              <div className="fs-14 textGrey2 me-4 col">{item.total}</div>
             </div>
-            <div className="fs-14 textGrey2">54.000 vnd</div>
-          </div>
-          <div className="d-flex justify-content-between">
-            <div className="d-flex">
-              <img
-                src="/images/motorcycle.png"
-                className="iconCar me-4"
-                alt="icon"
-              />
-              <div>
-                <div className="fs-14 textGrey2">
-                  Trip from Centec Tower to Gigamall Thu Duc
-                </div>
-                <div className="fs-11 textGrey1 mb-3">14:00, Sep 15th 2023</div>
-                <Link
-                  className="textBlue5 fs-14 fw-bolder text-decoration-none"
-                  to="/"
-                >
-                  See Detail
-                  <FontAwesomeIcon
-                    icon={faArrowRight}
-                    className="ms-2 bgBlue1 p-2 rounded-circle iconArrow"
-                  />
-                </Link>
-              </div>
-            </div>
-            <div className="fs-14 textGrey2">54.000 vnd</div>
-          </div>
+          ))}
         </div>
       </div>
     </div>

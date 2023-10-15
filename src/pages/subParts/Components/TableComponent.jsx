@@ -7,14 +7,11 @@ import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 
 function TableComponent(props) {
-  const [peopleId, setpeopleId] = useState();
   const [data, setData] = useState();
-  const id = localStorage.getItem("peopleChosenId");
 
   //Get id of chosen booking for showing modal see detail
-  const peopleChosen = (id) => {
-    localStorage.setItem("peopleChosenId", 123);
-    setpeopleId(id);
+  const peopleChosen = (itemId) => {
+    localStorage.setItem("peopleChosenId", itemId);
   };
 
   //For table using ant design
@@ -128,15 +125,15 @@ function TableComponent(props) {
   };
 
   //Items in dropdown button of each booking row
-  const itemNormalbooking = (
+  const itemDropdown = (itemId) => {return (
     <Menu>
       <Menu.Item key="1">
-        <Link rel="noopener noreferrer" className="nav-link" to={`/people/detail/${id}`}>
+        <Link rel="noopener noreferrer" className="nav-link" to={`/people/detail/${itemId}`}>
           See Detail
         </Link>
       </Menu.Item>
     </Menu>
-  );
+  )};
 
   const columns = [
     {
@@ -174,9 +171,9 @@ function TableComponent(props) {
       render: (_, item) => (
         <div className="d-flex justify-content-between">
           <div>{item.phone}</div>
-          <Dropdown overlay={itemNormalbooking} trigger={["click"]}>
+          <Dropdown overlay={() => itemDropdown(item.id)} trigger={["click"]}>
             <Button
-              onClick={() => peopleChosen(item._id)}
+              onClick={() => peopleChosen(item.id)}
               className="border-0"
             >
               <Space>
