@@ -75,7 +75,8 @@ export default function Layout() {
             to="/"
             onClick={() => handleMenuItemClick(1)}
           >
-            <b className="heading text-black">GrabApp</b>
+            {/* <b className="heading text-black">GrabApp</b> */}
+            <img src="images/logo.png" alt="logo" className="logoImg"/>
             <MenuIcon fontSize="large" className="textGreen1" />
           </Link>
         </Typography>

@@ -114,7 +114,7 @@ const Login = () => {
         }
       </div>
       <div className='col-5'>
-        <img className='loginImg' src='https://assets.materialup.com/uploads/dcb15c3c-52ef-4c2a-a5ab-8d9f08cf19ce/animated_teaser.gif' alt='loginImage'/>
+        <img className='loginImg' src='images/gifDriver.gif' alt='loginImage'/>
         <h3 className='text-center textGrey1'><b>YOUR FUTURE<br/>is created by what you do<br/>TODAY</b></h3>
       </div>
     </div>

@@ -1,15 +1,14 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { Dropdown, Button, Space, Menu, Table, Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
-import "./style.css";
-import "./../style.css";
 
-function TableCusComponent() {
+function TableComponent(props) {
   const [peopleId, setpeopleId] = useState();
+  const [data, setData] = useState();
   const id = localStorage.getItem("peopleChosenId");
 
   //Get id of chosen booking for showing modal see detail
@@ -123,83 +122,6 @@ function TableCusComponent() {
       ),
   });
 
-  let people = [
-    {
-      id: "CUS0010",
-      fullName: "Hoang Tran",
-      phone: "0793784663",
-    },
-    {
-      id: "CUS0011",
-      fullName: "Duy Nguyen",
-      phone: "0793784345",
-    },
-    {
-      id: "CUS0012",
-      fullName: "Bao Le",
-      phone: "9679769563",
-    },
-    {
-      id: "CUS0013",
-      fullName: "Hoang Ly",
-      phone: "0123456789",
-    },
-    {
-      id: "CUS0014",
-      fullName: "Minh Ly",
-      phone: "4545455465",
-    },
-    {
-      id: "CUS0015",
-      fullName: "Mai Nguyen",
-      phone: "6776775578",
-    },
-    {
-      id: "CUS0016",
-      fullName: "Hoa Le",
-      phone: "3454556456",
-    },
-    {
-        id: "CUS0017",
-        fullName: "Minh Dang",
-        phone: "6767676423",
-      },
-      {
-        id: "CUS0018",
-        fullName: "Hieu Le",
-        phone: "9897769876",
-      },
-      {
-        id: "CUS0019",
-        fullName: "Trung Tran",
-        phone: "7346754764",
-      },
-      {
-        id: "CUS0020",
-        fullName: "Ngan Tran",
-        phone: "4989659743",
-      },
-      {
-        id: "CUS0021",
-        fullName: "Tu Nguyen",
-        phone: "4356567898",
-      },
-      {
-        id: "CUS0022",
-        fullName: "Ty Le",
-        phone: "9706778745",
-      },
-      {
-        id: "CUS0023",
-        fullName: "Phuc Le",
-        phone: "5576768795",
-      },
-  ];
-
-  people = people.map((item, index) => {
-    return { ...item, key: index + 1 };
-  });
-
   //Function onChange for table
   const onChangeTable = (pagination, filters, sorter, extra) => {
     console.log("params", pagination, filters, sorter, extra);
@@ -267,14 +189,22 @@ function TableCusComponent() {
     },
   ];
 
+  useEffect(()=>{
+    let peopleList = [...props.people];
+    peopleList = peopleList?.map((item, index) => {
+      return { ...item, key: index + 1 };
+    });
+    setData(peopleList);
+  }, [])
+
   return (
       <Table
         columns={columns}
-        dataSource={people}
+        dataSource={data}
         onChange={onChangeTable}
         pagination={{ pageSize: 6 }}
         className="p-3 rounded-4 peopleTable"
       />
   );
 }
-export default TableCusComponent;
+export default TableComponent;

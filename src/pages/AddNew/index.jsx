@@ -1,7 +1,7 @@
 import { Button, Form, Input, message } from "antd";
-import FormGetInfo from "./FormComponent";
 import "./style.css";
 import { useNavigate } from "react-router-dom";
+import FormGetInfo from "../subParts/Components/FormComponent";
 
 export default function Add() {
   const navigate = useNavigate();
