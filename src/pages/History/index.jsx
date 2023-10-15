@@ -193,7 +193,11 @@ function History() {
   const itemNormalbooking = (
     <Menu>
       <Menu.Item key="1">
-        <Link rel="noopener noreferrer" className="nav-link" to="/booking/tracking">
+        <Link
+          rel="noopener noreferrer"
+          className="nav-link"
+          to="/booking/tracking"
+        >
           See Detail
         </Link>
       </Menu.Item>
@@ -232,6 +236,17 @@ function History() {
       key: "status",
       dataIndex: "status",
       className: "ps-5",
+      filters: [
+        {
+          text: "Complete",
+          value: "Complete",
+        },
+        {
+          text: "Canceled",
+          value: "Canceled",
+        },
+      ],
+      onFilter: (value, record) => record.status.indexOf(value) === 0,
       render: (_, item) => (
         <div className="d-flex justify-content-between">
           <Tag

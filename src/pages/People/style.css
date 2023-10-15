@@ -3,7 +3,7 @@
         background-color: var(--blue-color1) !important;
     }
     .ant-tabs-tab>.ant-tabs-tab-btn>div{
-        color: black !important;
+        color: var(--grey-color2) !important;
     }
     .ant-tabs-tab.ant-tabs-tab-active>.ant-tabs-tab-btn>div{
         color: var(--blue-color2) !important;

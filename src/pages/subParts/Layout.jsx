@@ -1,4 +1,4 @@
-import * as React from "react";
+// import * as React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUserGroup,
@@ -21,7 +21,7 @@ import { Settings, Logout } from "@mui/icons-material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MenuIcon from "@mui/icons-material/Menu";
 import "./style.css";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import {
   HomeOutlined,
@@ -32,6 +32,7 @@ import {
 } from "@ant-design/icons";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Badge } from "@mui/material";
+import { useEffect } from "react";
 
 export default function Layout() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -44,6 +45,7 @@ export default function Layout() {
     activePeople: false,
     activeMyAcc: false,
   });
+  const navigate = useNavigate();
   const activeItem = localStorage.getItem("active");
 
   const handleClick = (event) => {
@@ -52,6 +54,14 @@ export default function Layout() {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  //Logout func ==> when click login, page redirect to "/login"
+  const handleLogout = async () => {
+    // await logOut(t);
+    // setToken("");
+    localStorage.clear();
+    navigate("/login");
   };
 
   //Function setting active menu item when handle click
@@ -66,6 +76,39 @@ export default function Layout() {
     localStorage.setItem("active", item);
   };
 
+  // Set the title and active menu item based on the current URL when the user clicks the browser's back or forward button
+  const setTitleCurrentURL = () => {
+    const currentPath = window.location.pathname;
+    switch (currentPath) {
+      case "/":
+        handleMenuItemClick(1);
+        break;
+      case "/booking":
+        handleMenuItemClick(2);
+        break;
+      case "/history":
+        handleMenuItemClick(3);
+        break;
+      case "/people":
+        handleMenuItemClick(4);
+        break;
+      default:
+        handleMenuItemClick(5);
+    }
+  };
+
+  useEffect(() => {
+    // Set the initial title and active menu item based on the current URL
+    setTitleCurrentURL();
+    // Add an event listener to update the title and active menu item when the user clicks the browser's back or forward button
+    window.addEventListener("popstate", setTitleCurrentURL);
+
+    return () => {
+      // Remove the event listener when the component unmounts
+      window.removeEventListener("popstate", setTitleCurrentURL);
+    };
+  }, []);
+
   return (
     <div className="ps-3 pt-3" style={{ height: "100vh" }}>
       <Box className="mx-4 d-flex align-items-center justify-content-between text-center">
@@ -76,7 +119,7 @@ export default function Layout() {
             onClick={() => handleMenuItemClick(1)}
           >
             {/* <b className="heading text-black">GrabApp</b> */}
-            <img src="/images/logo.png" alt="logo" className="logoImg"/>
+            <img src="/images/logo.png" alt="logo" className="logoImg" />
             <MenuIcon fontSize="large" className="textGreen1" />
           </Link>
         </Typography>
@@ -149,12 +192,14 @@ export default function Layout() {
             My account
           </MenuItem>
         </Link>
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Logout fontSize="medium" className="iconMenuAcc" />
-          </ListItemIcon>
-          Logout
-        </MenuItem>
+        <Link to="/login" onClick={handleLogout} className="linkNormal text-black">
+          <MenuItem onClick={handleClose}>
+            <ListItemIcon>
+              <Logout fontSize="medium" className="iconMenuAcc" />
+            </ListItemIcon>
+            Logout
+          </MenuItem>
+        </Link>
       </Menu>
       <div className="d-flex" style={{ height: "100vh" }}>
         <MenuList sx={{ width: "150px" }}>

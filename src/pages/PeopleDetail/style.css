@@ -21,10 +21,12 @@
     .historyCusList {
       height: 310px;
       overflow-y: auto;
+      overflow-x: hidden;
     }
     .historyDriverList {
       height: 240px;
       overflow-y: auto;
+      overflow-x: hidden;
     }
   }
 }
