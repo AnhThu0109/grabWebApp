@@ -85,6 +85,7 @@ const Home = () => {
       fetchDataWeather(location)
         .then((json) => {
           setIsLoading(false);
+          setIsError(false);
           setWeather(json);
           setCurrentIcon(showIcon(json.current.condition.text));
         })
@@ -102,6 +103,7 @@ const Home = () => {
     if (keyWord.trim() !== "") {
       fetchWeather(keyWord);
     }
+    setIsLoading(true);
   };
 
   useEffect(() => {
