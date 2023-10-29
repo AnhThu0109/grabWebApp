@@ -79,21 +79,16 @@ export default function Layout() {
   // Set the title and active menu item based on the current URL when the user clicks the browser's back or forward button
   const setTitleCurrentURL = () => {
     const currentPath = window.location.pathname;
-    switch (currentPath) {
-      case "/":
-        handleMenuItemClick(1);
-        break;
-      case "/booking":
-        handleMenuItemClick(2);
-        break;
-      case "/history":
-        handleMenuItemClick(3);
-        break;
-      case "/people":
-        handleMenuItemClick(4);
-        break;
-      default:
-        handleMenuItemClick(5);
+    if (currentPath.includes("/booking")) {
+      handleMenuItemClick(2);
+    } else if (currentPath.includes("/history")) {
+      handleMenuItemClick(3);
+    } else if (currentPath.includes("/people")) {
+      handleMenuItemClick(4);
+    } else if (currentPath.includes("/users")) {
+      handleMenuItemClick(5);
+    } else {
+      handleMenuItemClick(1);
     }
   };
 
@@ -192,7 +187,11 @@ export default function Layout() {
             My account
           </MenuItem>
         </Link>
-        <Link to="/login" onClick={handleLogout} className="linkNormal text-black">
+        <Link
+          to="/login"
+          onClick={handleLogout}
+          className="linkNormal text-black"
+        >
           <MenuItem onClick={handleClose}>
             <ListItemIcon>
               <Logout fontSize="medium" className="iconMenuAcc" />

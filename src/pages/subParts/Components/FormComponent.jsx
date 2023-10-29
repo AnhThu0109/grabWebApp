@@ -10,11 +10,83 @@ import {
 import locale from "antd/es/date-picker/locale/en_US";
 // import dayjs from "dayjs";
 import { Option } from "antd/es/mentions";
+import { useState } from "react";
+import "./style.css";
+import moment from "moment/moment";
 
 export default function FormGetInfo() {
   const [form] = Form.useForm();
+  const [query, setQuery] = useState("");
+  const [predictions, setPredictions] = useState([]);
+  const [queryDes, setQueryDes] = useState("");
+  const [predictionsDes, setPredictionsDes] = useState([]);
+
+  const onSearch = (value, _e, info) => {
+    console.log(info?.source, value);
+  };
+
+  const handleInputChange = (e, setQueryFunction, setPredictionsFunction, inputName) => {
+    const inputValue = e.target.value;
+    form.setFieldValue(inputName, e.target.value);
+    setQueryFunction(inputValue);
+
+    // Create a new instance of google.maps.places.AutocompleteService
+    const autocompleteService =
+      new window.google.maps.places.AutocompleteService();
+
+    // Use AutocompleteService to get predictions based on the input value
+    autocompleteService.getPlacePredictions(
+      {
+        input: inputValue,
+        componentRestrictions: { country: "VN" }, // Restrict predictions to Vietnam
+      },
+      (predictions, status) => {
+        if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+          setPredictionsFunction(predictions);
+        } else {
+          setPredictionsFunction([]);
+        }
+      }
+    );
+  };
+
+  const chooseLocation = (location, setQueryFunction, setPredictionsFunction, inputName) => {
+    setQueryFunction(location);
+    console.log(location);
+    setPredictionsFunction([]);
+    form.setFieldValue(inputName, location);
+  };
+
+  const disabledDate = (current) => {
+    // Disable dates before today (past dates)
+    return current && current < moment().startOf("day");
+  };
+
+  const disabledDateTime = (current) => {
+    const today = new Date();
+    let isToday =
+      current &&
+      current.$D === today.getDate() &&
+      current.$M === today.getMonth() &&
+      current.$y === today.getFullYear()
+        ? true
+        : false;
+    if (isToday) {
+      return {
+        disabledHours: () =>
+          Array.from({ length: moment().hours() }, (_, i) => i),
+        disabledMinutes: () => [],
+      };
+    }
+    return {};
+  };
+
   const onFinish = () => {
-    message.success("Submit success!");
+    if (form.getFieldValue("PickupLocation") === form.getFieldValue("Destination")) {
+      message.error("Pickup Location and Destination are the same. Please choose again!");
+    } else{
+      message.success("Submit success!");
+    }
   };
   const onFinishFailed = () => {
     message.error("Submit failed!");
@@ -34,6 +106,7 @@ export default function FormGetInfo() {
       <div className="row">
         <div className="col">
           <Form.Item
+            className="location-search-container"
             name="PickupLocation"
             label={<div className="textBlue3">Pickup Location</div>}
             rules={[
@@ -48,7 +121,24 @@ export default function FormGetInfo() {
             ]}
             hasFeedback
           >
-            <Input />
+            {/* <Search
+              onSearch={onSearch}
+            /> */}
+            {/* <SearchLocationInput /> */}
+            <Input
+              value={query}
+              onChange={(e) => handleInputChange(e, setQuery, setPredictions, "PickupLocation")}
+            />
+            <ul className="predictions-list">
+              {predictions.map((prediction) => (
+                <li
+                  key={prediction.place_id}
+                  onClick={() => chooseLocation(prediction.description, setQuery, setPredictions, "PickupLocation")}
+                >
+                  {prediction.description}
+                </li>
+              ))}
+            </ul>
           </Form.Item>
         </div>
         <div className="col">
@@ -67,7 +157,23 @@ export default function FormGetInfo() {
             ]}
             hasFeedback
           >
-            <Input />
+            <Input
+              type="text"
+              value={queryDes}
+              onChange={(e) =>
+                handleInputChange(e, setQueryDes, setPredictionsDes, "Destination")
+              }
+            />
+            <ul className="predictions-list">
+              {predictionsDes.map((prediction) => (
+                <li
+                  key={prediction.place_id}
+                  onClick={() => chooseLocation(prediction.description, setQueryDes, setPredictionsDes, "Destination")}
+                >
+                  {prediction.description}
+                </li>
+              ))}
+            </ul>
           </Form.Item>
         </div>
       </div>
@@ -80,10 +186,12 @@ export default function FormGetInfo() {
           >
             <DatePicker
               showTime
-              format="YYYY-MM-DD HH:mm:ss"
+              format="YYYY-MM-DD HH:mm"
               placeholder=""
               className="w-100"
               locale={locale}
+              disabledDate={disabledDate}
+              disabledTime={disabledDateTime}
             />
           </Form.Item>
         </div>
@@ -160,16 +268,16 @@ export default function FormGetInfo() {
                 .length
             }
             className={
-                form.getFieldValue("PickupLocation") !== undefined &&
-                form.getFieldValue("Destination") !== undefined &&
-                form.getFieldValue("NoOfGuest") !== undefined &&
-                form.getFieldValue("CarType") !== undefined &&
-                form.getFieldValue("CarService") !== undefined &&
-                !form.getFieldsError().filter(({ errors }) => errors.length)
-                  .length
-                  ? "activeButton"
-                  : ""
-              }
+              form.getFieldValue("PickupLocation") !== undefined &&
+              form.getFieldValue("Destination") !== undefined &&
+              form.getFieldValue("NoOfGuest") !== undefined &&
+              form.getFieldValue("CarType") !== undefined &&
+              form.getFieldValue("CarService") !== undefined &&
+              !form.getFieldsError().filter(({ errors }) => errors.length)
+                .length
+                ? "activeButton"
+                : ""
+            }
           >
             Apply
           </Button>

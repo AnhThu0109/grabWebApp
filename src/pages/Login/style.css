@@ -17,6 +17,10 @@
     color: var(--grey-color1);
 }
 
+button.ant-btn.css-dev-only-do-not-override-1me4733.ant-btn-primary.my-3.fw-bolder.formLoginBtn:hover {
+    background: var(--blue-color3);
+}
+
 .loginImg{
     width: 400px !important;
 }

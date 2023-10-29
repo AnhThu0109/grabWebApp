@@ -52,7 +52,7 @@ export default function PeopleDetail(props) {
     } else {
       form.setFieldsValue({
         fullName: "Hoang Tran",
-        gender: "male",
+        gender: "Male",
         license: "51A-34221",
         phone: "0893874889",
       });
@@ -104,7 +104,7 @@ export default function PeopleDetail(props) {
                   ]}
                   //   hasFeedback={hasFeedback && itemChange.firstName}
                 >
-                  <Input disabled />
+                  <Input readOnly />
                 </Form.Item>
               </div>
               <div className="col">
@@ -113,7 +113,7 @@ export default function PeopleDetail(props) {
                   label={<div className="textBlue3">Phone Number</div>}
                   //   hasFeedback={hasFeedback && itemChange.lastName}
                 >
-                  <Input disabled />
+                  <Input readOnly />
                 </Form.Item>
               </div>
             </div>
@@ -132,11 +132,12 @@ export default function PeopleDetail(props) {
                     ]}
                     //   hasFeedback={hasFeedback && itemChange.gender}
                   >
-                    <Select disabled>
+                    <Input readOnly />
+                    {/* <Select disabled>
                       <Option value="male">Male</Option>
                       <Option value="female">Female</Option>
                       <Option value="others">Other</Option>
-                    </Select>
+                    </Select> */}
                   </Form.Item>
                 </div>
                 <div className="col">
@@ -144,7 +145,7 @@ export default function PeopleDetail(props) {
                     name="license"
                     label={<div className="textBlue3">License Plate</div>}
                   >
-                    <Input disabled />
+                    <Input readOnly />
                   </Form.Item>
                 </div>
               </div>
@@ -198,7 +199,7 @@ export default function PeopleDetail(props) {
                   <div className="fs-11 textGrey1 mb-3">{item.arrivedTime}</div>
                   <Link
                     className="textBlue5 fs-14 fw-bolder text-decoration-none"
-                    to="/"
+                    to="/booking/tracking"
                   >
                     See Detail
                     <FontAwesomeIcon

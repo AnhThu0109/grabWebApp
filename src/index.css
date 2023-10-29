@@ -80,6 +80,10 @@ body{
   background-color: var(--blue-color1) !important;
 }
 
+.bgBlue3{
+  background-color: var(--blue-color3) !important;
+}
+
 .textGrey2{
   color: var(--grey-color2) !important;
 }

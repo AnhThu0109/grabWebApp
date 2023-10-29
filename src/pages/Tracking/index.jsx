@@ -14,7 +14,7 @@ import MapComponent from "./MapComponent";
 export default function Tracking() {
   const navigate = useNavigate();
   const handleReturn = () => {
-    navigate("/booking");
+    navigate(-1);
   };
 
   const icons = Array.from({ length: 9 }, (_, index) => (
