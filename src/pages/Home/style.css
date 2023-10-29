@@ -48,3 +48,7 @@
 .avatarContact{
     width: 40px;
 }
+
+.skeletonRect{
+    padding: 0px;
+}
