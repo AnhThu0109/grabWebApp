@@ -13,6 +13,8 @@ import { Option } from "antd/es/mentions";
 import { useState } from "react";
 import "./style.css";
 import moment from "moment/moment";
+import API_KEY from "../../../utils/KEY";
+import calculateDistance from "../../../utils/calculateDistance";
 
 export default function FormGetInfo() {
   const [form] = Form.useForm();
@@ -20,10 +22,14 @@ export default function FormGetInfo() {
   const [predictions, setPredictions] = useState([]);
   const [queryDes, setQueryDes] = useState("");
   const [predictionsDes, setPredictionsDes] = useState([]);
-
-  const onSearch = (value, _e, info) => {
-    console.log(info?.source, value);
-  };
+  const [pickUp, setPickUp] = useState({
+    lat: 0,
+    lng: 0
+  });
+  const [destination, setDestination] = useState({
+    lat: 0,
+    lng: 0
+  })
 
   const handleInputChange = (e, setQueryFunction, setPredictionsFunction, inputName) => {
     const inputValue = e.target.value;
@@ -50,12 +56,39 @@ export default function FormGetInfo() {
     );
   };
 
-  const chooseLocation = (location, setQueryFunction, setPredictionsFunction, inputName) => {
+  // const chooseLocation = (location, setQueryFunction, setPredictionsFunction, inputName) => {
+  //   setQueryFunction(location);
+  //   console.log(location);
+  //   setPredictionsFunction([]);
+  //   form.setFieldValue(inputName, location);
+  // };
+
+  const chooseLocation = async(location, setQueryFunction, setPredictionsFunction, inputName) => {
     setQueryFunction(location);
     console.log(location);
     setPredictionsFunction([]);
     form.setFieldValue(inputName, location);
-  };
+    debugger;
+    // Geocoding API endpoint URL
+    const geocodingApiUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${API_KEY}`;
+
+    // Make API call to fetch latitude and longitude for the location
+    await fetch(geocodingApiUrl)
+        .then(response => response.json())
+        .then(data => {
+            // Extract latitude and longitude from the response
+            const { lat, lng } = data.results[0].geometry.location;
+            debugger;
+            // Now you have latitude and longitude for the selected location
+            console.log(`Latitude: ${lat}, Longitude: ${lng}`);
+
+            inputName === "PickupLocation" ? setPickUp({lat, lng}) : setDestination({lat, lng});
+        })
+        .catch(error => {
+            console.log('Error fetching location details:', error);
+        });
+};
+
 
   const disabledDate = (current) => {
     // Disable dates before today (past dates)
@@ -81,11 +114,13 @@ export default function FormGetInfo() {
     return {};
   };
 
-  const onFinish = () => {
+  const onFinish = async() => {
     if (form.getFieldValue("PickupLocation") === form.getFieldValue("Destination")) {
       message.error("Pickup Location and Destination are the same. Please choose again!");
     } else{
-      message.success("Submit success!");
+      debugger;
+      const distance = await calculateDistance(pickUp.lat, pickUp.lng, destination.lat, destination.lng);
+      message.success(`Submit success! ${distance}`);
     }
   };
   const onFinishFailed = () => {

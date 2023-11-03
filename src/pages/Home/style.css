@@ -52,3 +52,8 @@
 .skeletonRect{
     padding: 0px;
 }
+
+.chartBody {
+    height: 100%;
+  }
+  

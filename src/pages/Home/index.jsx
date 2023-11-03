@@ -4,13 +4,15 @@ import "./../style.css";
 import { Divider } from "antd";
 import { fetchDataWeather, showIcon } from "../../utils/weather";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { faChartColumn, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { changeFormatDate, changeFormatDate1 } from "../../utils/formatDate";
 import { Skeleton } from "@mui/material";
+import { Bar } from "react-chartjs-2";
 
 const Home = () => {
   const [isAdmin, setAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [dataChart, setDataChart] = useState();
   const isAdminLogin = () => {
     localStorage.getItem(isAdmin) === "true" ? setAdmin(true) : setAdmin(false);
   };
@@ -99,6 +101,7 @@ const Home = () => {
 
   //Handle submit for form of searching location
   const handleSubmit = (e) => {
+    debugger;
     e.preventDefault();
     if (keyWord.trim() !== "") {
       fetchWeather(keyWord);
@@ -107,6 +110,28 @@ const Home = () => {
   };
 
   useEffect(() => {
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    // Generate random data for the chart
+    const randomData = Array.from({ length: 12 }, () => Math.floor(Math.random() * 100));
+
+    // Create the dataChart object with random data
+    let dataChart = {
+        labels: months,
+        datasets: [
+            {
+                label: "Random Data",
+                backgroundColor: "rgb(81, 203, 206)",
+                borderColor: "rgb(255, 99, 132)",
+                borderWidth: 2,
+                borderRadius: 5,
+                borderSkipped: false,
+                data: randomData,
+            },
+        ],
+    };
+
+    setDataChart(dataChart);
     isAdminLogin();
     fetchWeather();
   }, []);
@@ -280,12 +305,20 @@ const Home = () => {
 
           <div className="row m-3 gap-3">
             <div className="bg-white col-9 rounded-4">
-              <p>
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque
-                ab esse modi inventore molestias vero ullam iste illum, neque
-                culpa ipsam et. Vero recusandae nisi iusto fugit dolore.
-                Perferendis, tempore?
-              </p>
+              {/* <div className="col-xl-6 chartContent">
+                  <div className="card chartBody">
+                      <div className="card-header fw-bolder">
+                          <FontAwesomeIcon icon={faChartColumn} className='me-2'></FontAwesomeIcon>
+                          Activity in 2023
+                      </div>
+                      <div style={{ height: "88%" }}>
+                          {
+                              dataChart &&
+                              <Bar data={dataChart} />
+                          }
+                      </div>
+                  </div> 
+              </div>*/}
             </div>
 
             <div
