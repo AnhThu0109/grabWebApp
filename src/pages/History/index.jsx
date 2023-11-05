@@ -1,8 +1,8 @@
 import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
-import { Dropdown, Button, Space, Menu, Table, Input, Tag } from "antd";
+import { faEllipsis, faFilter, faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { Dropdown, Button, Space, Menu, Table, Input, Tag, message } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import "./style.css";
@@ -10,6 +10,34 @@ import "./../style.css";
 
 function History() {
   const [bookingId, setbookingId] = useState();
+
+    //Filter items
+    const filterItems = (
+      <Menu>
+        <Menu.Item key="1">
+          <Link
+            rel="noopener noreferrer"
+            className="nav-link"
+            onClick={() => handleClickFilter("All")}
+          >
+            Show All
+          </Link>
+        </Menu.Item>
+        <Menu.Item key="2">
+          <Link
+            rel="noopener noreferrer"
+            className="nav-link"
+            onClick={() => handleClickFilter("Mine")}
+          >
+            Show Mine
+          </Link>
+        </Menu.Item>
+      </Menu>
+    );
+  
+    const handleClickFilter = (a) => {
+      message.success(a);
+    };
 
   //Get id of chosen booking for showing modal see detail
   const bookingChosen = (id) => {
@@ -272,7 +300,27 @@ function History() {
 
   return (
     <>
-      <h5 className="pt-4 px-3 mt-2 textGrey1">{bookings?.length} in total.</h5>
+    <div className="d-flex justify-content-between pt-4">
+    <h5 className="px-3 mt-2 textGrey1">{bookings?.length} in total.</h5>
+    <Dropdown overlay={filterItems} trigger={["click"]}>
+            <button
+              onClick={(e) => e.preventDefault()}
+              className="border-0 filterBtn px-3 py-2 me-3 rounded-3 bg-white"
+            >
+              <Space>
+                <FontAwesomeIcon
+                  icon={faFilter}
+                  className="me-1"
+                ></FontAwesomeIcon>
+                Filter
+                <FontAwesomeIcon
+                  icon={faChevronDown}
+                  className="me-1"
+                ></FontAwesomeIcon>
+              </Space>
+            </button>
+          </Dropdown>
+    </div>     
 
       {/* Table all bookings */}
       <Table

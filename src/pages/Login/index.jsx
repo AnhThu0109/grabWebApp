@@ -37,7 +37,7 @@ export default function Login() {
       navigate("/welcome");
     } catch (error) {
       console.error(error);
-      message.error(error.response.data);
+      message.error("Username or Password not correct.");
       handleClearInput();
     }
   };

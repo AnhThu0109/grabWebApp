@@ -1,24 +1,11 @@
 import { Link } from "react-router-dom";
 import "./style.css";
 import { useEffect } from "react";
+import setRootBackground from "../../utils/setRootBackground";
 
 function NotFound() {
-  const setRootBackground = () => {
-    document.documentElement.style.setProperty(
-      "--bg-color1",
-      "#BFEBE3" // Replace with your desired background color for the login page
-    );
-  };
-
-  const resetRootBackground = () => {
-    document.documentElement.style.setProperty(
-      "--bg-color1",
-      "#F6F1F1" // Replace with your desired background color for the login page
-    );
-  };
-
   useEffect(() => {
-    setRootBackground();
+    setRootBackground("--bg-color1", "#BFEBE3");
   }, []);
 
   return (
@@ -33,7 +20,6 @@ function NotFound() {
           className="rounded-4 text-white bg-"
           onClick={() => {
             localStorage.setItem("active", 1);
-            resetRootBackground();
           }}
         >
           GO TO HOMEPAGE

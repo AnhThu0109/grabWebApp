@@ -15,6 +15,13 @@
     font-weight: bolder;
 }
 
+button.filterBtn .ant-space-item{
+    color: var(--blue-color2) !important;
+    text-decoration: none !important;
+    font-weight: bolder;
+    font-size: 16px !important;
+}
+
 span.ant-tag {
     padding: 5px 10px !important;
 }

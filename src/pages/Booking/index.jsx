@@ -1,8 +1,22 @@
 import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsis, faPlus } from "@fortawesome/free-solid-svg-icons";
-import { Dropdown, Button, Space, Menu, Table, Input, Tag } from "antd";
+import {
+  faEllipsis,
+  faPlus,
+  faFilter,
+  faChevronDown,
+} from "@fortawesome/free-solid-svg-icons";
+import {
+  Dropdown,
+  Button,
+  Space,
+  Menu,
+  Table,
+  Input,
+  Tag,
+  message,
+} from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import "./style.css";
@@ -10,6 +24,34 @@ import "./../style.css";
 
 function Booking() {
   const [bookingId, setbookingId] = useState();
+
+  //Filter items
+  const filterItems = (
+    <Menu>
+      <Menu.Item key="1">
+        <Link
+          rel="noopener noreferrer"
+          className="nav-link"
+          onClick={() => handleClickFilter("All")}
+        >
+          Show All
+        </Link>
+      </Menu.Item>
+      <Menu.Item key="2">
+        <Link
+          rel="noopener noreferrer"
+          className="nav-link"
+          onClick={() => handleClickFilter("Mine")}
+        >
+          Show Mine
+        </Link>
+      </Menu.Item>
+    </Menu>
+  );
+
+  const handleClickFilter = (a) => {
+    message.success(a);
+  };
 
   //Get id of chosen booking for showing modal see detail
   const bookingChosen = (id) => {
@@ -178,7 +220,11 @@ function Booking() {
   const itemNormalbooking = (
     <Menu>
       <Menu.Item key="1">
-        <Link rel="noopener noreferrer" className="nav-link" to="/booking/tracking">
+        <Link
+          rel="noopener noreferrer"
+          className="nav-link"
+          to="/booking/tracking"
+        >
           See Detail
         </Link>
       </Menu.Item>
@@ -219,7 +265,9 @@ function Booking() {
       className: "ps-5",
       render: (_, item) => (
         <div className="d-flex justify-content-between">
-          <Tag bordered={false} color="green">{item.status}</Tag>
+          <Tag bordered={false} color="green">
+            {item.status}
+          </Tag>
           <Dropdown overlay={itemNormalbooking} trigger={["click"]}>
             <Button
               onClick={() => bookingChosen(item._id)}
@@ -239,13 +287,32 @@ function Booking() {
     <>
       <div className="d-flex justify-content-between pt-4">
         <h5 className="px-3 mt-2 textGrey1">{bookings?.length} in total.</h5>
-
-        <button className="border-0 bgBlue2 addNewBtn px-3 py-2 me-3 rounded-3">
-          <Link to="/booking/add">
-            <FontAwesomeIcon icon={faPlus} className="me-2"></FontAwesomeIcon>
-            Add New
-          </Link>
-        </button>
+        <div>
+          <Dropdown overlay={filterItems} trigger={["click"]}>
+            <button
+              onClick={(e) => e.preventDefault()}
+              className="border-0 filterBtn px-3 py-2 me-3 rounded-3 bg-white"
+            >
+              <Space>
+                <FontAwesomeIcon
+                  icon={faFilter}
+                  className="me-1"
+                ></FontAwesomeIcon>
+                Filter
+                <FontAwesomeIcon
+                  icon={faChevronDown}
+                  className="me-1"
+                ></FontAwesomeIcon>
+              </Space>
+            </button>
+          </Dropdown>
+          <button className="border-0 bgBlue2 addNewBtn px-3 py-2 me-3 rounded-3">
+            <Link to="/booking/add">
+              <FontAwesomeIcon icon={faPlus} className="me-2"></FontAwesomeIcon>
+              Add New
+            </Link>
+          </button>
+        </div>
       </div>
 
       {/* Table all bookings */}

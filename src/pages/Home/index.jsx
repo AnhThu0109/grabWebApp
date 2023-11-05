@@ -8,6 +8,7 @@ import { faChartColumn, faMagnifyingGlass } from "@fortawesome/free-solid-svg-ic
 import { changeFormatDate, changeFormatDate1 } from "../../utils/formatDate";
 import { Skeleton } from "@mui/material";
 import { Bar } from "react-chartjs-2";
+import setRootBackground from "../../utils/setRootBackground";
 
 const Home = () => {
   const [isAdmin, setAdmin] = useState(false);
@@ -94,7 +95,7 @@ const Home = () => {
         .catch((error) => {
           setIsLoading(false);
           setIsError(true);
-          setErrorMess("Location is not found. Please type again!!!");
+          setErrorMess("Location is not found. Please type again!");
         });
     }
   };
@@ -110,6 +111,7 @@ const Home = () => {
   };
 
   useEffect(() => {
+    setRootBackground("--bg-color1", "rgb(248,248,255)");
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
     // Generate random data for the chart
@@ -336,6 +338,7 @@ const Home = () => {
                   <button
                     type="submit"
                     className="border-0 bgBlue4 py-1 px-2 fs-14"
+                    onClick={e => e.preventDefault()}
                   >
                     <FontAwesomeIcon
                       icon={faMagnifyingGlass}

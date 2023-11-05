@@ -119,8 +119,15 @@ export default function FormGetInfo() {
       message.error("Pickup Location and Destination are the same. Please choose again!");
     } else{
       debugger;
-      const distance = await calculateDistance(pickUp.lat, pickUp.lng, destination.lat, destination.lng);
-      message.success(`Submit success! ${distance}`);
+      //const distance = await calculateDistance(pickUp.lat, pickUp.lng, destination.lat, destination.lng);
+      calculateDistance(pickUp.lat, pickUp.lng, destination.lat, destination.lng)
+        .then(distance => {
+            console.log('Distance:', distance);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+      message.success("Submit success!");
     }
   };
   const onFinishFailed = () => {

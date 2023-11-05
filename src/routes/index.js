@@ -8,64 +8,61 @@ import History from "../pages/History";
 import Add from "../pages/AddNew";
 import Tracking from "../pages/Tracking";
 import PeopleDetail from "../pages/PeopleDetail";
+import NotFound from "../pages/NotFoundPage";
 
 const publicRoutes = [
-    {
-        element: <Welcome/>,
-        path: "/welcome"
-    },
-    {
-        element: <Login/>,
-        path: "/login"
-    },
-    {
-        element: <Home/>,
-        path: "/"
-    },
-    {
-        element: <MyAccount/>,
-        path: "/users/:id"
-    },
-    {
-        element: <People/>,
-        path: "/people"
-    },
-    {
-        element: <PeopleDetail/>,
-        path: "/people/detail/:id"
-    },
-    {
-        element: <Booking/>,
-        path: "/booking"
-    },
-    {
-        element: <Add/>,
-        path: "/booking/add"
-    },
-    {
-        element: <Tracking/>,
-        path: "/booking/tracking"
-    },
-    {
-        element: <History/>,
-        path: "/history"
-    },
-]
+  // {
+  //     element: <Welcome/>,
+  //     path: "/welcome"
+  // },
+  {
+    element: <Login />,
+    path: "/login",
+  },
+  // {
+  //     element: <NotFound/>,
+  //     path: "/*"
+  // }
+];
+
+const welcomeRoute = {
+  element: Welcome,
+  path: "/welcome",
+};
 
 const userRoutes = [
-    {
-        element: Home,
-        path: "/"
-    },
-    {
-        element: MyAccount,
-        path: "/users/:id"
-    },
-    {
-        element: People,
-        path: "/people"
-    },
-    
-]
+  {
+    element: Home,
+    path: "/",
+  },
+  {
+    element: MyAccount,
+    path: "/users/:id",
+  },
+  {
+    element: People,
+    path: "/people",
+  },
+  {
+    element: PeopleDetail,
+    path: "/people/detail/:id",
+  },
+  {
+    element: Booking,
+    path: "/booking",
+  },
+  {
+    element: Add,
+    path: "/booking/add",
+  },
+  {
+    element: Tracking,
+    path: "/booking/tracking",
+  },
+  {
+    element: History,
+    path: "/history",
+  },
+];
 
-export {publicRoutes, userRoutes};
+export { publicRoutes, userRoutes, welcomeRoute };
