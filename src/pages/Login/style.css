@@ -14,11 +14,11 @@
     width: 100%;
     border-radius: 8px !important;
     background-color: var(--grey-color3);
-    color: var(--grey-color1);
 }
 
-button.ant-btn.css-dev-only-do-not-override-1me4733.ant-btn-primary.my-3.fw-bolder.formLoginBtn:hover {
+button.active.ant-btn.css-dev-only-do-not-override-1me4733.ant-btn-primary.my-3.fw-bolder.formLoginBtn {
     background: var(--blue-color3);
+    color: white !important;
 }
 
 .loginImg{

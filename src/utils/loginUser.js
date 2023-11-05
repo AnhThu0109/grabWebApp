@@ -1,16 +1,26 @@
+import axios from "axios";
 import { LOGIN } from "./API";
 
 async function loginUser(credentials) {
-  return fetch(LOGIN, {
-    method: "POST",
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(credentials),
-  })
+  // await axios.post(LOGIN, credentials, {
+  //   headers: { 'Content-Type': 'application/json' }
+  // })
+  //   .then(response => {
+  //     console.log(response);
+  //     return response;})
+  //   .catch(error => {
+  //     console.error(error);
+  //     throw error;
+  //   });
+
+    await axios.post(LOGIN, credentials, {
+      headers: { 'Content-Type': 'application/json' }
+    })
     .then(response => {return response;})
     .catch(error => {
-      console.error(error);
-      throw error;
-    });
+          console.error(error);
+          throw error;
+        });
 }
 
 export default loginUser;
