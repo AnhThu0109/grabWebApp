@@ -102,12 +102,11 @@ const Home = () => {
 
   //Handle submit for form of searching location
   const handleSubmit = (e) => {
-    debugger;
     e.preventDefault();
     if (keyWord.trim() !== "") {
       fetchWeather(keyWord);
-    }
-    setIsLoading(true);
+      setIsLoading(true);
+    }   
   };
 
   useEffect(() => {

@@ -33,7 +33,7 @@ export default function Login() {
       setData(response.data);
       message.success("Login successful!");
       localStorage.setItem("token", response.data.token);
-      localStorage.setItem("token", response.data.data.id);
+      localStorage.setItem("userId", response.data.data.id);
       navigate("/welcome");
     } catch (error) {
       console.error(error);

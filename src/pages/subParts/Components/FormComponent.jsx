@@ -15,6 +15,8 @@ import "./style.css";
 import moment from "moment/moment";
 import API_KEY from "../../../utils/KEY";
 import calculateDistance from "../../../utils/calculateDistance";
+import axios from "axios";
+import { POST_LOCATION } from "../../../utils/API";
 
 export default function FormGetInfo() {
   const [form] = Form.useForm();
@@ -30,6 +32,7 @@ export default function FormGetInfo() {
     lat: 0,
     lng: 0
   })
+  const token = localStorage.getItem("token");
 
   const handleInputChange = (e, setQueryFunction, setPredictionsFunction, inputName) => {
     const inputValue = e.target.value;
@@ -63,32 +66,56 @@ export default function FormGetInfo() {
   //   form.setFieldValue(inputName, location);
   // };
 
-  const chooseLocation = async(location, setQueryFunction, setPredictionsFunction, inputName) => {
+  const chooseLocation = async (location, setQueryFunction, setPredictionsFunction, inputName) => {
     setQueryFunction(location);
     console.log(location);
     setPredictionsFunction([]);
-    form.setFieldValue(inputName, location);
-    debugger;
-    // Geocoding API endpoint URL
-    const geocodingApiUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${API_KEY}`;
 
-    // Make API call to fetch latitude and longitude for the location
-    await fetch(geocodingApiUrl)
-        .then(response => response.json())
-        .then(data => {
-            // Extract latitude and longitude from the response
+    try {
+        const geocodingApiUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${API_KEY}`;
+        const response = await fetch(geocodingApiUrl);
+        const data = await response.json();
+
+        if (response.ok && data.results && data.results.length > 0) {
             const { lat, lng } = data.results[0].geometry.location;
-            debugger;
-            // Now you have latitude and longitude for the selected location
             console.log(`Latitude: ${lat}, Longitude: ${lng}`);
+            debugger;
 
-            inputName === "PickupLocation" ? setPickUp({lat, lng}) : setDestination({lat, lng});
-        })
-        .catch(error => {
-            console.log('Error fetching location details:', error);
-        });
+            // Save location to database
+            await saveLocationToDatabase(location, lat, lng, inputName);
+        } else {
+            console.log('Error fetching location details:', data.error_message);
+        }
+    } catch (error) {
+        console.log('Error fetching location details:', error);
+    }
 };
 
+const saveLocationToDatabase = async (locationName, latitude, longitude, inputName) => {
+    debugger;
+    const input = {
+        "locationName": locationName,
+        "latitude": latitude,
+        "longitude": longitude
+    };
+
+    try {
+        const response = await axios.post(POST_LOCATION, input, {
+            headers: { 
+              "Content-Type": "application/json",
+              "Authorization": token
+            }
+        });
+
+        if (response.status === 200) {
+            console.log(`Location ${inputName} saved successfully.`);
+        } else {
+            console.log('Error saving location:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error saving location:', error);
+    }
+};
 
   const disabledDate = (current) => {
     // Disable dates before today (past dates)
