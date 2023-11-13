@@ -1,13 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./style.css";
 import "./../style.css";
 import { Divider } from "antd";
 import { fetchDataWeather, showIcon } from "../../utils/weather";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChartColumn, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChartColumn,
+  faMagnifyingGlass,
+} from "@fortawesome/free-solid-svg-icons";
 import { changeFormatDate, changeFormatDate1 } from "../../utils/formatDate";
 import { Skeleton } from "@mui/material";
 import { Bar } from "react-chartjs-2";
+import Chart from "chart.js/auto";
 import setRootBackground from "../../utils/setRootBackground";
 
 const Home = () => {
@@ -17,6 +21,8 @@ const Home = () => {
   const isAdminLogin = () => {
     localStorage.getItem(isAdmin) === "true" ? setAdmin(true) : setAdmin(false);
   };
+  const chartInstance = useRef(null);
+  const chartCanvas = useRef(null);
 
   const peopleList = [
     {
@@ -106,36 +112,84 @@ const Home = () => {
     if (keyWord.trim() !== "") {
       fetchWeather(keyWord);
       setIsLoading(true);
-    }   
+    }
+  };
+
+  // Initialize Chart
+  const initializeChart = () => {
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+
+    const data = {
+      labels: months,
+      datasets: [
+        {
+          label: "Completed",
+          backgroundColor: "#00D6BB",
+          borderRadius: 10,
+          borderSkipped: false,
+          barPercentage: 0.5,
+          data: [45, 50, 48, 52, 60, 65, 58, 45, 80, 85, 75, 80],
+        },
+        {
+          label: "Canceled",
+          backgroundColor: "#C51E3A",
+          borderRadius: 10,
+          borderSkipped: false,
+          barPercentage: 0.5,
+          data: [5, 12, 9, 6, 11, 5, 8, 12, 9, 10, 5, 15],
+        },
+      ],
+    };
+
+    setDataChart(data);
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        type: "category",
+      },
+      y: {
+        beginAtZero: true,
+      },
+    },
   };
 
   useEffect(() => {
+    // Set root background
     setRootBackground("--bg-color1", "rgb(248,248,255)");
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-    // Generate random data for the chart
-    const randomData = Array.from({ length: 12 }, () => Math.floor(Math.random() * 100));
-
-    // Create the dataChart object with random data
-    let dataChart = {
-        labels: months,
-        datasets: [
-            {
-                label: "Random Data",
-                backgroundColor: "rgb(81, 203, 206)",
-                borderColor: "rgb(255, 99, 132)",
-                borderWidth: 2,
-                borderRadius: 5,
-                borderSkipped: false,
-                data: randomData,
-            },
-        ],
-    };
-
-    setDataChart(dataChart);
+    // Check admin login status
     isAdminLogin();
+
+    // Fetch weather data
     fetchWeather();
-  }, []);
+
+    // Initialize the chart
+    initializeChart();
+
+    // Cleanup the chart on component unmount
+    return () => {
+      if (chartInstance.current) {
+        chartInstance.current.destroy();
+      }
+    };
+  }, [isAdmin]);
 
   return (
     <>
@@ -306,20 +360,14 @@ const Home = () => {
 
           <div className="row m-3 gap-3">
             <div className="bg-white col-9 rounded-4">
-              {/* <div className="col-xl-6 chartContent">
-                  <div className="card chartBody">
-                      <div className="card-header fw-bolder">
-                          <FontAwesomeIcon icon={faChartColumn} className='me-2'></FontAwesomeIcon>
-                          Activity in 2023
-                      </div>
-                      <div style={{ height: "88%" }}>
-                          {
-                              dataChart &&
-                              <Bar data={dataChart} />
-                          }
-                      </div>
-                  </div> 
-              </div>*/}
+              <div className="mt-3 fw-bolder">
+                Activity in 2023
+              </div>
+              <div className="mx-2 my-1" style={{ height: "80%" }}>
+                {dataChart && (
+                  <Bar data={dataChart} options={options} />
+                )}
+              </div>
             </div>
 
             <div
@@ -337,7 +385,7 @@ const Home = () => {
                   <button
                     type="submit"
                     className="border-0 bgBlue4 py-1 px-2 fs-14"
-                    onClick={e => e.preventDefault()}
+                    onClick={(e) => e.preventDefault()}
                   >
                     <FontAwesomeIcon
                       icon={faMagnifyingGlass}
