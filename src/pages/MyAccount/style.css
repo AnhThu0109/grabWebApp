@@ -25,3 +25,7 @@
     color: rgba(0, 0, 0, 0.338) !important;
   }
 }
+
+.activeImg {
+  border: 3px solid black;
+}

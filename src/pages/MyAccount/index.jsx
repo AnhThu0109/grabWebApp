@@ -3,9 +3,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Avatar,
   Button,
+  Carousel,
   DatePicker,
   Form,
   Input,
+  Modal,
   Select,
   message,
 } from "antd";
@@ -14,6 +16,55 @@ import "./style.css";
 import locale from "antd/es/date-picker/locale/en_US";
 import { Option } from "antd/es/mentions";
 import moment from "moment";
+import { AvatarImg, AvatarImg2, AvatarImg3 } from "../../utils/avatar";
+
+const AvatarCarousel = ({ images }) => {
+  const [avatarSrc, setAvatarSrc] = useState("");
+  const [activeIndex, setActiveIndex] = useState(-1);
+
+  const chunkArray = (arr, size) => {
+    return Array.from({ length: Math.ceil(arr.length / size) }, (v, i) =>
+      arr.slice(i * size, i * size + size)
+    );
+  };
+
+  const chunkedImages = chunkArray(images, 12);
+
+  const contentStyle = {
+    height: "380px",
+    width: "100%",
+    marginLeft: "5px",
+    textAlign: "center",
+  };
+
+  return (
+    <Carousel dotPosition="right">
+      {chunkedImages.map((chunk, pageIndex) => (
+        <div key={pageIndex}>
+          <div className="row" style={contentStyle}>
+            {chunk.map((item, index) => (
+              <div key={index + pageIndex * 12} className="col-3 px-1 pb-2">
+                <img
+                  src={item}
+                  className={
+                    index === (activeIndex - pageIndex*12) 
+                      ? "activeImg rounded-2 w-100"
+                      : "rounded-2 w-100"
+                  }
+                  onClick={() => {
+                    setAvatarSrc(item);
+                    setActiveIndex(index + pageIndex * 12); // Adjust the index based on the current page
+                  }}
+                  alt={`Image ${index + pageIndex * 12 + 1}`}
+                ></img>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </Carousel>
+  );
+};
 
 const MyAccount = () => {
   const [isAdmin, setAdmin] = useState(false);
@@ -27,6 +78,8 @@ const MyAccount = () => {
   });
   const a = localStorage.getItem("isAdmin");
   const [form] = Form.useForm();
+  const [open, setOpen] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
 
   let initialValue = {
     firstName: "Tommy",
@@ -71,6 +124,24 @@ const MyAccount = () => {
     setHasFeedback(false);
     setItemChange(initialItemChange);
   };
+
+  const showModal = () => {
+    setOpen(true);
+  };
+
+  const handleOk = () => {
+    setConfirmLoading(true);
+    setTimeout(() => {
+      setOpen(false);
+      setConfirmLoading(false);
+    }, 2000);
+  };
+
+  const handleCancel = () => {
+    console.log("Clicked cancel button");
+    setOpen(false);
+  };
+
   return (
     <div className="myAcc">
       <div className="row bgGreen2">
@@ -84,7 +155,10 @@ const MyAccount = () => {
           <div>
             <h4>Tommy Nguyen</h4>
             <div>AD01272</div>
-            <button className="changeAvatarBtn bg-white rounded-3 border-0 px-3 py-2 mt-2 textGreen3 fw-bolder">
+            <button
+              className="changeAvatarBtn bg-white rounded-3 border-0 px-3 py-2 mt-2 textGreen3 fw-bolder"
+              onClick={showModal}
+            >
               <FontAwesomeIcon icon={faUpload} className="me-2" />
               Change Avatar
             </button>
@@ -228,7 +302,8 @@ const MyAccount = () => {
                 form.getFieldValue("gender") === undefined ||
                 form.getFieldValue("address") === undefined ||
                 !!form.getFieldsError().filter(({ errors }) => errors.length)
-                  .length || !hasFeedback
+                  .length ||
+                !hasFeedback
               }
               className="border-0 rounded-3 px-5 mt-2 w-70 text-black-60 fw-bolder updateAvatarBtn"
             >
@@ -237,6 +312,78 @@ const MyAccount = () => {
           )}
         </Form.Item>
       </Form>
+      <Modal
+        title="&nbsp;&nbsp;Choose Avatar"
+        open={open}
+        onOk={handleOk}
+        confirmLoading={confirmLoading}
+        onCancel={handleCancel}
+        // style={{background: "green"}}
+      >
+        {/* <Carousel dotPosition="right">
+          <div>
+            <div className="row" style={contentStyle}>
+              {AvatarImg1.map((item, index) => (
+                <div key={index} className="col-3 px-1 pb-2">
+                  <img
+                    src={item}
+                    className={
+                      index === activeIndex
+                        ? "activeImg rounded-2 w-100"
+                        : "rounded-2 w-100"
+                    }
+                    onClick={() => {
+                      setAvatarSrc(item);
+                      setActiveIndex(index);
+                    }}
+                  ></img>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <div className="row" style={contentStyle}>
+              {AvatarImg2.map((item, index) => (
+                <div key={index} className="col-3 px-1 pb-2">
+                  <img
+                    src={item}
+                    className={
+                      index === activeIndex
+                        ? "activeImg rounded-2 w-100"
+                        : "rounded-2 w-100"
+                    }
+                    onClick={() => {
+                      setAvatarSrc(item);
+                      setActiveIndex(index);
+                    }}
+                  ></img>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <div className="row" style={contentStyle}>
+              {AvatarImg3.map((item, index) => (
+                <div key={index} className="col-3 px-1 pb-2">
+                  <img
+                    src={item}
+                    className={
+                      index === activeIndex
+                        ? "activeImg rounded-2 w-100"
+                        : "rounded-2 w-100"
+                    }
+                    onClick={() => {
+                      setAvatarSrc(item);
+                      setActiveIndex(index);
+                    }}
+                  ></img>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Carousel> */}
+        <AvatarCarousel images={AvatarImg} />
+      </Modal>
     </div>
   );
 };
