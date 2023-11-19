@@ -14,52 +14,47 @@ import { useEffect, useState } from "react";
 import "./style.css";
 import moment from "moment/moment";
 import API_KEY from "../../../utils/KEY";
-import calculateDistance from "../../../utils/calculateDistance";
 import axios from "axios";
-import { CREATE_LOCATION, SEARCH_LOCATION } from "../../../utils/API";
+import { CREATE_LOCATION, GET_CARTYPE, GET_DISTANCE, SEARCH_LOCATION } from "../../../utils/API";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClock, faLocationDot, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import {
+  faClock,
+  faLocationDot,
+  faMagnifyingGlass,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function FormGetInfo() {
   const [form] = Form.useForm();
   const [query, setQuery] = useState("");
-  const [locations, setLocations] = useState([]);
-  const [predictions, setPredictions] = useState([]);
   const [predictionsDB, setPredictionsDB] = useState([]);
   const [predictionsLive, setPredictionsLive] = useState([]);
   const [queryDes, setQueryDes] = useState("");
-  const [predictionsDes, setPredictionsDes] = useState([]);
-  const [pickUp, setPickUp] = useState({
-    lat: 0,
-    lng: 0,
-  });
-  const [destination, setDestination] = useState({
-    lat: 0,
-    lng: 0,
-  });
-  const [isSearchLive, setIsSearchLive] = useState(false);
+  const [predictionsDesDB, setPredictionsDesDB] = useState([]);
+  const [predictionsDesLive, setPredictionsDesLive] = useState([]);
+  const [pickUp, setPickUp] = useState();
+  const [destination, setDestination] = useState();
+  const [isChooseLocation, setIsChooseLocation] = useState({pickUp: false, des: false});
+  const [carTypes, setCarTypes] = useState();
   const token = localStorage.getItem("token");
 
   const handleInputChange = async (e, setQueryFunction, inputName) => {
-    const inputValue = e.target.value;
+    const inputValue = e.target.value.trim();
     form.setFieldValue(inputName, inputValue);
     setQueryFunction(inputValue);
 
     // Search location
-    if (inputValue.trim() !== "") {
+    if (inputValue !== "") {
       // Search in database first
       const locations = await searchLocationInDatabase(inputValue);
       console.log("database location", locations);
-      setLocations(locations);
-      if(locations.length !== 0){
-        setIsSearchLive(false);
-      }
+      //setLocations(locations);
       const predictLocations = locations.map((item) => item.locationName);
       inputName === "PickupLocation"
-        ? setPredictions(predictLocations)
-        : setPredictionsDes(predictLocations);
+        ? (setPredictionsDB(predictLocations) && setIsChooseLocation((prevState => ({ ...prevState, pickUp: false }))))
+        : (setPredictionsDesDB(predictLocations) && setIsChooseLocation((prevState => ({ ...prevState, des: false }))));
 
-      if (locations.length === 0) {
+      //Search live from enter third key word
+      if (inputValue.length > 3) {
         // Search live
         const predictions = await new Promise((resolve) => {
           const autocompleteService =
@@ -80,15 +75,18 @@ export default function FormGetInfo() {
           );
         });
         console.log(predictions);
-        setIsSearchLive(true);
+        // Just take 4 results
+        if (predictions.length > 4) {
+          predictions.splice(4);
+        }
         inputName === "PickupLocation"
-          ? setPredictions(predictions)
-          : setPredictionsDes(predictions);
+          ? setPredictionsLive(predictions)
+          : setPredictionsDesLive(predictions);
       }
     } else {
       inputName === "PickupLocation"
-        ? setPredictions([])
-        : setPredictionsDes([]);
+        ? setPredictionsDB([]) && setPredictionsLive([])
+        : setPredictionsDesDB([]) && setPredictionsDesLive([]);
     }
   };
 
@@ -121,14 +119,21 @@ export default function FormGetInfo() {
 
   const chooseLocation = async (
     location,
-    setQueryFunction,
-    setPredictionsFunction,
-    inputName
+    inputName,
+    isSearchLive = false
   ) => {
-    debugger;
-    setQueryFunction(location);
-    console.log(location);
-    setPredictionsFunction([]); 
+    if(inputName === "PickupLocation"){
+      setPickUp(location);
+      setIsChooseLocation((prevState => ({ ...prevState, pickUp: true })));
+      setPredictionsDB([]);
+      setPredictionsLive([]);
+    } else{
+      setDestination(location);
+      setIsChooseLocation((prevState => ({ ...prevState, des: true })));
+      setPredictionsDesDB([]);
+      setPredictionsDesLive([]);
+    }
+    //If search live => save location to db
     if (isSearchLive) {
       try {
         debugger;
@@ -150,12 +155,7 @@ export default function FormGetInfo() {
       } catch (error) {
         console.log("Error fetching location details:", error);
       }
-    } else {
-      let locationObjectArr = locations.filter(
-        (item) => item.locationName === location
-      );
-      console.log("locationObjectArr", locationObjectArr);
-    }
+    } 
   };
 
   const saveLocationToDatabase = async (
@@ -213,6 +213,41 @@ export default function FormGetInfo() {
     return {};
   };
 
+  const getAllCarType = async() => {
+    try {
+      const response = await axios.get(GET_CARTYPE, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching car types data:", error);
+      throw error; // Re-throw the error to handle it elsewhere if needed
+    }
+  }
+
+  const getDistance = (origin, destination) => {
+    const input = {
+      origin,
+      destination,
+    }
+    return fetch(GET_DISTANCE, {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json', Authorization: token },
+      body: JSON.stringify(input),
+    })
+      .then(response => response.json())
+      .then(data => {
+        return data;
+      })
+      .catch(error => {
+        console.error(error);
+        throw error;
+      });
+  }
+
   const onFinish = async () => {
     if (
       form.getFieldValue("PickupLocation") === form.getFieldValue("Destination")
@@ -221,29 +256,27 @@ export default function FormGetInfo() {
         "Pickup Location and Destination are the same. Please choose again!"
       );
     } else {
-      debugger;
-      //const distance = await calculateDistance(pickUp.lat, pickUp.lng, destination.lat, destination.lng);
-      calculateDistance(
-        pickUp.lat,
-        pickUp.lng,
-        destination.lat,
-        destination.lng
-      )
-        .then((distance) => {
-          console.log("Distance:", distance);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-      message.success("Submit success!");
+      try {
+        const response = await getDistance(pickUp, destination);
+        console.log(response.data);
+        message.success("Submit success!");
+      } catch (error) {
+        console.error("Error fetching distance data:", error);
+        throw error; // Re-throw the error to handle it elsewhere if needed
+      }
     }
   };
   const onFinishFailed = () => {
     message.error("Submit failed!");
   };
+  
+  const getInitInformation = async() => {
+    const type = await getAllCarType();
+    setCarTypes(type);
+  }
 
   useEffect(() => {
-    setIsSearchLive(false);
+    getInitInformation();
   }, []);
 
   return (
@@ -267,52 +300,66 @@ export default function FormGetInfo() {
                 required: true,
                 message: "Please input Pickup location!",
               },
-              {
-                type: "string",
-                min: 6,
-              },
+              // {
+              //   type: "string",
+              //   min: 6,
+              // },
             ]}
             hasFeedback
           >
             <Input
-              value={query}
+              value={pickUp}
               onChange={(e) => handleInputChange(e, setQuery, "PickupLocation")}
             />
             <ul className="predictions-list">
-              {predictions.length > 0 ? predictions.map((prediction, index) => (
-                <li
-                  key={index}
-                  onClick={() =>
-                    chooseLocation(
-                      isSearchLive ? prediction.description : prediction,
-                      setQuery,
-                      setPredictions,
-                      "PickupLocation"
-                    )
-                  }
-                >
-                  {isSearchLive ? (
-                    <FontAwesomeIcon
-                      icon={faLocationDot}
-                      className="me-1 text-black-50"
-                    />
-                  ) : (
+              {predictionsDB.length > 0 &&
+                predictionsDB.map((prediction, index) => (
+                  <li
+                    key={index}
+                    onClick={() =>
+                      chooseLocation(
+                        prediction,
+                        "PickupLocation"
+                      )
+                    }
+                  >
                     <FontAwesomeIcon
                       icon={faClock}
                       className="me-1 text-black-50"
                     />
-                  )}
-                  {isSearchLive ? prediction.description : prediction}
-                </li>
-              )) : predictions.length == 0 && (form.getFieldValue("PickupLocation") == "" || form.getFieldValue("PickupLocation") == undefined) ? null : (
-                <li>
-                  <FontAwesomeIcon
+                    {prediction}
+                  </li>
+                ))}
+              {predictionsLive.length > 0 &&
+                predictionsLive.map((prediction, index) => (
+                  <li
+                    key={index}
+                    onClick={() =>
+                      chooseLocation(
+                        prediction.description,
+                        "PickupLocation", true
+                      )
+                    }
+                  >
+                    <FontAwesomeIcon
+                      icon={faLocationDot}
+                      className="me-1 text-black-50"
+                    />
+                    {prediction.description}
+                  </li>
+                ))}
+              {(!isChooseLocation.pickUp && predictionsDB.length == 0 &&
+                predictionsLive.length == 0 &&
+                form.getFieldValue("PickupLocation")?.trim() != "" &&
+                  form.getFieldValue("PickupLocation") != undefined) && (
+                  <li>
+                    <FontAwesomeIcon
                       icon={faMagnifyingGlass}
                       className="me-1 text-black-50"
-                  />
-                  No results were found
-                </li>
-              )}
+                    />
+                    No results were found
+                  </li>
+                )}
             </ul>
           </Form.Item>
         </div>
@@ -325,45 +372,67 @@ export default function FormGetInfo() {
                 required: true,
                 message: "Please input Destination",
               },
-              {
-                type: "string",
-                min: 6,
-              },
+              // {
+              //   type: "string",
+              //   min: 6,
+              // },
             ]}
             hasFeedback
           >
             <Input
               type="text"
-              value={queryDes}
+              value={destination}
               onChange={(e) => handleInputChange(e, setQueryDes, "Destination")}
             />
             <ul className="predictions-list">
-              {predictionsDes.map((prediction, index) => (
-                <li
-                  key={index}
-                  onClick={() =>
-                    chooseLocation(
-                      isSearchLive ? prediction.description : prediction,
-                      setQueryDes,
-                      setPredictionsDes,
-                      "Destination"
-                    )
-                  }
-                >
-                  {isSearchLive ? (
-                    <FontAwesomeIcon
-                      icon={faLocationDot}
-                      className="me-1 text-black-50"
-                    />
-                  ) : (
+              {predictionsDesDB.length > 0 &&
+                predictionsDesDB.map((prediction, index) => (
+                  <li
+                    key={index}
+                    onClick={() =>
+                      chooseLocation(
+                        prediction,
+                        "Destination"
+                      )
+                    }
+                  >
                     <FontAwesomeIcon
                       icon={faClock}
                       className="me-1 text-black-50"
                     />
-                  )}
-                  {isSearchLive ? prediction?.description : prediction}
-                </li>
-              ))}
+                    {prediction}
+                  </li>
+                ))}
+              {predictionsDesLive.length > 0 &&
+                predictionsDesLive.map((prediction, index) => (
+                  <li
+                    key={index}
+                    onClick={() =>
+                      chooseLocation(
+                        prediction.description,
+                        "Destination", true
+                      )
+                    }
+                  >
+                    <FontAwesomeIcon
+                      icon={faLocationDot}
+                      className="me-1 text-black-50"
+                    />
+                    {prediction.description}
+                  </li>
+                ))}
+              {(!isChooseLocation.des && predictionsDesDB.length == 0 &&
+                predictionsDesLive.length == 0 &&
+                form.getFieldValue("Destination")?.trim() != "" &&
+                  form.getFieldValue("Destination") != undefined) && (
+                  <li>
+                    <FontAwesomeIcon
+                      icon={faMagnifyingGlass}
+                      className="me-1 text-black-50"
+                    />
+                    No results were found
+                  </li>
+                )}
             </ul>
           </Form.Item>
         </div>
@@ -417,9 +486,11 @@ export default function FormGetInfo() {
             hasFeedback
           >
             <Select>
-              <Option value="2">2</Option>
-              <Option value="4">4</Option>
-              <Option value="7">7</Option>
+              {
+                carTypes?.map((item) => (
+                  <Option key={item.id} value={item.car_type}>{item.car_type}</Option>
+                ))
+              }
             </Select>
           </Form.Item>
         </div>
