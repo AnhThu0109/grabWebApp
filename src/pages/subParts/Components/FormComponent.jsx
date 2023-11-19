@@ -18,13 +18,15 @@ import calculateDistance from "../../../utils/calculateDistance";
 import axios from "axios";
 import { CREATE_LOCATION, SEARCH_LOCATION } from "../../../utils/API";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClock, faLocationDot } from "@fortawesome/free-solid-svg-icons";
+import { faClock, faLocationDot, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
 export default function FormGetInfo() {
   const [form] = Form.useForm();
   const [query, setQuery] = useState("");
   const [locations, setLocations] = useState([]);
   const [predictions, setPredictions] = useState([]);
+  const [predictionsDB, setPredictionsDB] = useState([]);
+  const [predictionsLive, setPredictionsLive] = useState([]);
   const [queryDes, setQueryDes] = useState("");
   const [predictionsDes, setPredictionsDes] = useState([]);
   const [pickUp, setPickUp] = useState({
@@ -47,7 +49,11 @@ export default function FormGetInfo() {
     if (inputValue.trim() !== "") {
       // Search in database first
       const locations = await searchLocationInDatabase(inputValue);
+      console.log("database location", locations);
       setLocations(locations);
+      if(locations.length !== 0){
+        setIsSearchLive(false);
+      }
       const predictLocations = locations.map((item) => item.locationName);
       inputName === "PickupLocation"
         ? setPredictions(predictLocations)
@@ -66,7 +72,6 @@ export default function FormGetInfo() {
             },
             (predictions, status) => {
               if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-                setIsSearchLive(true);
                 resolve(predictions);
               } else {
                 resolve([]);
@@ -74,7 +79,8 @@ export default function FormGetInfo() {
             }
           );
         });
-
+        console.log(predictions);
+        setIsSearchLive(true);
         inputName === "PickupLocation"
           ? setPredictions(predictions)
           : setPredictionsDes(predictions);
@@ -119,12 +125,13 @@ export default function FormGetInfo() {
     setPredictionsFunction,
     inputName
   ) => {
+    debugger;
     setQueryFunction(location);
     console.log(location);
-    setPredictionsFunction([]);
-
+    setPredictionsFunction([]); 
     if (isSearchLive) {
       try {
+        debugger;
         const geocodingApiUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
           location
         )}&key=${API_KEY}`;
@@ -237,7 +244,7 @@ export default function FormGetInfo() {
 
   useEffect(() => {
     setIsSearchLive(false);
-  }, [predictions, predictionsDes]);
+  }, []);
 
   return (
     <Form
@@ -247,7 +254,6 @@ export default function FormGetInfo() {
       onFinishFailed={onFinishFailed}
       autoComplete="off"
       className="bookingForm"
-      // initialValues={}
     >
       <h6 className="fw-bolder">Basic Information</h6>
       <div className="row">
@@ -268,16 +274,12 @@ export default function FormGetInfo() {
             ]}
             hasFeedback
           >
-            {/* <Search
-              onSearch={onSearch}
-            /> */}
-            {/* <SearchLocationInput /> */}
             <Input
               value={query}
               onChange={(e) => handleInputChange(e, setQuery, "PickupLocation")}
             />
             <ul className="predictions-list">
-              {predictions.map((prediction, index) => (
+              {predictions.length > 0 ? predictions.map((prediction, index) => (
                 <li
                   key={index}
                   onClick={() =>
@@ -302,7 +304,15 @@ export default function FormGetInfo() {
                   )}
                   {isSearchLive ? prediction.description : prediction}
                 </li>
-              ))}
+              )) : predictions.length == 0 && (form.getFieldValue("PickupLocation") == "" || form.getFieldValue("PickupLocation") == undefined) ? null : (
+                <li>
+                  <FontAwesomeIcon
+                      icon={faMagnifyingGlass}
+                      className="me-1 text-black-50"
+                  />
+                  No results were found
+                </li>
+              )}
             </ul>
           </Form.Item>
         </div>
@@ -351,7 +361,7 @@ export default function FormGetInfo() {
                       className="me-1 text-black-50"
                     />
                   )}
-                  {isSearchLive ? prediction.description : prediction}
+                  {isSearchLive ? prediction?.description : prediction}
                 </li>
               ))}
             </ul>

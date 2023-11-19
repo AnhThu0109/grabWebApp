@@ -93,7 +93,7 @@ export default function Login() {
               },
             ]}
           >
-            <Input.Password className="py-2" />
+            <Input.Password  visibilityToggle={false} className="py-2" />
           </Form.Item>
 
           <div className="d-flex justify-content-between">

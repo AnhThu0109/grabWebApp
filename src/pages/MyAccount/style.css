@@ -29,3 +29,21 @@
 .activeImg {
   border: 3px solid black;
 }
+
+.myAccModal button.ant-btn.css-dev-only-do-not-override-1me4733.ant-btn-default {
+  border: 1px solid var(--green-color3) !important;
+  color: var(--green-color3) !important;
+}
+
+.myAccModal button.ant-btn.css-dev-only-do-not-override-1me4733.ant-btn-default:hover {
+  border: 1px solid var(--green-color4) !important;
+  color: var(--green-color4) !important;
+}
+
+.myAccModal button.ant-btn.css-dev-only-do-not-override-1me4733.ant-btn-primary{
+  background-color: var(--green-color3) !important;
+}
+
+.myAccModal button.ant-btn.css-dev-only-do-not-override-1me4733.ant-btn-primary:hover{
+  background-color: var(--green-color4) !important;
+}
