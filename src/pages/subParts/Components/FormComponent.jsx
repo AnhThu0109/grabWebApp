@@ -22,13 +22,13 @@ import {
   faLocationDot,
   faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
+import { useDispatch, useSelector } from "react-redux";
+import { setDistanceData } from "../../../redux/distanceSlide";
 
 export default function FormGetInfo() {
   const [form] = Form.useForm();
-  const [query, setQuery] = useState("");
   const [predictionsDB, setPredictionsDB] = useState([]);
   const [predictionsLive, setPredictionsLive] = useState([]);
-  const [queryDes, setQueryDes] = useState("");
   const [predictionsDesDB, setPredictionsDesDB] = useState([]);
   const [predictionsDesLive, setPredictionsDesLive] = useState([]);
   const [pickUp, setPickUp] = useState();
@@ -36,11 +36,13 @@ export default function FormGetInfo() {
   const [isChooseLocation, setIsChooseLocation] = useState({pickUp: false, des: false});
   const [carTypes, setCarTypes] = useState();
   const token = localStorage.getItem("token");
+  const distanceInfo = useSelector(state => state.distance);
+  // Dispatching actions
+  const dispatch = useDispatch();
 
-  const handleInputChange = async (e, setQueryFunction, inputName) => {
+  const handleInputChange = async (e, inputName) => {
+    inputName === "PickupLocation"? setPickUp(e.target.value) : setDestination(e.target.value);
     const inputValue = e.target.value.trim();
-    form.setFieldValue(inputName, inputValue);
-    setQueryFunction(inputValue);
 
     // Search location
     if (inputValue !== "") {
@@ -89,13 +91,6 @@ export default function FormGetInfo() {
         : setPredictionsDesDB([]) && setPredictionsDesLive([]);
     }
   };
-
-  // const chooseLocation = (location, setQueryFunction, setPredictionsFunction, inputName) => {
-  //   setQueryFunction(location);
-  //   console.log(location);
-  //   setPredictionsFunction([]);
-  //   form.setFieldValue(inputName, location);
-  // };
 
   const searchLocationInDatabase = async (keyword) => {
     try {
@@ -257,8 +252,12 @@ export default function FormGetInfo() {
       );
     } else {
       try {
+        const allFieldValues = form.getFieldsValue();
         const response = await getDistance(pickUp, destination);
-        console.log(response.data);
+        console.log("response data", response.data);
+        const dataTranfer = {...allFieldValues, ...response.data};
+        console.log("data", dataTranfer);
+        dispatch(setDistanceData(dataTranfer));
         message.success("Submit success!");
       } catch (error) {
         console.error("Error fetching distance data:", error);
@@ -309,7 +308,7 @@ export default function FormGetInfo() {
           >
             <Input
               value={pickUp}
-              onChange={(e) => handleInputChange(e, setQuery, "PickupLocation")}
+              onChange={(e) => handleInputChange(e, "PickupLocation")}
             />
             <ul className="predictions-list">
               {predictionsDB.length > 0 &&
@@ -382,7 +381,7 @@ export default function FormGetInfo() {
             <Input
               type="text"
               value={destination}
-              onChange={(e) => handleInputChange(e, setQueryDes, "Destination")}
+              onChange={(e) => handleInputChange(e, "Destination")}
             />
             <ul className="predictions-list">
               {predictionsDesDB.length > 0 &&
@@ -507,8 +506,8 @@ export default function FormGetInfo() {
             hasFeedback
           >
             <Select>
-              <Option value="standard">Standard</Option>
-              <Option value="plus">Plus</Option>
+              <Option value="Standard">Standard</Option>
+              <Option value="Plus">Plus</Option>
             </Select>
           </Form.Item>
         </div>

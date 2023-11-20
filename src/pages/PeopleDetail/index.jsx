@@ -6,11 +6,16 @@ import { Link, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
+import axios from "axios";
+import { GET_CUSTOMER, GET_DRIVER } from "../../utils/API";
 
 export default function PeopleDetail(props) {
   const [form] = Form.useForm();
   const { id } = useParams();
+  const [peopleData, setPeopleData] = useState();
   const [isCus, setIsCus] = useState(false);
+  const token = localStorage.getItem("token");
+  const peopleID = localStorage.getItem("peopleChosenId");
 
   const historyList = [
     {
@@ -42,29 +47,45 @@ export default function PeopleDetail(props) {
       total: "135.000 vnd",
     },
   ];
-  useEffect(() => {
+
+  const findPeopleByID = async(peopleId, URL) => {
+    const response = await axios.get(`${URL}/${peopleId}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      }
+    })
+    return response.data;
+  } 
+
+  const initData = async(id) => {
     if (id.includes("CUS")) {
-      form.setFieldsValue({
-        fullName: "Ms. Hoa",
-        phone: "0893874889",
-      });
+      const customer = await findPeopleByID(peopleID, GET_CUSTOMER);
       setIsCus(true);
+      form.setFieldValue("fullName", customer?.fullname);
+      form.setFieldValue("phone", customer?.phoneNo);
     } else {
-      form.setFieldsValue({
-        fullName: "Hoang Tran",
-        gender: "Male",
-        license: "51A-34221",
-        phone: "0893874889",
-      });
+      const driver = await findPeopleByID(peopleID, GET_DRIVER);
+      console.log(driver);
       setIsCus(false);
+      form.setFieldsValue({
+        fullName: driver?.fullname,
+        gender: driver?.gender? driver?.gender : "Unknown",
+        license: driver?.licensePlate,
+        phone: driver?.phoneNo,
+      });
     }
+  }
+
+  useEffect(() => {
+    initData(id);
   }, []);
   return (
     <div className="peopleDetail">
       <div className="row p-3">
         <div className="col-4 d-flex justify-content-center align-items-center">
           <Avatar
-            src="https://lh3.googleusercontent.com/PSBfmOl_5jv97zDydSaV0FYEOFaU279KK4EKxGj5yzMMHMim8501-dToq_kD4sMfZ-niDUYtywSoNgwnUdP02hsfnQ"
+            src={peopleData?.avatarPath != null ? peopleData?.avatarPath : "https://lh3.googleusercontent.com/ED85u6aQ2oseaV3Zi4ff-DyLnQpc-02EbG328ilQChGqg-4OkQuDzfirfuCnRP_Sv9DWwkI3iG_DALmWPVRr-SxO"}
             alt="avatar"
             className="avatarImg me-5"
           />
@@ -77,8 +98,6 @@ export default function PeopleDetail(props) {
           <Form
             form={form}
             layout="vertical"
-            // onFinish={onFinish}
-            // onValuesChange={handleFormChange}
             className="me-2"
             autoComplete="off"
             requiredMark={false}
@@ -92,17 +111,6 @@ export default function PeopleDetail(props) {
                       {isCus ? "Name" : "Full Name"}
                     </div>
                   }
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input Full Name!",
-                    },
-                    {
-                      type: "string",
-                      min: 2,
-                    },
-                  ]}
-                  //   hasFeedback={hasFeedback && itemChange.firstName}
                 >
                   <Input readOnly />
                 </Form.Item>
@@ -111,7 +119,6 @@ export default function PeopleDetail(props) {
                 <Form.Item
                   name="phone"
                   label={<div className="textBlue3">Phone Number</div>}
-                  //   hasFeedback={hasFeedback && itemChange.lastName}
                 >
                   <Input readOnly />
                 </Form.Item>
@@ -130,7 +137,6 @@ export default function PeopleDetail(props) {
                         message: "Please select your Gender",
                       },
                     ]}
-                    //   hasFeedback={hasFeedback && itemChange.gender}
                   >
                     <Input readOnly />
                     {/* <Select disabled>

@@ -190,7 +190,7 @@ const MyAccount = () => {
             <div className="col d-flex justify-content-center align-items-center">
               <Avatar
                 sx={{ width: 120, height: 120 }}
-                src="https://lh3.googleusercontent.com/ED85u6aQ2oseaV3Zi4ff-DyLnQpc-02EbG328ilQChGqg-4OkQuDzfirfuCnRP_Sv9DWwkI3iG_DALmWPVRr-SxO"
+                src={userData?.avatarpath != null? userData?.avatarpath : "https://lh3.googleusercontent.com/ED85u6aQ2oseaV3Zi4ff-DyLnQpc-02EbG328ilQChGqg-4OkQuDzfirfuCnRP_Sv9DWwkI3iG_DALmWPVRr-SxO"}
                 alt="avatar"
                 className="avatarImg me-5"
               />

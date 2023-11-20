@@ -5,5 +5,8 @@ const SEARCH_LOCATION = "http://localhost:5000/v1/location/search";
 const ADMIN = "http://localhost:5000/v1/admin";
 const GET_CARTYPE = "http://localhost:5000/v1/cartypes";
 const GET_DISTANCE = "http://localhost:5000/v1/distance";
+const SEARCH_CUSTOMER_PHONE = "http://localhost:5000/v1/customers/search";
+const GET_CUSTOMER = "http://localhost:5000/v1/customers";
+const GET_DRIVER = "http://localhost:5000/v1/drivers";
 
-export {REGISTER, LOGIN, CREATE_LOCATION, SEARCH_LOCATION, ADMIN, GET_CARTYPE, GET_DISTANCE};
+export {REGISTER, LOGIN, CREATE_LOCATION, SEARCH_LOCATION, ADMIN, GET_CARTYPE, GET_DISTANCE, SEARCH_CUSTOMER_PHONE, GET_CUSTOMER, GET_DRIVER};

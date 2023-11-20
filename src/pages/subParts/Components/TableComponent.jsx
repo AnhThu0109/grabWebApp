@@ -145,33 +145,33 @@ function TableComponent(props) {
     },
     {
       title: "ID",
-      dataIndex: "id",
-      key: "id",
+      dataIndex: "peopleID",
+      key: "peopleID",
       sorter: (a, b) => a.id.localeCompare(b.id),
       sortDirections: ["ascend", "descend"],
-      ...getColumnSearchProps("id"),
+      ...getColumnSearchProps("peopleID"),
       width: 270,
       className: "ps-5",
     },
     {
       title: "FULL NAME",
-      dataIndex: "fullName",
-      key: "fullName",
-      sorter: (a, b) => a.fullName.localeCompare(b.fullName),
+      dataIndex: "fullname",
+      key: "fullname",
+      sorter: (a, b) => a.fullname.localeCompare(b.fullname),
       sortDirections: ["ascend", "descend"],
-      ...getColumnSearchProps("fullName"),
+      ...getColumnSearchProps("fullname"),
       className: "ps-5",
     },
     {
       title: "PHONE NUMBER",
-      key: "phone",
-      dataIndex: "phone",
-      ...getColumnSearchProps("phone"),
+      key: "phoneNo",
+      dataIndex: "phoneNo",
+      ...getColumnSearchProps("phoneNo"),
       className: "ps-5",
       render: (_, item) => (
         <div className="d-flex justify-content-between">
-          <div>{item.phone}</div>
-          <Dropdown overlay={() => itemDropdown(item.id)} trigger={["click"]}>
+          <div>{item.phoneNo}</div>
+          <Dropdown overlay={() => itemDropdown(item.peopleID)} trigger={["click"]}>
             <Button
               onClick={() => peopleChosen(item.id)}
               className="border-0"
@@ -188,9 +188,6 @@ function TableComponent(props) {
 
   useEffect(()=>{
     let peopleList = [...props.people];
-    peopleList = peopleList?.map((item, index) => {
-      return { ...item, key: index + 1 };
-    });
     setData(peopleList);
   }, [])
 

@@ -1,12 +1,75 @@
 import { Button, Form, Input, message } from "antd";
 import "./style.css";
+import "./../style.css";
 import { useNavigate } from "react-router-dom";
 import FormGetInfo from "../subParts/Components/FormComponent";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import changeFareFormat from "../../utils/formatFare";
+import { SEARCH_CUSTOMER_PHONE } from "../../utils/API";
+import axios from "axios";
+import { faClock } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function Add() {
   const navigate = useNavigate();
+  const [phoneNo, setPhoneNo] = useState();
+  const [cusName, setCusName] = useState();
+  const [predictions, setPredictions] = useState([]);
   const [form] = Form.useForm();
+  const distanceInfo = useSelector((state) => state.distance);
+  // Dispatching actions
+  const dispatch = useDispatch();
+  const token = localStorage.getItem("token");
 
+  const getFare = (info) => {
+    let result;
+    if (info?.CarType == "Motorcycle") {
+      info?.CarService == "standard"
+        ? (result = "bike")
+        : (result = "bike-plus");
+    } else {
+      info?.NoOfGuest > 4
+        ? (result = "car-7seat")
+        : info?.CarService == "standard"
+        ? (result = "car")
+        : (result = "car-plus");
+    }
+    return result;
+  };
+
+  const searchPhoneNo = async (keyword) => {
+    const response = await axios.get(
+      `${SEARCH_CUSTOMER_PHONE}?keyword=${keyword}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      }
+    );
+    console.log(response);
+    return response.data;
+  };
+
+  const handleInputChange = async (e) => {
+    setPhoneNo(e.target.value);
+    const inputValue = e.target.value.trim();
+    if (inputValue !== "") {
+      const phoneNumbers = await searchPhoneNo(inputValue);
+      phoneNumbers.length > 0
+        ? setPredictions(phoneNumbers)
+        : setPredictions([]);
+    } else {
+      setPredictions([]);
+    }
+  };
+
+  const choosePhone = (item) => {
+    setPhoneNo(item?.phoneNo);
+    setPredictions([]);
+    form.setFieldValue("Name", item?.fullname);
+  };
   const onFinishForm = () => {
     if (
       form.getFieldValue("Name") !== undefined &&
@@ -19,10 +82,15 @@ export default function Add() {
     message.success("Submit success form 1!");
   };
 
+  useEffect(() => {
+    console.log("add new", distanceInfo);
+  }, []);
+
   return (
     <div className="contentAddNew">
       <div className="leftPart mx-3 pt-3">
         <h5 className="textBlue2 text-center fw-bolder">Add New Booking</h5>
+        {/* Get info form */}
         <FormGetInfo />
         <h6 className="fw-bolder">Guest Detail</h6>
         <Form
@@ -33,25 +101,6 @@ export default function Add() {
           className="bookingForm1"
         >
           <div className="row">
-            <div className="col">
-              <Form.Item
-                name="Name"
-                label={<div className="textBlue3">Name</div>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input Guest's Name!",
-                  },
-                  {
-                    type: "string",
-                    min: 4,
-                  },
-                ]}
-                hasFeedback
-              >
-                <Input />
-              </Form.Item>
-            </div>
             <div className="col">
               <Form.Item
                 name="PhoneNumber"
@@ -68,7 +117,38 @@ export default function Add() {
                 ]}
                 hasFeedback
               >
-                <Input />
+                <Input value={phoneNo} onChange={handleInputChange} />
+                <ul className="predictions-list">
+                  {predictions.length > 0 &&
+                    predictions.map((item, index) => (
+                      <li key={index} onClick={() => choosePhone(item)}>
+                        <FontAwesomeIcon
+                          icon={faClock}
+                          className="me-1 text-black-50"
+                        />
+                        {item?.phoneNo}
+                      </li>
+                    ))}
+                </ul>
+              </Form.Item>
+            </div>
+            <div className="col">
+              <Form.Item
+                name="Name"
+                label={<div className="textBlue3">Name</div>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input Guest's Name!",
+                  },
+                  {
+                    type: "string",
+                    min: 4,
+                  },
+                ]}
+                hasFeedback
+              >
+                <Input value={cusName} allowClear />
               </Form.Item>
             </div>
           </div>
@@ -80,9 +160,64 @@ export default function Add() {
           </Form.Item>
           <div className="rightPart">
             <h6 className="fw-bolder">Booking Summary</h6>
-            <div className="fs-14 mt-3">No information</div>
-
-            <Form.Item shouldUpdate style={{ textAlign: "center" }}>
+            <div className="fs-14 mt-3 lh-lg">
+              {distanceInfo == null ? (
+                "No information"
+              ) : (
+                <>
+                  <div>
+                    Kilometer:{" "}
+                    <b className="float-end me-5 pe-2">
+                      {distanceInfo?.distance
+                        ? distanceInfo?.distance?.distance?.text
+                        : "Unknown"}
+                    </b>
+                  </div>
+                  <div>
+                    Duration:{" "}
+                    <b className="float-end me-5 pe-2">
+                      {distanceInfo?.distance
+                        ? distanceInfo?.distance?.duration?.text
+                        : "Unknown"}
+                    </b>
+                  </div>
+                  <div>
+                    Car Type:{" "}
+                    <b className="float-end me-5 pe-2">
+                      {distanceInfo?.CarType}
+                    </b>
+                  </div>
+                  <div>
+                    Car Service:{" "}
+                    <b className="float-end me-5 pe-2">
+                      {distanceInfo?.CarService}
+                    </b>
+                  </div>
+                  <div>
+                    VIP Booking:{" "}
+                    <b className="float-end me-5 pe-2">
+                      {distanceInfo?.PickupTime == undefined ? "None" : "Yes"}
+                    </b>
+                  </div>
+                  <hr />
+                  <div className="fw-bolder textOrange1">
+                    Total (Vnd):{" "}
+                    <span className="float-end me-5 pe-2 fs-18">
+                      {distanceInfo?.fare
+                        ? changeFareFormat(
+                            distanceInfo?.fare[getFare(distanceInfo)]
+                          )
+                        : "Unknown"}
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
+            <Form.Item
+              shouldUpdate
+              style={{ textAlign: "center" }}
+              className={distanceInfo == null ? "" : "float-end"}
+            >
               {() => (
                 <Button
                   htmlType="submit"
