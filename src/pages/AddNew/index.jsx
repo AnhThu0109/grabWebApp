@@ -11,6 +11,7 @@ import axios from "axios";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons';
+import { setDistanceData } from "../../redux/distanceSlide";
 
 export default function Add() {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ export default function Add() {
   const [predictions, setPredictions] = useState([]);
   const [form] = Form.useForm();
   const [hasFeedback, setHasFeedback] = useState(null);
-  const distanceInfo = useSelector((state) => state.distance);
+  let distanceInfo = useSelector((state) => state.distance);
   // Dispatching actions
   const dispatch = useDispatch();
   const token = localStorage.getItem("token");
@@ -29,14 +30,14 @@ export default function Add() {
 
   const getFare = (info) => {
     let result;
-    if (info?.CarType == 1) {
-      info?.CarService == 1
+    if (info?.CarType === 1) {
+      info?.CarService === 1
         ? (result = "bike")
         : (result = "bike-plus");
     } else {
       info?.NoOfGuest > 4
         ? (result = "car-7seat")
-        : info?.CarService == 1
+        : info?.CarService === 1
         ? (result = "car")
         : (result = "car-plus");
     }
@@ -103,6 +104,7 @@ export default function Add() {
 
   useEffect(() => {
     setHasFeedback(null);
+    dispatch(setDistanceData(null));
   }, []);
 
   return (
@@ -206,7 +208,7 @@ export default function Add() {
                   <div>
                     VIP Booking:{" "}
                     <b className="float-end me-5 pe-2">
-                      {distanceInfo?.PickupTime == undefined ? "None" : "Yes"}
+                      {distanceInfo?.PickupTime === undefined ? "None" : "Yes"}
                     </b>
                   </div>
                   <hr />

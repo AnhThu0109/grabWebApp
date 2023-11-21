@@ -115,18 +115,55 @@ export default function FormGetInfo() {
           : setPredictionsDesLive(predictions);
       }
     } else {
+      const locations = await searchLocationInDatabase(inputValue);
+      console.log("database location", locations);
+      const predictLocations = locations.map((item) => item.locationName);
       if (inputName === "PickupLocation") {
         setHasFeedback((previous) => {
           return { ...previous, pick: false };
         });
-        setPredictionsDB([]);
+        // setPredictionsDB([]);
+        setPredictionsDB(predictLocations);
         setPredictionsLive([]);
       } else {
         setHasFeedback((previous) => {
           return { ...previous, des: false };
         });
-        setPredictionsDesDB([]);
+        // setPredictionsDesDB([]);
+        setPredictionsDesDB(predictLocations);
         setPredictionsDesLive([]);
+      }
+    }
+  };
+
+  const handleFocus = async (e, inputName) => {
+    const inputValue = e.target.value.trim();
+    // Search location
+    if (inputValue === "") {
+      // Search in database first
+      const locations = await searchLocationInDatabase("");
+      //setLocations(locations);
+      const predictLocations = locations.map((item) => item.locationName);
+      if (inputName === "PickupLocation") {
+        setPredictionsDesDB([]);
+        setPredictionsDB(predictLocations);
+        setIsChooseLocation((prevState) => ({ ...prevState, pickUp: false }));
+      } else {
+        setPredictionsDB([]);
+        setPredictionsDesDB(predictLocations);
+        setIsChooseLocation((prevState) => ({ ...prevState, des: false }));
+      }
+    }
+  };
+
+  const handleBlur = (e, inputName) => {
+    // Check if a location has been chosen
+    const locationChosen = isChooseLocation[inputName];
+    if (locationChosen) {
+      if (inputName === "PickupLocation") {
+        setPredictionsDB([]);
+      } else {
+        setPredictionsDesDB([]);
       }
     }
   };
@@ -156,12 +193,14 @@ export default function FormGetInfo() {
       setPickUp(location);
       form.setFieldValue("PickupLocation", location);
       setIsChooseLocation((prevState) => ({ ...prevState, pickUp: true }));
+      setHasFeedback((prevState) => ({ ...prevState, pick: true }));
       setPredictionsDB([]);
       setPredictionsLive([]);
     } else {
       setDestination(location);
       form.setFieldValue("Destination", location);
       setIsChooseLocation((prevState) => ({ ...prevState, des: true }));
+      setHasFeedback((prevState) => ({ ...prevState, des: true }));
       setPredictionsDesDB([]);
       setPredictionsDesLive([]);
     }
@@ -275,7 +314,12 @@ export default function FormGetInfo() {
     } else {
       try {
         let allFieldValues = form.getFieldsValue();
-        allFieldValues = {...allFieldValues, PickupTime: allFieldValues.PickupTime.toISOString()};
+        allFieldValues = {
+          ...allFieldValues,
+          PickupTime: allFieldValues?.PickupTime
+            ? allFieldValues?.PickupTime?.toISOString()
+            : null,
+        };
         const response = await getDistance(pickUp, destination);
         console.log("response data", response.data);
         const dataTranfer = { ...allFieldValues, ...response.data };
@@ -330,7 +374,9 @@ export default function FormGetInfo() {
           >
             <Input
               value={pickUp}
+              onFocus={(e) => handleFocus(e, "PickupLocation")}
               onChange={(e) => handleInputChange(e, "PickupLocation")}
+              onBlur={(e) => handleBlur(e, "PickupLocation")}
               suffix={
                 hasFeedback.pick === true ? (
                   <CheckCircleFilled
@@ -379,10 +425,10 @@ export default function FormGetInfo() {
                   </li>
                 ))}
               {!isChooseLocation.pickUp &&
-                predictionsDB.length == 0 &&
-                predictionsLive.length == 0 &&
-                form.getFieldValue("PickupLocation")?.trim() != "" &&
-                form.getFieldValue("PickupLocation") != undefined && (
+                predictionsDB.length === 0 &&
+                predictionsLive.length === 0 &&
+                form.getFieldValue("PickupLocation")?.trim() !== "" &&
+                form.getFieldValue("PickupLocation") !== undefined && (
                   <li>
                     <FontAwesomeIcon
                       icon={faMagnifyingGlass}
@@ -404,7 +450,9 @@ export default function FormGetInfo() {
             <Input
               type="text"
               value={destination}
+              onFocus={(e) => handleFocus(e, "Destination")}
               onChange={(e) => handleInputChange(e, "Destination")}
+              onBlur={(e) => handleBlur(e, "Destination")}
               suffix={
                 hasFeedback.des === true ? (
                   <CheckCircleFilled
@@ -453,10 +501,10 @@ export default function FormGetInfo() {
                   </li>
                 ))}
               {!isChooseLocation.des &&
-                predictionsDesDB.length == 0 &&
-                predictionsDesLive.length == 0 &&
-                form.getFieldValue("Destination")?.trim() != "" &&
-                form.getFieldValue("Destination") != undefined && (
+                predictionsDesDB.length === 0 &&
+                predictionsDesLive.length === 0 &&
+                form.getFieldValue("Destination")?.trim() !== "" &&
+                form.getFieldValue("Destination") !== undefined && (
                   <li>
                     <FontAwesomeIcon
                       icon={faMagnifyingGlass}

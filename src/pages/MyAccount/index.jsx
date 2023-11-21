@@ -26,7 +26,6 @@ import { CheckCircleFilled, CloseCircleFilled } from "@ant-design/icons";
 import getUserById from "../../utils/getUserById";
 
 const AvatarCarousel = ({ images }) => {
-  const [avatarSrc, setAvatarSrc] = useState("");
   const [activeIndex, setActiveIndex] = useState(-1);
   const dispatch = useDispatch();
   const avatar = useSelector((state) => state.avatar.avatarPath);
@@ -63,11 +62,10 @@ const AvatarCarousel = ({ images }) => {
                   }
                   onClick={() => {
                     dispatch(setAvatarChosenPath(item));
-                    setAvatarSrc(item);
                     setActiveIndex(index + pageIndex * 12); // Adjust the index based on the current page
                   }}
-                  alt={`Image ${index + pageIndex * 12 + 1}`}
-                ></img>
+                  alt="avatar"
+                />
               </div>
             ))}
           </div>
@@ -86,7 +84,6 @@ const MyAccount = () => {
     address: null,
   };
   const [userData, setUserData] = useState();
-  const [fullNameSplit, setFullNameSplit] = useState();
   const [initialData, setInitialData] = useState();
   const [hasFeedback, setHasFeedback] = useState(false);
   const [itemChange, setItemChange] = useState(initialItemChange);
@@ -106,7 +103,7 @@ const MyAccount = () => {
     for (const changedField in changedValues) {
       console.log("changed", changedField);
       console.log("form value", form.getFieldValue(changedField));
-      if (form.getFieldValue(changedField) != "") {
+      if (form.getFieldValue(changedField) !== "") {
         updatedItemChange[changedField] = true;
       } else updatedItemChange[changedField] = false;
     }
@@ -171,7 +168,6 @@ const MyAccount = () => {
       try {
         const user = await getUserById(id, ADMIN, token);
         setUserData(user);
-        setFullNameSplit(splitFullName(user?.fullname));
         setInitialData({
           givenName: splitFullName(user?.fullname).splice(1).join(" "),
           familyName: splitFullName(user?.fullname)[0],
