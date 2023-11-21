@@ -19,6 +19,7 @@ import {
   CREATE_LOCATION,
   GET_CARTYPE,
   GET_DISTANCE,
+  GET_SERVICE,
   SEARCH_LOCATION,
 } from "../../../utils/API";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -29,7 +30,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { setDistanceData } from "../../../redux/distanceSlide";
-import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons';
+import { CheckCircleFilled, CloseCircleFilled } from "@ant-design/icons";
+import getAll from "../../../utils/getAll";
 
 export default function FormGetInfo() {
   const [form] = Form.useForm();
@@ -44,9 +46,10 @@ export default function FormGetInfo() {
     des: false,
   });
   const [carTypes, setCarTypes] = useState();
+  const [carServices, setCarServices] = useState();
   const [hasFeedback, setHasFeedback] = useState({
     pick: null,
-    des: null
+    des: null,
   });
   const token = localStorage.getItem("token");
   const distanceInfo = useSelector((state) => state.distance);
@@ -57,11 +60,15 @@ export default function FormGetInfo() {
     if (inputName === "PickupLocation") {
       setPickUp(e.target.value);
       form.setFieldValue("PickupLocation", e.target.value);
-      setHasFeedback(previous => {return {...previous, pick: true}});
+      setHasFeedback((previous) => {
+        return { ...previous, pick: true };
+      });
     } else {
       setDestination(e.target.value);
       form.setFieldValue("Destination", e.target.value);
-      setHasFeedback(previous => {return {...previous, des: true}});
+      setHasFeedback((previous) => {
+        return { ...previous, des: true };
+      });
     }
     const inputValue = e.target.value.trim();
     // Search location
@@ -108,12 +115,16 @@ export default function FormGetInfo() {
           : setPredictionsDesLive(predictions);
       }
     } else {
-      if (inputName === "PickupLocation"){
-        setHasFeedback(previous => {return {...previous, pick: false}});
+      if (inputName === "PickupLocation") {
+        setHasFeedback((previous) => {
+          return { ...previous, pick: false };
+        });
         setPredictionsDB([]);
         setPredictionsLive([]);
-      } else{
-        setHasFeedback(previous => {return {...previous, des: false}});
+      } else {
+        setHasFeedback((previous) => {
+          return { ...previous, des: false };
+        });
         setPredictionsDesDB([]);
         setPredictionsDesLive([]);
       }
@@ -234,21 +245,6 @@ export default function FormGetInfo() {
     return {};
   };
 
-  const getAllCarType = async () => {
-    try {
-      const response = await axios.get(GET_CARTYPE, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
-        },
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching car types data:", error);
-      throw error; // Re-throw the error to handle it elsewhere if needed
-    }
-  };
-
   const getDistance = (origin, destination) => {
     const input = {
       origin,
@@ -278,7 +274,8 @@ export default function FormGetInfo() {
       );
     } else {
       try {
-        const allFieldValues = form.getFieldsValue();
+        let allFieldValues = form.getFieldsValue();
+        allFieldValues = {...allFieldValues, PickupTime: allFieldValues.PickupTime.toISOString()};
         const response = await getDistance(pickUp, destination);
         console.log("response data", response.data);
         const dataTranfer = { ...allFieldValues, ...response.data };
@@ -296,15 +293,17 @@ export default function FormGetInfo() {
   };
 
   const getInitInformation = async () => {
-    const type = await getAllCarType();
+    const type = await getAll(GET_CARTYPE, token);
     setCarTypes(type);
+    const service = await getAll(GET_SERVICE, token);
+    setCarServices(service);
   };
 
   useEffect(() => {
     getInitInformation();
     setHasFeedback({
       pick: null,
-      des: null
+      des: null,
     });
   }, []);
 
@@ -324,15 +323,27 @@ export default function FormGetInfo() {
             className="location-search-container"
             name="PickupLocation"
             label={<div className="textBlue3">Pickup Location</div>}
-            validateStatus={ hasFeedback.pick === false? "error" : ""}
-            help={hasFeedback.pick === false? "Please input Pickup location!" : ""}
+            validateStatus={hasFeedback.pick === false ? "error" : ""}
+            help={
+              hasFeedback.pick === false ? "Please input Pickup location!" : ""
+            }
           >
             <Input
               value={pickUp}
               onChange={(e) => handleInputChange(e, "PickupLocation")}
-              suffix={hasFeedback.pick === true ? <CheckCircleFilled style={{
-                color: "#52c41a",
-              }}/> : hasFeedback.pick === false ? <CloseCircleFilled /> : <span />}
+              suffix={
+                hasFeedback.pick === true ? (
+                  <CheckCircleFilled
+                    style={{
+                      color: "#52c41a",
+                    }}
+                  />
+                ) : hasFeedback.pick === false ? (
+                  <CloseCircleFilled />
+                ) : (
+                  <span />
+                )
+              }
             />
             <ul className="predictions-list">
               {predictionsDB.length > 0 &&
@@ -387,16 +398,26 @@ export default function FormGetInfo() {
           <Form.Item
             name="Destination"
             label={<div className="textBlue3">Destination</div>}
-            validateStatus={ hasFeedback.des === false? "error" : ""}
-            help={hasFeedback.des === false? "Please input Destination!" : ""}
+            validateStatus={hasFeedback.des === false ? "error" : ""}
+            help={hasFeedback.des === false ? "Please input Destination!" : ""}
           >
             <Input
               type="text"
               value={destination}
               onChange={(e) => handleInputChange(e, "Destination")}
-              suffix={hasFeedback.des === true ? <CheckCircleFilled style={{
-                color: "#52c41a",
-              }}/> : hasFeedback.des === false ? <CloseCircleFilled /> : <span />}
+              suffix={
+                hasFeedback.des === true ? (
+                  <CheckCircleFilled
+                    style={{
+                      color: "#52c41a",
+                    }}
+                  />
+                ) : hasFeedback.des === false ? (
+                  <CloseCircleFilled />
+                ) : (
+                  <span />
+                )
+              }
             />
             <ul className="predictions-list">
               {predictionsDesDB.length > 0 &&
@@ -498,7 +519,7 @@ export default function FormGetInfo() {
           >
             <Select>
               {carTypes?.map((item) => (
-                <Option key={item.id} value={item.car_type}>
+                <Option key={item.id} value={item.id}>
                   {item.car_type}
                 </Option>
               ))}
@@ -518,8 +539,11 @@ export default function FormGetInfo() {
             hasFeedback
           >
             <Select>
-              <Option value="Standard">Standard</Option>
-              <Option value="Plus">Plus</Option>
+              {carServices?.map((item) => (
+                <Option key={item.id} value={item.id}>
+                  {item.serviceName}
+                </Option>
+              ))}
             </Select>
           </Form.Item>
         </div>
@@ -540,11 +564,15 @@ export default function FormGetInfo() {
               form.getFieldValue("CarType") === undefined ||
               form.getFieldValue("CarService") === undefined ||
               !!form.getFieldsError().filter(({ errors }) => errors.length)
-                .length || hasFeedback.pick === false || hasFeedback.des === false
+                .length ||
+              hasFeedback.pick === false ||
+              hasFeedback.des === false
             }
             className={
-              form.getFieldValue("PickupLocation") !== undefined && form.getFieldValue("PickupLocation") !== "" &&
-              form.getFieldValue("Destination") !== undefined && form.getFieldValue("Destination") !== "" &&
+              form.getFieldValue("PickupLocation") !== undefined &&
+              form.getFieldValue("PickupLocation") !== "" &&
+              form.getFieldValue("Destination") !== undefined &&
+              form.getFieldValue("Destination") !== "" &&
               form.getFieldValue("NoOfGuest") !== undefined &&
               form.getFieldValue("CarType") !== undefined &&
               form.getFieldValue("CarService") !== undefined &&

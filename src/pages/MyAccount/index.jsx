@@ -22,7 +22,8 @@ import { ADMIN } from "../../utils/API";
 import { Skeleton } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { setAvatarChosenPath, setAvatarPath } from "../../redux/avatarSlide";
-import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons';
+import { CheckCircleFilled, CloseCircleFilled } from "@ant-design/icons";
+import getUserById from "../../utils/getUserById";
 
 const AvatarCarousel = ({ images }) => {
   const [avatarSrc, setAvatarSrc] = useState("");
@@ -104,11 +105,10 @@ const MyAccount = () => {
     const updatedItemChange = { ...itemChange };
     for (const changedField in changedValues) {
       console.log("changed", changedField);
-      console.log("form value",form.getFieldValue(changedField));
-      if(form.getFieldValue(changedField) != ""){
+      console.log("form value", form.getFieldValue(changedField));
+      if (form.getFieldValue(changedField) != "") {
         updatedItemChange[changedField] = true;
-      }
-      else updatedItemChange[changedField] = false;
+      } else updatedItemChange[changedField] = false;
     }
     console.log(updatedItemChange);
     setItemChange(updatedItemChange);
@@ -162,21 +162,6 @@ const MyAccount = () => {
     setOpen(false);
   };
 
-  const getUserById = async (userId) => {
-    try {
-      const response = await axios.get(`${ADMIN}/${userId}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
-        },
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-      throw error; // Re-throw the error to handle it elsewhere if needed
-    }
-  };
-
   const splitFullName = (fullname) => {
     return fullname.split(" ");
   };
@@ -184,7 +169,7 @@ const MyAccount = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const user = await getUserById(id);
+        const user = await getUserById(id, ADMIN, token);
         setUserData(user);
         setFullNameSplit(splitFullName(user?.fullname));
         setInitialData({
@@ -279,13 +264,25 @@ const MyAccount = () => {
                   {
                     required: true,
                     message: "Please input your Family Name",
-                  }
+                  },
                 ]}
-                validateStatus={ itemChange.familyName === false? "error" : ""}
+                validateStatus={itemChange.familyName === false ? "error" : ""}
               >
-                <Input suffix={itemChange.familyName === true ? <CheckCircleFilled style={{
-                color: "#52c41a",
-              }}/> : itemChange.familyName === false ? <CloseCircleFilled /> : <span />}/>
+                <Input
+                  suffix={
+                    itemChange.familyName === true ? (
+                      <CheckCircleFilled
+                        style={{
+                          color: "#52c41a",
+                        }}
+                      />
+                    ) : itemChange.familyName === false ? (
+                      <CloseCircleFilled />
+                    ) : (
+                      <span />
+                    )
+                  }
+                />
               </Form.Item>
             </div>
             <div className="col">
@@ -296,13 +293,25 @@ const MyAccount = () => {
                   {
                     required: true,
                     message: "Please input your Given Name!",
-                  }
+                  },
                 ]}
-                validateStatus={ itemChange.givenName === false? "error" : ""}
+                validateStatus={itemChange.givenName === false ? "error" : ""}
               >
-                <Input suffix={itemChange.givenName === true ? <CheckCircleFilled style={{
-                color: "#52c41a",
-              }}/> : itemChange.givenName === false ? <CloseCircleFilled /> : <span />}/>
+                <Input
+                  suffix={
+                    itemChange.givenName === true ? (
+                      <CheckCircleFilled
+                        style={{
+                          color: "#52c41a",
+                        }}
+                      />
+                    ) : itemChange.givenName === false ? (
+                      <CloseCircleFilled />
+                    ) : (
+                      <span />
+                    )
+                  }
+                />
               </Form.Item>
             </div>
           </div>
@@ -358,13 +367,25 @@ const MyAccount = () => {
                   {
                     required: true,
                     message: "Please input your Address",
-                  }
+                  },
                 ]}
-                validateStatus={ itemChange.address === false? "error" : ""}
+                validateStatus={itemChange.address === false ? "error" : ""}
               >
-                <Input suffix={itemChange.address === true ? <CheckCircleFilled style={{
-                color: "#52c41a",
-              }}/> : itemChange.address === false ? <CloseCircleFilled /> : <span />}/>
+                <Input
+                  suffix={
+                    itemChange.address === true ? (
+                      <CheckCircleFilled
+                        style={{
+                          color: "#52c41a",
+                        }}
+                      />
+                    ) : itemChange.address === false ? (
+                      <CloseCircleFilled />
+                    ) : (
+                      <span />
+                    )
+                  }
+                />
               </Form.Item>
             </div>
             <div className="col">

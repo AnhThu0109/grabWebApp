@@ -29,14 +29,14 @@ export default function Add() {
 
   const getFare = (info) => {
     let result;
-    if (info?.CarType == "Motorcycle") {
-      info?.CarService == "standard"
+    if (info?.CarType == 1) {
+      info?.CarService == 1
         ? (result = "bike")
         : (result = "bike-plus");
     } else {
       info?.NoOfGuest > 4
         ? (result = "car-7seat")
-        : info?.CarService == "standard"
+        : info?.CarService == 1
         ? (result = "car")
         : (result = "car-plus");
     }

@@ -33,6 +33,9 @@ import {
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Badge } from "@mui/material";
 import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import getUserById from "../../utils/getUserById";
+import { ADMIN } from "../../utils/API";
 
 export default function Layout() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -45,8 +48,12 @@ export default function Layout() {
     activePeople: false,
     activeMyAcc: false,
   });
+  const [userData, setUserData] = useState();
+  const dispatch = useDispatch();
+  const avatar = useSelector((state) => state.avatar.avatarPath);
   const navigate = useNavigate();
   const activeItem = localStorage.getItem("active");
+  const token = localStorage.getItem("token");
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -58,8 +65,6 @@ export default function Layout() {
 
   //Logout func ==> when click login, page redirect to "/login"
   const handleLogout = async () => {
-    // await logOut(t);
-    // setToken("");
     localStorage.clear();
     navigate("/login");
   };
@@ -93,6 +98,17 @@ export default function Layout() {
   };
 
   useEffect(() => {
+    //getUserInfo
+    const fetchUserData = async () => {
+      try {
+        const user = await getUserById(id, ADMIN, token);
+        setUserData(user);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
     // Set the initial title and active menu item based on the current URL
     setTitleCurrentURL();
     // Add an event listener to update the title and active menu item when the user clicks the browser's back or forward button
@@ -133,7 +149,13 @@ export default function Layout() {
           >
             <Avatar
               sx={{ width: 32, height: 32 }}
-              src="https://lh3.googleusercontent.com/ED85u6aQ2oseaV3Zi4ff-DyLnQpc-02EbG328ilQChGqg-4OkQuDzfirfuCnRP_Sv9DWwkI3iG_DALmWPVRr-SxO"
+              src={
+                avatar !== ""
+                  ? avatar
+                  : userData?.avatarPath
+                  ? userData?.avatarPath
+                  : "https://lh3.googleusercontent.com/ED85u6aQ2oseaV3Zi4ff-DyLnQpc-02EbG328ilQChGqg-4OkQuDzfirfuCnRP_Sv9DWwkI3iG_DALmWPVRr-SxO"
+              }
               alt="avatar"
             />
           </IconButton>
