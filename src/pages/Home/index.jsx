@@ -196,35 +196,35 @@ const Home = () => {
       {isLoading ? (
         <>
           <div className="m-4">
-            <Skeleton variant="rectangular" height={100} />
+            <Skeleton variant="rectangular" height={120} />
           </div>
 
           <div className="row m-4 gap-3">
             <div className="col pb-2 skeletonRect">
-              <Skeleton variant="rectangular" height={120} />
+              <Skeleton variant="rectangular" height={140} />
             </div>
 
             <div className="col pb-2 skeletonRect">
-              <Skeleton variant="rectangular" height={120} />
+              <Skeleton variant="rectangular" height={140} />
             </div>
 
             <div className="col pb-2 skeletonRect">
-              <Skeleton variant="rectangular" height={120} />
+              <Skeleton variant="rectangular" height={140} />
             </div>
 
             {/* Show weather forecast */}
             <div className="col-4 skeletonRect">
-              <Skeleton variant="rectangular" height={120} />
+              <Skeleton variant="rectangular" height={140} />
             </div>
           </div>
 
           <div className="row m-4 gap-3">
             <div className="col-9 skeletonRect">
-              <Skeleton variant="rectangular" height={200} />
+              <Skeleton variant="rectangular" height={230} />
             </div>
 
             <div className="col pb-2 skeletonRect">
-              <Skeleton variant="rectangular" height={200} />
+              <Skeleton variant="rectangular" height={230} />
             </div>
           </div>
         </>

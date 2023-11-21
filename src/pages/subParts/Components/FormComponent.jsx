@@ -15,7 +15,12 @@ import "./style.css";
 import moment from "moment/moment";
 import API_KEY from "../../../utils/KEY";
 import axios from "axios";
-import { CREATE_LOCATION, GET_CARTYPE, GET_DISTANCE, SEARCH_LOCATION } from "../../../utils/API";
+import {
+  CREATE_LOCATION,
+  GET_CARTYPE,
+  GET_DISTANCE,
+  SEARCH_LOCATION,
+} from "../../../utils/API";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faClock,
@@ -24,6 +29,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { setDistanceData } from "../../../redux/distanceSlide";
+import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons';
 
 export default function FormGetInfo() {
   const [form] = Form.useForm();
@@ -33,17 +39,31 @@ export default function FormGetInfo() {
   const [predictionsDesLive, setPredictionsDesLive] = useState([]);
   const [pickUp, setPickUp] = useState();
   const [destination, setDestination] = useState();
-  const [isChooseLocation, setIsChooseLocation] = useState({pickUp: false, des: false});
+  const [isChooseLocation, setIsChooseLocation] = useState({
+    pickUp: false,
+    des: false,
+  });
   const [carTypes, setCarTypes] = useState();
+  const [hasFeedback, setHasFeedback] = useState({
+    pick: null,
+    des: null
+  });
   const token = localStorage.getItem("token");
-  const distanceInfo = useSelector(state => state.distance);
+  const distanceInfo = useSelector((state) => state.distance);
   // Dispatching actions
   const dispatch = useDispatch();
 
   const handleInputChange = async (e, inputName) => {
-    inputName === "PickupLocation"? setPickUp(e.target.value) : setDestination(e.target.value);
+    if (inputName === "PickupLocation") {
+      setPickUp(e.target.value);
+      form.setFieldValue("PickupLocation", e.target.value);
+      setHasFeedback(previous => {return {...previous, pick: true}});
+    } else {
+      setDestination(e.target.value);
+      form.setFieldValue("Destination", e.target.value);
+      setHasFeedback(previous => {return {...previous, des: true}});
+    }
     const inputValue = e.target.value.trim();
-
     // Search location
     if (inputValue !== "") {
       // Search in database first
@@ -52,8 +72,10 @@ export default function FormGetInfo() {
       //setLocations(locations);
       const predictLocations = locations.map((item) => item.locationName);
       inputName === "PickupLocation"
-        ? (setPredictionsDB(predictLocations) && setIsChooseLocation((prevState => ({ ...prevState, pickUp: false }))))
-        : (setPredictionsDesDB(predictLocations) && setIsChooseLocation((prevState => ({ ...prevState, des: false }))));
+        ? setPredictionsDB(predictLocations) &&
+          setIsChooseLocation((prevState) => ({ ...prevState, pickUp: false }))
+        : setPredictionsDesDB(predictLocations) &&
+          setIsChooseLocation((prevState) => ({ ...prevState, des: false }));
 
       //Search live from enter third key word
       if (inputValue.length > 3) {
@@ -86,9 +108,15 @@ export default function FormGetInfo() {
           : setPredictionsDesLive(predictions);
       }
     } else {
-      inputName === "PickupLocation"
-        ? setPredictionsDB([]) && setPredictionsLive([])
-        : setPredictionsDesDB([]) && setPredictionsDesLive([]);
+      if (inputName === "PickupLocation"){
+        setHasFeedback(previous => {return {...previous, pick: false}});
+        setPredictionsDB([]);
+        setPredictionsLive([]);
+      } else{
+        setHasFeedback(previous => {return {...previous, des: false}});
+        setPredictionsDesDB([]);
+        setPredictionsDesLive([]);
+      }
     }
   };
 
@@ -112,19 +140,17 @@ export default function FormGetInfo() {
     }
   };
 
-  const chooseLocation = async (
-    location,
-    inputName,
-    isSearchLive = false
-  ) => {
-    if(inputName === "PickupLocation"){
+  const chooseLocation = async (location, inputName, isSearchLive = false) => {
+    if (inputName === "PickupLocation") {
       setPickUp(location);
-      setIsChooseLocation((prevState => ({ ...prevState, pickUp: true })));
+      form.setFieldValue("PickupLocation", location);
+      setIsChooseLocation((prevState) => ({ ...prevState, pickUp: true }));
       setPredictionsDB([]);
       setPredictionsLive([]);
-    } else{
+    } else {
       setDestination(location);
-      setIsChooseLocation((prevState => ({ ...prevState, des: true })));
+      form.setFieldValue("Destination", location);
+      setIsChooseLocation((prevState) => ({ ...prevState, des: true }));
       setPredictionsDesDB([]);
       setPredictionsDesLive([]);
     }
@@ -150,7 +176,7 @@ export default function FormGetInfo() {
       } catch (error) {
         console.log("Error fetching location details:", error);
       }
-    } 
+    }
   };
 
   const saveLocationToDatabase = async (
@@ -208,7 +234,7 @@ export default function FormGetInfo() {
     return {};
   };
 
-  const getAllCarType = async() => {
+  const getAllCarType = async () => {
     try {
       const response = await axios.get(GET_CARTYPE, {
         headers: {
@@ -221,27 +247,27 @@ export default function FormGetInfo() {
       console.error("Error fetching car types data:", error);
       throw error; // Re-throw the error to handle it elsewhere if needed
     }
-  }
+  };
 
   const getDistance = (origin, destination) => {
     const input = {
       origin,
       destination,
-    }
+    };
     return fetch(GET_DISTANCE, {
       method: "POST",
-      headers: { 'Content-Type': 'application/json', Authorization: token },
+      headers: { "Content-Type": "application/json", Authorization: token },
       body: JSON.stringify(input),
     })
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         return data;
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
         throw error;
       });
-  }
+  };
 
   const onFinish = async () => {
     if (
@@ -255,7 +281,7 @@ export default function FormGetInfo() {
         const allFieldValues = form.getFieldsValue();
         const response = await getDistance(pickUp, destination);
         console.log("response data", response.data);
-        const dataTranfer = {...allFieldValues, ...response.data};
+        const dataTranfer = { ...allFieldValues, ...response.data };
         console.log("data", dataTranfer);
         dispatch(setDistanceData(dataTranfer));
         message.success("Submit success!");
@@ -268,14 +294,18 @@ export default function FormGetInfo() {
   const onFinishFailed = () => {
     message.error("Submit failed!");
   };
-  
-  const getInitInformation = async() => {
+
+  const getInitInformation = async () => {
     const type = await getAllCarType();
     setCarTypes(type);
-  }
+  };
 
   useEffect(() => {
     getInitInformation();
+    setHasFeedback({
+      pick: null,
+      des: null
+    });
   }, []);
 
   return (
@@ -294,33 +324,22 @@ export default function FormGetInfo() {
             className="location-search-container"
             name="PickupLocation"
             label={<div className="textBlue3">Pickup Location</div>}
-            rules={[
-              {
-                required: true,
-                message: "Please input Pickup location!",
-              },
-              // {
-              //   type: "string",
-              //   min: 6,
-              // },
-            ]}
-            hasFeedback
+            validateStatus={ hasFeedback.pick === false? "error" : ""}
+            help={hasFeedback.pick === false? "Please input Pickup location!" : ""}
           >
             <Input
               value={pickUp}
               onChange={(e) => handleInputChange(e, "PickupLocation")}
+              suffix={hasFeedback.pick === true ? <CheckCircleFilled style={{
+                color: "#52c41a",
+              }}/> : hasFeedback.pick === false ? <CloseCircleFilled /> : <span />}
             />
             <ul className="predictions-list">
               {predictionsDB.length > 0 &&
                 predictionsDB.map((prediction, index) => (
                   <li
                     key={index}
-                    onClick={() =>
-                      chooseLocation(
-                        prediction,
-                        "PickupLocation"
-                      )
-                    }
+                    onClick={() => chooseLocation(prediction, "PickupLocation")}
                   >
                     <FontAwesomeIcon
                       icon={faClock}
@@ -336,7 +355,8 @@ export default function FormGetInfo() {
                     onClick={() =>
                       chooseLocation(
                         prediction.description,
-                        "PickupLocation", true
+                        "PickupLocation",
+                        true
                       )
                     }
                   >
@@ -347,10 +367,11 @@ export default function FormGetInfo() {
                     {prediction.description}
                   </li>
                 ))}
-              {(!isChooseLocation.pickUp && predictionsDB.length == 0 &&
+              {!isChooseLocation.pickUp &&
+                predictionsDB.length == 0 &&
                 predictionsLive.length == 0 &&
                 form.getFieldValue("PickupLocation")?.trim() != "" &&
-                  form.getFieldValue("PickupLocation") != undefined) && (
+                form.getFieldValue("PickupLocation") != undefined && (
                   <li>
                     <FontAwesomeIcon
                       icon={faMagnifyingGlass}
@@ -366,34 +387,23 @@ export default function FormGetInfo() {
           <Form.Item
             name="Destination"
             label={<div className="textBlue3">Destination</div>}
-            rules={[
-              {
-                required: true,
-                message: "Please input Destination",
-              },
-              // {
-              //   type: "string",
-              //   min: 6,
-              // },
-            ]}
-            hasFeedback
+            validateStatus={ hasFeedback.des === false? "error" : ""}
+            help={hasFeedback.des === false? "Please input Destination!" : ""}
           >
             <Input
               type="text"
               value={destination}
               onChange={(e) => handleInputChange(e, "Destination")}
+              suffix={hasFeedback.des === true ? <CheckCircleFilled style={{
+                color: "#52c41a",
+              }}/> : hasFeedback.des === false ? <CloseCircleFilled /> : <span />}
             />
             <ul className="predictions-list">
               {predictionsDesDB.length > 0 &&
                 predictionsDesDB.map((prediction, index) => (
                   <li
                     key={index}
-                    onClick={() =>
-                      chooseLocation(
-                        prediction,
-                        "Destination"
-                      )
-                    }
+                    onClick={() => chooseLocation(prediction, "Destination")}
                   >
                     <FontAwesomeIcon
                       icon={faClock}
@@ -409,7 +419,8 @@ export default function FormGetInfo() {
                     onClick={() =>
                       chooseLocation(
                         prediction.description,
-                        "Destination", true
+                        "Destination",
+                        true
                       )
                     }
                   >
@@ -420,10 +431,11 @@ export default function FormGetInfo() {
                     {prediction.description}
                   </li>
                 ))}
-              {(!isChooseLocation.des && predictionsDesDB.length == 0 &&
+              {!isChooseLocation.des &&
+                predictionsDesDB.length == 0 &&
                 predictionsDesLive.length == 0 &&
                 form.getFieldValue("Destination")?.trim() != "" &&
-                  form.getFieldValue("Destination") != undefined) && (
+                form.getFieldValue("Destination") != undefined && (
                   <li>
                     <FontAwesomeIcon
                       icon={faMagnifyingGlass}
@@ -485,11 +497,11 @@ export default function FormGetInfo() {
             hasFeedback
           >
             <Select>
-              {
-                carTypes?.map((item) => (
-                  <Option key={item.id} value={item.car_type}>{item.car_type}</Option>
-                ))
-              }
+              {carTypes?.map((item) => (
+                <Option key={item.id} value={item.car_type}>
+                  {item.car_type}
+                </Option>
+              ))}
             </Select>
           </Form.Item>
         </div>
@@ -521,16 +533,18 @@ export default function FormGetInfo() {
             ghost
             disabled={
               form.getFieldValue("PickupLocation") === undefined ||
+              form.getFieldValue("PickupLocation") === "" ||
               form.getFieldValue("Destination") === undefined ||
+              form.getFieldValue("Destination") === "" ||
               form.getFieldValue("NoOfGuest") === undefined ||
               form.getFieldValue("CarType") === undefined ||
               form.getFieldValue("CarService") === undefined ||
               !!form.getFieldsError().filter(({ errors }) => errors.length)
-                .length
+                .length || hasFeedback.pick === false || hasFeedback.des === false
             }
             className={
-              form.getFieldValue("PickupLocation") !== undefined &&
-              form.getFieldValue("Destination") !== undefined &&
+              form.getFieldValue("PickupLocation") !== undefined && form.getFieldValue("PickupLocation") !== "" &&
+              form.getFieldValue("Destination") !== undefined && form.getFieldValue("Destination") !== "" &&
               form.getFieldValue("NoOfGuest") !== undefined &&
               form.getFieldValue("CarType") !== undefined &&
               form.getFieldValue("CarService") !== undefined &&

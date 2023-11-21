@@ -70,7 +70,7 @@ export default function PeopleDetail(props) {
       setIsCus(false);
       form.setFieldsValue({
         fullName: driver?.fullname,
-        gender: driver?.gender? driver?.gender : "Unknown",
+        gender: driver?.gender ? driver?.gender : "Unknown",
         license: driver?.licensePlate,
         phone: driver?.phoneNo,
       });

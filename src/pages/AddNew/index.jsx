@@ -10,6 +10,7 @@ import { SEARCH_CUSTOMER_PHONE } from "../../utils/API";
 import axios from "axios";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons';
 
 export default function Add() {
   const navigate = useNavigate();
@@ -17,10 +18,14 @@ export default function Add() {
   const [cusName, setCusName] = useState();
   const [predictions, setPredictions] = useState([]);
   const [form] = Form.useForm();
+  const [hasFeedback, setHasFeedback] = useState(null);
   const distanceInfo = useSelector((state) => state.distance);
   // Dispatching actions
   const dispatch = useDispatch();
   const token = localStorage.getItem("token");
+  const suffix = hasFeedback === true ? <CheckCircleFilled style={{
+    color: "#52c41a",
+  }}/> : hasFeedback === false ? <CloseCircleFilled /> : <span />;
 
   const getFare = (info) => {
     let result;
@@ -56,20 +61,34 @@ export default function Add() {
     setPhoneNo(e.target.value);
     const inputValue = e.target.value.trim();
     if (inputValue !== "") {
+      setHasFeedback(true);
+      form.setFieldsValue({ PhoneNumber: inputValue });
       const phoneNumbers = await searchPhoneNo(inputValue);
       phoneNumbers.length > 0
         ? setPredictions(phoneNumbers)
         : setPredictions([]);
     } else {
       setPredictions([]);
+      form.setFieldsValue({ PhoneNumber: "" });
+      setHasFeedback(false);
     }
   };
 
   const choosePhone = (item) => {
+    setHasFeedback(true);
     setPhoneNo(item?.phoneNo);
     setPredictions([]);
-    form.setFieldValue("Name", item?.fullname);
+    form.setFieldsValue({ PhoneNumber: item?.phoneNo, Name: item?.fullname });
   };
+
+  const handleCusNameChange = (e) => {
+    const input = e.target.value.trim();
+    if(input !== ""){
+      form.setFieldsValue({ Name: input });
+    } else {
+      form.setFieldsValue({ Name: "" });
+    }
+  }
   const onFinishForm = () => {
     if (
       form.getFieldValue("Name") !== undefined &&
@@ -83,7 +102,7 @@ export default function Add() {
   };
 
   useEffect(() => {
-    console.log("add new", distanceInfo);
+    setHasFeedback(null);
   }, []);
 
   return (
@@ -105,19 +124,10 @@ export default function Add() {
               <Form.Item
                 name="PhoneNumber"
                 label={<div className="textBlue3">Phone Number</div>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input Guest's Phone Number",
-                  },
-                  {
-                    type: "string",
-                    min: 12,
-                  },
-                ]}
-                hasFeedback
+                validateStatus={ hasFeedback === false? "error" : ""}
+                help={hasFeedback === false? "Please input Guest's Phone Number" : ""}
               >
-                <Input value={phoneNo} onChange={handleInputChange} />
+                <Input value={phoneNo} onChange={handleInputChange} suffix={suffix} status={hasFeedback === true ? 'success' : hasFeedback === false? 'error' : ""}/>
                 <ul className="predictions-list">
                   {predictions.length > 0 &&
                     predictions.map((item, index) => (
@@ -148,7 +158,7 @@ export default function Add() {
                 ]}
                 hasFeedback
               >
-                <Input value={cusName} allowClear />
+                <Input value={cusName} onChange={handleCusNameChange}/>
               </Form.Item>
             </div>
           </div>
@@ -223,11 +233,11 @@ export default function Add() {
                   htmlType="submit"
                   className="border-0 rounded-3 px-5 mt-4 w-70 text-black-60 fw-bolder bookingBtn"
                   disabled={
-                    form.getFieldValue("Name") === undefined ||
-                    form.getFieldValue("PhoneNumber") === undefined ||
+                    form.getFieldValue("Name") === undefined || form.getFieldValue("Name") === "" || 
+                    form.getFieldValue("PhoneNumber") === undefined || form.getFieldValue("PhoneNumber") === "" ||
                     !!form
                       .getFieldsError()
-                      .filter(({ errors }) => errors.length).length
+                      .filter(({ errors }) => errors.length).length || !hasFeedback
                   }
                 >
                   BOOK

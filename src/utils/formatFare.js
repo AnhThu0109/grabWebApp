@@ -1,5 +1,4 @@
 const changeFareFormat = (number) => {
-    debugger;
   const numStr = String(number);
   const numArray = numStr.split("");
 

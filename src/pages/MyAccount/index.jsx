@@ -20,10 +20,16 @@ import { AvatarImg } from "../../utils/avatar";
 import axios from "axios";
 import { ADMIN } from "../../utils/API";
 import { Skeleton } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { setAvatarChosenPath, setAvatarPath } from "../../redux/avatarSlide";
+import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons';
 
 const AvatarCarousel = ({ images }) => {
   const [avatarSrc, setAvatarSrc] = useState("");
   const [activeIndex, setActiveIndex] = useState(-1);
+  const dispatch = useDispatch();
+  const avatar = useSelector((state) => state.avatar.avatarPath);
+  const avatarChosen = useSelector((state) => state.avatar.avatarChosenPath);
 
   const chunkArray = (arr, size) => {
     return Array.from({ length: Math.ceil(arr.length / size) }, (v, i) =>
@@ -55,6 +61,7 @@ const AvatarCarousel = ({ images }) => {
                       : "rounded-2 w-100"
                   }
                   onClick={() => {
+                    dispatch(setAvatarChosenPath(item));
                     setAvatarSrc(item);
                     setActiveIndex(index + pageIndex * 12); // Adjust the index based on the current page
                   }}
@@ -70,54 +77,69 @@ const AvatarCarousel = ({ images }) => {
 };
 
 const MyAccount = () => {
+  const initialItemChange = {
+    givenName: null,
+    familyName: null,
+    birth: null,
+    gender: null,
+    address: null,
+  };
   const [userData, setUserData] = useState();
   const [fullNameSplit, setFullNameSplit] = useState();
   const [initialData, setInitialData] = useState();
   const [hasFeedback, setHasFeedback] = useState(false);
-  const [itemChange, setItemChange] = useState({
-    firstName: false,
-    lastName: false,
-    birth: false,
-    gender: false,
-    address: false,
-  });
+  const [itemChange, setItemChange] = useState(initialItemChange);
   const id = localStorage.getItem("userId");
   const token = localStorage.getItem("token");
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-
-  const initialItemChange = {
-    firstName: false,
-    lastName: false,
-    birth: false,
-    gender: false,
-    address: false,
-  };
+  const dispatch = useDispatch();
+  const avatar = useSelector((state) => state.avatar.avatarPath);
+  const avatarChosen = useSelector((state) => state.avatar.avatarChosenPath);
+  const [isDataChange, setIsDataChange] = useState(false);
 
   const handleFormChange = (changedValues, allValues) => {
     setHasFeedback(true);
-    console.log("hasfeed", hasFeedback);
-    console.log("change", allValues);
     const updatedItemChange = { ...itemChange };
     for (const changedField in changedValues) {
-      updatedItemChange[changedField] = true;
+      console.log("changed", changedField);
+      console.log("form value",form.getFieldValue(changedField));
+      if(form.getFieldValue(changedField) != ""){
+        updatedItemChange[changedField] = true;
+      }
+      else updatedItemChange[changedField] = false;
     }
     console.log(updatedItemChange);
     setItemChange(updatedItemChange);
   };
 
-  const onFinish = (values) => {
-    message.success("Update information success!");
-    // initialValue = {
-    //   firstName: values.firstName,
-    //   lastName: values.lastName,
-    //   birth: values.birth,
-    //   gender: values.gender,
-    //   address: values.address,
-    //   phone: "0893874889",
-    // };
-    // console.log("Form values:", initialValue);
+  const updateInformation = async (input, userId) => {
+    const response = await axios.put(`${ADMIN}/${userId}`, input, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+    });
+    return response;
+  };
+
+  const onFinish = async (values) => {
+    const data = {
+      fullname: `${values.familyName} ${values.givenName}`,
+      birthday: values.birth,
+      gender: values.gender,
+      address: values.address,
+      avatarPath: avatar,
+    };
+    console.log("Form values:", data);
+    const result = await updateInformation(data, id);
+    if (result.status === 200) {
+      message.success("Update information success!");
+      setIsDataChange(true);
+    } else {
+      message.error("Update information fail!");
+    }
     setHasFeedback(false);
     setItemChange(initialItemChange);
   };
@@ -127,15 +149,16 @@ const MyAccount = () => {
   };
 
   const handleOk = () => {
+    dispatch(setAvatarPath(avatarChosen));
+    setHasFeedback(true);
     setConfirmLoading(true);
     setTimeout(() => {
       setOpen(false);
       setConfirmLoading(false);
-    }, 2000);
+    }, 200);
   };
 
   const handleCancel = () => {
-    console.log("Clicked cancel button");
     setOpen(false);
   };
 
@@ -165,10 +188,8 @@ const MyAccount = () => {
         setUserData(user);
         setFullNameSplit(splitFullName(user?.fullname));
         setInitialData({
-          firstName: splitFullName(user?.fullname)[
-            splitFullName(user?.fullname).length - 1
-          ],
-          lastName: splitFullName(user?.fullname)[0],
+          givenName: splitFullName(user?.fullname).splice(1).join(" "),
+          familyName: splitFullName(user?.fullname)[0],
           birth: moment(user?.birthday),
           gender: user?.gender,
           address: user?.address,
@@ -180,7 +201,9 @@ const MyAccount = () => {
     };
 
     fetchUserData();
-  }, [id]);
+    setIsDataChange(false);
+    setItemChange(initialItemChange);
+  }, [id, isDataChange]);
 
   return (
     <div className="myAcc">
@@ -190,7 +213,13 @@ const MyAccount = () => {
             <div className="col d-flex justify-content-center align-items-center">
               <Avatar
                 sx={{ width: 120, height: 120 }}
-                src={userData?.avatarpath != null? userData?.avatarpath : "https://lh3.googleusercontent.com/ED85u6aQ2oseaV3Zi4ff-DyLnQpc-02EbG328ilQChGqg-4OkQuDzfirfuCnRP_Sv9DWwkI3iG_DALmWPVRr-SxO"}
+                src={
+                  avatar !== ""
+                    ? avatar
+                    : userData?.avatarPath
+                    ? userData?.avatarPath
+                    : "https://lh3.googleusercontent.com/ED85u6aQ2oseaV3Zi4ff-DyLnQpc-02EbG328ilQChGqg-4OkQuDzfirfuCnRP_Sv9DWwkI3iG_DALmWPVRr-SxO"
+                }
                 alt="avatar"
                 className="avatarImg me-5"
               />
@@ -244,40 +273,36 @@ const MyAccount = () => {
           <div className="row">
             <div className="col">
               <Form.Item
-                name="firstName"
-                label={<div className="textBlue3">First Name</div>}
+                name="familyName"
+                label={<div className="textBlue3">Family Name</div>}
                 rules={[
                   {
                     required: true,
-                    message: "Please input your First Name!",
-                  },
-                  {
-                    type: "string",
-                    min: 2,
-                  },
+                    message: "Please input your Family Name",
+                  }
                 ]}
-                hasFeedback={hasFeedback && itemChange.firstName}
+                validateStatus={ itemChange.familyName === false? "error" : ""}
               >
-                <Input />
+                <Input suffix={itemChange.familyName === true ? <CheckCircleFilled style={{
+                color: "#52c41a",
+              }}/> : itemChange.familyName === false ? <CloseCircleFilled /> : <span />}/>
               </Form.Item>
             </div>
             <div className="col">
               <Form.Item
-                name="lastName"
-                label={<div className="textBlue3">Last Name</div>}
+                name="givenName"
+                label={<div className="textBlue3">Given Name</div>}
                 rules={[
                   {
                     required: true,
-                    message: "Please input your Last Name",
-                  },
-                  {
-                    type: "string",
-                    min: 2,
-                  },
+                    message: "Please input your Given Name!",
+                  }
                 ]}
-                hasFeedback={hasFeedback && itemChange.lastName}
+                validateStatus={ itemChange.givenName === false? "error" : ""}
               >
-                <Input />
+                <Input suffix={itemChange.givenName === true ? <CheckCircleFilled style={{
+                color: "#52c41a",
+              }}/> : itemChange.givenName === false ? <CloseCircleFilled /> : <span />}/>
               </Form.Item>
             </div>
           </div>
@@ -333,15 +358,13 @@ const MyAccount = () => {
                   {
                     required: true,
                     message: "Please input your Address",
-                  },
-                  {
-                    type: "string",
-                    min: 2,
-                  },
+                  }
                 ]}
-                hasFeedback={hasFeedback && itemChange.address}
+                validateStatus={ itemChange.address === false? "error" : ""}
               >
-                <Input />
+                <Input suffix={itemChange.address === true ? <CheckCircleFilled style={{
+                color: "#52c41a",
+              }}/> : itemChange.address === false ? <CloseCircleFilled /> : <span />}/>
               </Form.Item>
             </div>
             <div className="col">
@@ -359,8 +382,8 @@ const MyAccount = () => {
               <Button
                 htmlType="submit"
                 disabled={
-                  form.getFieldValue("firstName") === undefined ||
-                  form.getFieldValue("lastName") === undefined ||
+                  form.getFieldValue("givenName") === undefined ||
+                  form.getFieldValue("familyName") === undefined ||
                   form.getFieldValue("birth") === undefined ||
                   form.getFieldValue("gender") === undefined ||
                   form.getFieldValue("address") === undefined ||

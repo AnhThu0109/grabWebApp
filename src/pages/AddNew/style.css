@@ -35,3 +35,8 @@
     color: var(--green-color3) !important;
     border-color: var(--green-color3) !important;
 }
+
+span.ant-input-suffix{
+  margin-top: -1px !important;
+  margin-right: 1px !important;
+}
