@@ -6,7 +6,7 @@ import FormGetInfo from "../subParts/Components/FormComponent";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import changeFareFormat from "../../utils/formatFare";
-import { SEARCH_CUSTOMER_PHONE } from "../../utils/API";
+import { BOOKING_FORM, SEARCH_CUSTOMER_PHONE } from "../../utils/API";
 import axios from "axios";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -54,7 +54,6 @@ export default function Add() {
         },
       }
     );
-    console.log(response);
     return response.data;
   };
 
@@ -90,15 +89,41 @@ export default function Add() {
       form.setFieldsValue({ Name: "" });
     }
   }
-  const onFinishForm = () => {
-    if (
-      form.getFieldValue("Name") !== undefined &&
-      form.getFieldValue("PhoneNumber") !== undefined &&
-      !!form.getFieldsError().filter(({ errors }) => errors.length).length ===
-        false
-    ) {
+
+  const submitBookingForm = async(input) => {
+    try {
+      const response = await axios.post(`${BOOKING_FORM}/create`, input, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        }
+      })
+      return response;
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      throw error; 
+    } 
+  }
+
+  const onFinishForm = async() => {
+    if (distanceInfo != null) {
+      const inputData = {
+        "pickupLocation": "Diamond Plaza, Đường Lê Duẩn, Bến Nghé, Quận 1, Thành phố Hồ Chí Minh",
+        "destination": "Etown, Đường Cộng Hòa, phường 13, Tân Bình, Thành phố Hồ Chí Minh",
+        "bookingWay": 0,
+        "Trip_Start_Time": "2023-11-22 17:14",
+        "distance": "2.3 km",
+        "sum": 52342,
+        "customerId": 1,
+        "driverId": 1,
+        "adminId": 1,
+        "note": "abc",
+        "carId": 1
+      }
+      const response = await submitBookingForm(inputData);
       navigate("/booking/tracking");
     }
+
     message.success("Submit success form 1!");
   };
 
@@ -239,7 +264,7 @@ export default function Add() {
                     form.getFieldValue("PhoneNumber") === undefined || form.getFieldValue("PhoneNumber") === "" ||
                     !!form
                       .getFieldsError()
-                      .filter(({ errors }) => errors.length).length || !hasFeedback
+                      .filter(({ errors }) => errors.length).length || !hasFeedback || distanceInfo === null
                   }
                 >
                   BOOK

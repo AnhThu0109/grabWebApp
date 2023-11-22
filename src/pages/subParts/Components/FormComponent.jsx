@@ -32,6 +32,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { setDistanceData } from "../../../redux/distanceSlide";
 import { CheckCircleFilled, CloseCircleFilled } from "@ant-design/icons";
 import getAll from "../../../utils/getAll";
+import { setCarTypeData } from "../../../redux/carTypeSlide";
+import { setCarServiceData } from "../../../redux/carServiceSlide";
 
 export default function FormGetInfo() {
   const [form] = Form.useForm();
@@ -45,7 +47,6 @@ export default function FormGetInfo() {
     pickUp: false,
     des: false,
   });
-  const [carTypes, setCarTypes] = useState();
   const [carServices, setCarServices] = useState();
   const [hasFeedback, setHasFeedback] = useState({
     pick: null,
@@ -53,6 +54,8 @@ export default function FormGetInfo() {
   });
   const token = localStorage.getItem("token");
   const distanceInfo = useSelector((state) => state.distance);
+  const carTypeInfo = useSelector((state) => state.carType);
+  const carServiceInfo = useSelector((state) => state.carService);
   // Dispatching actions
   const dispatch = useDispatch();
 
@@ -77,11 +80,11 @@ export default function FormGetInfo() {
       const locations = await searchLocationInDatabase(inputValue);
       console.log("database location", locations);
       //setLocations(locations);
-      const predictLocations = locations.map((item) => item.locationName);
+      const predictLocationsDB = locations.map((item) => item.locationName);
       inputName === "PickupLocation"
-        ? setPredictionsDB(predictLocations) &&
+        ? setPredictionsDB(predictLocationsDB) &&
           setIsChooseLocation((prevState) => ({ ...prevState, pickUp: false }))
-        : setPredictionsDesDB(predictLocations) &&
+        : setPredictionsDesDB(predictLocationsDB) &&
           setIsChooseLocation((prevState) => ({ ...prevState, des: false }));
 
       //Search live from enter third key word
@@ -105,7 +108,18 @@ export default function FormGetInfo() {
             }
           );
         });
+        debugger;
         console.log(predictions);
+        //Filter predictions to include only items with different description
+        const filteredPredictions = predictions.filter(
+          (livePrediction) =>
+            !predictLocationsDB.some(
+              (databasePrediction) =>
+                livePrediction.description === databasePrediction.locationName
+            )
+        );
+        console.log("filter", filteredPredictions);
+
         // Just take 4 results
         if (predictions.length > 4) {
           predictions.splice(4);
@@ -122,14 +136,12 @@ export default function FormGetInfo() {
         setHasFeedback((previous) => {
           return { ...previous, pick: false };
         });
-        // setPredictionsDB([]);
         setPredictionsDB(predictLocations);
         setPredictionsLive([]);
       } else {
         setHasFeedback((previous) => {
           return { ...previous, des: false };
         });
-        // setPredictionsDesDB([]);
         setPredictionsDesDB(predictLocations);
         setPredictionsDesLive([]);
       }
@@ -207,13 +219,14 @@ export default function FormGetInfo() {
     //If search live => save location to db
     if (isSearchLive) {
       try {
-        debugger;
         const geocodingApiUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
           location
         )}&key=${API_KEY}`;
         const response = await fetch(geocodingApiUrl);
         const data = await response.json();
-
+        inputName === "PickupLocation"
+          ? form.setFieldValue("PickupLocation", location)
+          : form.setFieldValue("Destination", location);
         if (response.ok && data.results && data.results.length > 0) {
           const { lat, lng } = data.results[0].geometry.location;
           console.log(`Latitude: ${lat}, Longitude: ${lng}`);
@@ -304,6 +317,18 @@ export default function FormGetInfo() {
       });
   };
 
+  const handleChangeGuestNo = (e) => {
+    const noOfGuest = form.getFieldValue("NoOfGuest");
+    if (noOfGuest > 1) {
+      const filteredCarTypes = carTypeInfo.filter(
+        (item) => item.car_type !== "Motorcycle"
+      );
+      dispatch(setCarTypeData(filteredCarTypes));
+    } else {
+      getInitInformation();
+    }
+  };
+
   const onFinish = async () => {
     if (
       form.getFieldValue("PickupLocation") === form.getFieldValue("Destination")
@@ -321,7 +346,6 @@ export default function FormGetInfo() {
             : null,
         };
         const response = await getDistance(pickUp, destination);
-        console.log("response data", response.data);
         const dataTranfer = { ...allFieldValues, ...response.data };
         console.log("data", dataTranfer);
         dispatch(setDistanceData(dataTranfer));
@@ -338,9 +362,9 @@ export default function FormGetInfo() {
 
   const getInitInformation = async () => {
     const type = await getAll(GET_CARTYPE, token);
-    setCarTypes(type);
+    dispatch(setCarTypeData(type));
     const service = await getAll(GET_SERVICE, token);
-    setCarServices(service);
+    dispatch(setCarServiceData(service));
   };
 
   useEffect(() => {
@@ -547,7 +571,12 @@ export default function FormGetInfo() {
             ]}
             hasFeedback
           >
-            <InputNumber min={1} max={10} className="w-100" />
+            <InputNumber
+              min={1}
+              max={10}
+              className="w-100"
+              onChange={handleChangeGuestNo}
+            />
           </Form.Item>
         </div>
       </div>
@@ -566,8 +595,15 @@ export default function FormGetInfo() {
             hasFeedback
           >
             <Select>
-              {carTypes?.map((item) => (
-                <Option key={item.id} value={item.id}>
+              {carTypeInfo?.map((item) => (
+                <Option
+                  key={item.id}
+                  value={item.id}
+                  disabled={
+                    form.getFieldValue("NoOfGuest") > 1 &&
+                    item.car_type.toLowerCase() === "motorcycle"
+                  }
+                >
                   {item.car_type}
                 </Option>
               ))}
@@ -587,7 +623,7 @@ export default function FormGetInfo() {
             hasFeedback
           >
             <Select>
-              {carServices?.map((item) => (
+              {carServiceInfo?.map((item) => (
                 <Option key={item.id} value={item.id}>
                   {item.serviceName}
                 </Option>
