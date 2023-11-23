@@ -8,7 +8,7 @@ const containerStyle = {
 
 const directionsService = new window.google.maps.DirectionsService();
 
-const MapComponent = ({ driverLocation, pickup, destination }) => {
+const MapComponent = ({ driverLocation, pickup, destination, carType }) => {
   const [directions, setDirections] = useState(null);
 
   let center = {
@@ -16,8 +16,13 @@ const MapComponent = ({ driverLocation, pickup, destination }) => {
     lng: pickup.lng, // Default longitude for the map center
   };
 
-  const driverMarkerIcon = {
+  const motocycleMarkerIcon = {
     url: '/images/driver.png', // Replace this with the URL of your custom marker icon
+    scaledSize: new window.google.maps.Size(40, 40), // Adjust the size of the custom marker icon
+  };
+
+  const taxiMarkerIcon = {
+    url: '/images/taxi.png', // Replace this with the URL of your custom marker icon
     scaledSize: new window.google.maps.Size(40, 40), // Adjust the size of the custom marker icon
   };
 
@@ -47,7 +52,9 @@ const MapComponent = ({ driverLocation, pickup, destination }) => {
       {directions && <DirectionsRenderer directions={directions} />}
       {/* <Marker position={pickup} label="PickUpLocation" />
       <Marker position={destination} label="Destination" /> */}
-      <MarkerF position={driverLocation} icon={driverMarkerIcon}/>
+      {
+        driverLocation !== null && <MarkerF position={driverLocation} icon={carType === "1"? motocycleMarkerIcon : taxiMarkerIcon}/>
+      }     
       {/* {locations.map((location, index) => (
         <Marker key={index} position={location} />
       ))} */}

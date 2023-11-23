@@ -29,7 +29,10 @@ export default function Tracking() {
   const [isLoading, setIsLoading] = useState(true);
   const [pickup, setPickup] = useState();
   const [destination, setDestination] = useState();
-  const [driverLocation, setDriverLocation] = useState();
+  const [driverLocation, setDriverLocation] = useState({
+    lat: 10.780987,
+    lng: 106.69747,
+  });
   const [bookingForm, setBookingForm] = useState();
 
   const icons = Array.from({ length: 9 }, (_, index) => (
@@ -44,34 +47,37 @@ export default function Tracking() {
   const initInformation = async () => {
     const bookingFormInfo = await getById(id, BOOKING_FORM, token);
     console.log(bookingFormInfo);
-    setBookingForm(bookingFormInfo);
-    const pickLocation = await getLocationByName(
-      SEARCH_LOCATION_NAME,
-      bookingFormInfo.pickupLocation,
-      token
-    );
-    setPickup({
-      lat: Number(pickLocation.latitude),
-      lng: Number(pickLocation.longitude),
-    });
-    const destLocation = await getLocationByName(
-      SEARCH_LOCATION_NAME,
-      bookingFormInfo.destination,
-      token
-    );
-    setDestination({
-      lat: Number(destLocation.latitude),
-      lng: Number(destLocation.longitude),
-    });
-    setIsLoading(false);
+    if (bookingFormInfo !== "") {
+      if (bookingFormInfo.status !== 2){
+        setDriverLocation(null);
+      }
+      setBookingForm(bookingFormInfo);
+      const pickLocation = await getLocationByName(
+        SEARCH_LOCATION_NAME,
+        bookingFormInfo.pickupLocation,
+        token
+      );
+      setPickup({
+        lat: Number(pickLocation.latitude),
+        lng: Number(pickLocation.longitude),
+      });
+      const destLocation = await getLocationByName(
+        SEARCH_LOCATION_NAME,
+        bookingFormInfo.destination,
+        token
+      );
+      setDestination({
+        lat: Number(destLocation.latitude),
+        lng: Number(destLocation.longitude),
+      });
+      setIsLoading(false);
+    } else {
+      navigate("/notfound");
+    }
   };
 
   useEffect(() => {
     initInformation();
-    setDriverLocation({
-      lat: 10.780987, // Driver's latitude
-      lng: 106.69747, // Driver's longitude
-    });
   }, []);
 
   return (
@@ -114,8 +120,10 @@ export default function Tracking() {
                     <div>
                       {getShortLocationName(bookingForm?.pickupLocation)}
                       <div className="text-black-50 fs-11">
-                        {bookingForm?.Trip_Start_Time !== null
+                        {bookingForm?.status === 3 || bookingForm?.status === 2
                           ? formatTime(bookingForm?.Trip_Start_Time)
+                          : bookingForm?.status === 4
+                          ? "None"
                           : "On Progress"}
                       </div>
                     </div>
@@ -123,13 +131,13 @@ export default function Tracking() {
                     <div>
                       {getShortLocationName(bookingForm?.destination)}
                       <div className="text-black-50 fs-11">
-                        {bookingForm?.Trip_End_Time === null &&
-                        bookingForm?.Trip_Start_Time === null
-                          ? "On Progress"
-                          : bookingForm?.Trip_End_Time === null &&
-                            bookingForm?.Trip_Start_Time !== null
+                        {bookingForm?.status === 3
+                          ? formatTime(bookingForm?.Trip_End_Time)
+                          : bookingForm?.status === 2
                           ? "Ongoing"
-                          : formatTime(bookingForm?.Trip_End_Time)}
+                          : bookingForm?.status === 4
+                          ? "None"
+                          : "On Progress"}
                       </div>
                     </div>
                   </div>
@@ -176,7 +184,11 @@ export default function Tracking() {
                       {changeFareFormat(bookingForm?.Bill?.sum)}
                     </div>
                     <div className="text-black-50">
-                      {bookingForm?.Trip_End_Time === null ? "Unpaid" : "Paid"}
+                      {bookingForm?.status === 3
+                        ? "Paid"
+                        : bookingForm?.status === 4
+                        ? "Canceled"
+                        : "Unpaid"}
                     </div>
                   </div>
                 </div>
@@ -188,6 +200,7 @@ export default function Tracking() {
               driverLocation={driverLocation}
               pickup={pickup}
               destination={destination}
+              carType={bookingForm?.carType}
             />
           </div>
         </>

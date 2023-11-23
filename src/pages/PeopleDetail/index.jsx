@@ -7,13 +7,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { GET_CUSTOMER, GET_DRIVER } from "../../utils/API";
+import { BOOKING_FORM, GET_CUSTOMER, GET_DRIVER } from "../../utils/API";
+import getAll from "../../utils/getAll";
+import formatTime from "../../utils/formatTime";
 
 export default function PeopleDetail(props) {
   const [form] = Form.useForm();
   const { id } = useParams();
   const [peopleData, setPeopleData] = useState();
   const [isCus, setIsCus] = useState(false);
+  const [bookingData, setBookingData] = useState();
   const token = localStorage.getItem("token");
   const peopleID = localStorage.getItem("peopleChosenId");
 
@@ -48,22 +51,24 @@ export default function PeopleDetail(props) {
     },
   ];
 
-  const findPeopleByID = async(peopleId, URL) => {
+  const findPeopleByID = async (peopleId, URL) => {
     const response = await axios.get(`${URL}/${peopleId}`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: token,
-      }
-    })
+      },
+    });
     return response.data;
-  } 
+  };
 
-  const initData = async(id) => {
+  const initData = async (id) => {
+    let bookings;
     if (id.includes("CUS")) {
       const customer = await findPeopleByID(peopleID, GET_CUSTOMER);
       setIsCus(true);
       form.setFieldValue("fullName", customer?.fullname);
       form.setFieldValue("phone", customer?.phoneNo);
+      bookings = await getAll(`${BOOKING_FORM}/customer/${peopleID}`, token);
     } else {
       const driver = await findPeopleByID(peopleID, GET_DRIVER);
       console.log(driver);
@@ -74,8 +79,13 @@ export default function PeopleDetail(props) {
         license: driver?.licensePlate,
         phone: driver?.phoneNo,
       });
+      bookings = await getAll(`${BOOKING_FORM}/driver/${peopleID}`, token);
     }
-  }
+    const history = bookings.filter(
+      (item) => item.status === 3 || item.status === 4
+    );
+    setBookingData(history);
+  };
 
   useEffect(() => {
     initData(id);
@@ -85,7 +95,11 @@ export default function PeopleDetail(props) {
       <div className="row p-3">
         <div className="col-4 d-flex justify-content-center align-items-center">
           <Avatar
-            src={peopleData?.avatarPath != null ? peopleData?.avatarPath : "https://lh3.googleusercontent.com/ED85u6aQ2oseaV3Zi4ff-DyLnQpc-02EbG328ilQChGqg-4OkQuDzfirfuCnRP_Sv9DWwkI3iG_DALmWPVRr-SxO"}
+            src={
+              peopleData?.avatarPath != null
+                ? peopleData?.avatarPath
+                : "https://lh3.googleusercontent.com/ED85u6aQ2oseaV3Zi4ff-DyLnQpc-02EbG328ilQChGqg-4OkQuDzfirfuCnRP_Sv9DWwkI3iG_DALmWPVRr-SxO"
+            }
             alt="avatar"
             className="avatarImg me-5"
           />
@@ -190,22 +204,35 @@ export default function PeopleDetail(props) {
           </Form.Item>
         </Form>
         <div className={isCus ? "historyCusList" : "historyDriverList"}>
-          {historyList?.map((item, index) => (
+          {bookingData?.map((item, index) => (
             <div className="row mb-5" key={index}>
               <div className="col-10 d-flex">
-                <img
-                  src="/images/motorcycle.png"
-                  className="iconCar me-4"
-                  alt="icon"
-                />
+                {item?.carType === "1" ? (
+                  <img
+                    src="/images/motorcycle.png"
+                    className="iconCar me-4"
+                    alt="icon"
+                  />
+                ) : (
+                  <img
+                    src="/images/carIcon.png"
+                    className="iconCar me-4"
+                    alt="icon"
+                  />
+                )}
                 <div>
                   <div className="fs-14 textGrey2">
-                    Trip from {item.pickup} to {item.destination}
+                    Trip from {item.pickupLocation.split(",")[0]} to{" "}
+                    {item.destination}
                   </div>
-                  <div className="fs-11 textGrey1 mb-3">{item.arrivedTime}</div>
+                  <div className="fs-11 textGrey1 mb-3">
+                    {item?.status === 3
+                      ? "Completed at " + formatTime(item.Trip_End_Time)
+                      : "Canceled"}
+                  </div>
                   <Link
                     className="textBlue5 fs-14 fw-bolder text-decoration-none"
-                    to="/booking/tracking"
+                    to={`/booking/tracking/${item.id}`}
                   >
                     See Detail
                     <FontAwesomeIcon
@@ -215,7 +242,6 @@ export default function PeopleDetail(props) {
                   </Link>
                 </div>
               </div>
-              <div className="fs-14 textGrey2 me-4 col">{item.total}</div>
             </div>
           ))}
         </div>

@@ -151,7 +151,8 @@ export default function Add() {
           adminId: adminId,
           note: form.getFieldValue("Note"),
           service: distanceInfo.CarService,
-          carType: distanceInfo.CarType
+          carType: distanceInfo.CarType,
+          status: 1
         };
         const response = await submitBookingForm(inputData);
         if (response.status === 200) {
