@@ -17,6 +17,7 @@ import getById from "../../utils/getById";
 import formatPeopleId from "../../utils/formatPeopleID";
 import getShortLocationName from "../../utils/getShortLocationName";
 import formatTime from "../../utils/formatTime";
+import changeFareFormat from "../../utils/formatFare";
 
 export default function Tracking() {
   const { id } = useParams();
@@ -172,7 +173,7 @@ export default function Tracking() {
                   <div>Total (Vnd)</div>
                   <div>
                     <div className="fw-bolder textOrange1">
-                      {bookingForm?.Bill?.sum}
+                      {changeFareFormat(bookingForm?.Bill?.sum)}
                     </div>
                     <div className="text-black-50">
                       {bookingForm?.Trip_End_Time === null ? "Unpaid" : "Paid"}

@@ -87,4 +87,27 @@ const formatCurrentDate = () => {
   return formattedDateTime;
 };
 
-export { changeFormatDate, changeFormatDate1, formatCurrentDate };
+const formatDateBooking = (inputDateString) => {
+  const inputDate = new Date(inputDateString);
+
+  const options = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+  };
+
+  const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
+    inputDate
+  );
+
+  return formattedDate;
+};
+
+export {
+  changeFormatDate,
+  changeFormatDate1,
+  formatCurrentDate,
+  formatDateBooking,
+};

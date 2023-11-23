@@ -251,7 +251,7 @@ const Home = () => {
                 <h5 className="fw-bolder fs-16">Total</h5>
               </div>
               <Divider />
-              <h5 className="textBlue2 fw-bolder fs-16">124</h5>
+              <h5 className="textBlue2 fw-bolder fs-16">19</h5>
               <small className="textGrey1">Booking trips</small>
             </div>
 
@@ -268,7 +268,7 @@ const Home = () => {
                 <h5 className="fw-bolder fs-16">Complete</h5>
               </div>
               <Divider />
-              <h5 className="textBlue2 fw-bolder fs-16">115</h5>
+              <h5 className="textBlue2 fw-bolder fs-16">11</h5>
               <small className="textGrey1">Booking trips</small>
             </div>
 

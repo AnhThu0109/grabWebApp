@@ -146,7 +146,7 @@ export default function Add() {
           bookingWay: 0,
           bookingTime: distanceInfo.PickupTime,
           distance: distanceInfo.distance.distance.text,
-          sum: changeFareFormat(distanceInfo?.fare[getFare(distanceInfo)]),
+          sum: distanceInfo?.fare[getFare(distanceInfo)],
           customerId: cusId === 0 ? responseCusData?.customer?.id : cusId,
           adminId: adminId,
           note: form.getFieldValue("Note"),
