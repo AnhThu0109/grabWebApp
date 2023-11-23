@@ -4,6 +4,7 @@ import distanceReducer from "./distanceSlide";
 import avatarReducer from "./avatarSlide";
 import carTypeReducer from "./carTypeSlide";
 import carServiceReducer from "./carServiceSlide";
+import bookingFormReducer from "./bookingFormSlide";
 
 export default configureStore({
 	reducer: {
@@ -12,5 +13,6 @@ export default configureStore({
         avatar: avatarReducer,
         carType: carTypeReducer,
         carService: carServiceReducer,
+        bookingForm: bookingFormReducer,
     },
 });

@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const getUserById = async (userId, url, token) => {
+const getById = async (id, url, token) => {
     try {
-      const response = await axios.get(`${url}/${userId}`, {
+      const response = await axios.get(`${url}/${id}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: token,
@@ -15,4 +15,4 @@ const getUserById = async (userId, url, token) => {
     }
   };
 
-export default getUserById;
+export default getById;

@@ -23,7 +23,8 @@ import { Skeleton } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { setAvatarChosenPath, setAvatarPath } from "../../redux/avatarSlide";
 import { CheckCircleFilled, CloseCircleFilled } from "@ant-design/icons";
-import getUserById from "../../utils/getUserById";
+import getUserById from "../../utils/getById";
+import formatPeopleId from "../../utils/formatPeopleID";
 
 const AvatarCarousel = ({ images }) => {
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -206,7 +207,7 @@ const MyAccount = () => {
               />
               <div>
                 <h4>{userData?.fullname}</h4>
-                <div>AD0127{userData?.id}</div>
+                <div>{formatPeopleId(userData?.id, "AD")}</div>
                 <button
                   className="changeAvatarBtn bg-white rounded-3 border-0 px-3 py-2 mt-2 textGreen3 fw-bolder"
                   onClick={showModal}

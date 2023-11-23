@@ -34,7 +34,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Badge } from "@mui/material";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import getUserById from "../../utils/getUserById";
+import getById from "../../utils/getById";
 import { ADMIN } from "../../utils/API";
 
 export default function Layout() {
@@ -101,7 +101,7 @@ export default function Layout() {
     //getUserInfo
     const fetchUserData = async () => {
       try {
-        const user = await getUserById(id, ADMIN, token);
+        const user = await getById(id, ADMIN, token);
         setUserData(user);
       } catch (error) {
         console.error("Error fetching user data:", error);

@@ -8,21 +8,12 @@ import History from "../pages/History";
 import Add from "../pages/AddNew";
 import Tracking from "../pages/Tracking";
 import PeopleDetail from "../pages/PeopleDetail";
-import NotFound from "../pages/NotFoundPage";
 
 const publicRoutes = [
-  // {
-  //     element: <Welcome/>,
-  //     path: "/welcome"
-  // },
   {
     element: <Login />,
     path: "/login",
   },
-  // {
-  //     element: <NotFound/>,
-  //     path: "/*"
-  // }
 ];
 
 const welcomeRoute = {
@@ -57,7 +48,7 @@ const userRoutes = [
   },
   {
     element: Tracking,
-    path: "/booking/tracking",
+    path: "/booking/tracking/:id",
   },
   {
     element: History,

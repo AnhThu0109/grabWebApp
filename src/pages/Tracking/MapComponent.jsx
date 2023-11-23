@@ -12,8 +12,8 @@ const MapComponent = ({ driverLocation, pickup, destination }) => {
   const [directions, setDirections] = useState(null);
 
   let center = {
-    lat: driverLocation.lat, // Default latitude for the map center
-    lng: driverLocation.lng, // Default longitude for the map center
+    lat: pickup.lat, // Default latitude for the map center
+    lng: pickup.lng, // Default longitude for the map center
   };
 
   const driverMarkerIcon = {

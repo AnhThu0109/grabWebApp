@@ -108,25 +108,24 @@ export default function FormGetInfo() {
             }
           );
         });
-        debugger;
         console.log(predictions);
         //Filter predictions to include only items with different description
         const filteredPredictions = predictions.filter(
           (livePrediction) =>
             !predictLocationsDB.some(
               (databasePrediction) =>
-                livePrediction.description === databasePrediction.locationName
+                livePrediction.description === databasePrediction
             )
         );
         console.log("filter", filteredPredictions);
 
         // Just take 4 results
-        if (predictions.length > 4) {
-          predictions.splice(4);
+        if (filteredPredictions.length > 3) {
+          filteredPredictions.splice(3);
         }
         inputName === "PickupLocation"
-          ? setPredictionsLive(predictions)
-          : setPredictionsDesLive(predictions);
+          ? setPredictionsLive(filteredPredictions)
+          : setPredictionsDesLive(filteredPredictions);
       }
     } else {
       const locations = await searchLocationInDatabase(inputValue);
@@ -248,7 +247,6 @@ export default function FormGetInfo() {
     longitude,
     inputName
   ) => {
-    debugger;
     const input = {
       locationName: locationName,
       latitude: latitude,
@@ -342,7 +340,7 @@ export default function FormGetInfo() {
         allFieldValues = {
           ...allFieldValues,
           PickupTime: allFieldValues?.PickupTime
-            ? allFieldValues?.PickupTime?.toISOString()
+            ? allFieldValues?.PickupTime.format('YYYY-MM-DD HH:mm:ss.SSSZ')
             : null,
         };
         const response = await getDistance(pickUp, destination);
@@ -599,10 +597,6 @@ export default function FormGetInfo() {
                 <Option
                   key={item.id}
                   value={item.id}
-                  disabled={
-                    form.getFieldValue("NoOfGuest") > 1 &&
-                    item.car_type.toLowerCase() === "motorcycle"
-                  }
                 >
                   {item.car_type}
                 </Option>
