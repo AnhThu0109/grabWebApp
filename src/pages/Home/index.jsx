@@ -13,11 +13,17 @@ import { Skeleton } from "@mui/material";
 import { Bar } from "react-chartjs-2";
 import Chart from "chart.js/auto";
 import setRootBackground from "../../utils/setRootBackground";
+import getAll from "../../utils/getAll";
+import { BOOKING_FORM } from "../../utils/API";
 
 const Home = () => {
   const [isAdmin, setAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [dataChart, setDataChart] = useState();
+  const [allBooking, setAllBooking] = useState();
+  const [completeBooking, setCompleteBooking] = useState();
+  const [ongoingBooking, setOngoingBooking] = useState();
+  const token = localStorage.getItem("token");
   const isAdminLogin = () => {
     localStorage.getItem(isAdmin) === "true" ? setAdmin(true) : setAdmin(false);
   };
@@ -136,7 +142,7 @@ const Home = () => {
       labels: months,
       datasets: [
         {
-          label: "Completed",
+          label: "Complete",
           backgroundColor: "#00D6BB",
           borderRadius: 10,
           borderSkipped: false,
@@ -170,6 +176,20 @@ const Home = () => {
     },
   };
 
+  const getAllBookings = async() => {
+    const data = await getAll(BOOKING_FORM, token);
+    setAllBooking(data);
+    const complete = data?.rows?.filter(item => item.status === 4);
+    setCompleteBooking(complete);
+    const ongoing = data?.rows?.filter(item => item.status === 3);
+    setOngoingBooking(ongoing);
+  }
+
+  const initData = async() => {
+    await getAllBookings();
+    await fetchWeather();
+  }
+
   useEffect(() => {
     // Set root background
     setRootBackground("--bg-color1", "rgb(248,248,255)");
@@ -177,8 +197,8 @@ const Home = () => {
     // Check admin login status
     isAdminLogin();
 
-    // Fetch weather data
-    fetchWeather();
+    //Init data
+    initData()
 
     // Initialize the chart
     initializeChart();
@@ -251,7 +271,7 @@ const Home = () => {
                 <h5 className="fw-bolder fs-16">Total</h5>
               </div>
               <Divider />
-              <h5 className="textBlue2 fw-bolder fs-16">19</h5>
+              <h5 className="textBlue2 fw-bolder fs-16">{allBooking?.count}</h5>
               <small className="textGrey1">Booking trips</small>
             </div>
 
@@ -268,7 +288,7 @@ const Home = () => {
                 <h5 className="fw-bolder fs-16">Complete</h5>
               </div>
               <Divider />
-              <h5 className="textBlue2 fw-bolder fs-16">11</h5>
+              <h5 className="textBlue2 fw-bolder fs-16">{completeBooking?.length}</h5>
               <small className="textGrey1">Booking trips</small>
             </div>
 
@@ -285,7 +305,7 @@ const Home = () => {
                 <h5 className="fw-bolder fs-16">Ongoing</h5>
               </div>
               <Divider />
-              <h5 className="textBlue2 fw-bolder fs-16">2</h5>
+              <h5 className="textBlue2 fw-bolder fs-16">{ongoingBooking?.length}</h5>
               <small className="textGrey1">Booking trips</small>
             </div>
 

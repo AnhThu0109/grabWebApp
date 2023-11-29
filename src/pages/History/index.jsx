@@ -205,7 +205,7 @@ function History() {
           value: "Canceled",
         },
       ],
-      onFilter: (value, record) => (value === "Complete" && record.status === 3) || (value === "Canceled" && record.status === 4),
+      onFilter: (value, record) => (value === "Complete" && record?.BookingStatusId?.status_description === "Complete") || (value === "Canceled" && record?.BookingStatusId?.status_description === "Canceled"),
       render: (_, item) => (
         <div className="d-flex justify-content-between">
           <Tag
@@ -253,6 +253,7 @@ function History() {
       ...item,
       key: index + 1,
     }));
+    console.log(filterData);
     setBookingData(filterData);
     setIsLoading(false);
   };

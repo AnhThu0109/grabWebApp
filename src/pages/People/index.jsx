@@ -22,7 +22,6 @@ const People = () => {
         Authorization: token,
       },
     })
-    console.log(response);
     return response.data;
   }
 
@@ -33,7 +32,6 @@ const People = () => {
         Authorization: token,
       },
     })
-    console.log(response);
     return response.data;
   }
 
@@ -50,10 +48,10 @@ const People = () => {
     const drivers = await findAllDrivers();
     if (drivers.length > 0) {
       let peopleList = [...drivers];
+      peopleList.sort((a, b) => a.id - b.id);
       peopleList = peopleList?.map((item, index) => {
         return { ...item, key: index + 1, peopleID: formatPeopleId(item.id, "DR")};
       });
-      console.log(peopleList);
       setDriversData(peopleList);
       setIsLoading(false);
     }

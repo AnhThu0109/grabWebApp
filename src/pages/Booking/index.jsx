@@ -253,9 +253,9 @@ function Booking() {
         },
       ],
       onFilter: (value, record) =>
-        (value === "Running" && record.status === 3) ||
-        (value === "Progress" && record.status === 1) ||
-        (value === "No drivers accepted" && record.status === 2),
+        (value === "Running" && record?.BookingStatusId?.status_description === "Running") ||
+        (value === "Progress" && record?.BookingStatusId?.status_description === "On Progress") ||
+        (value === "No drivers accepted" && record?.BookingStatusId?.status_description === "No drivers accepted"),
       render: (_, item) => (
         <div className="d-flex justify-content-between">
           <Tag

@@ -48,9 +48,10 @@ export default function PeopleDetail(props) {
         phone: driver?.phoneNo,
       });
       bookings = await getAll(`${BOOKING_FORM}/driver/${peopleID}`, token);
+      console.log(bookings);
     }
     const history = bookings.filter(
-      (item) => item.status === 3 || item.status === 4
+      (item) => item.BookingStatusId.status_description === "Complete" || item.BookingStatusId.status_description === "Canceled"
     );
     setBookingData(history);
   };
@@ -190,13 +191,11 @@ export default function PeopleDetail(props) {
                 )}
                 <div>
                   <div className="fs-14 textGrey2">
-                    Trip from {item.pickupLocation.split(",")[0]} to{" "}
-                    {item.destination}
+                    Trip from {item.pickupLocation.locationName.split(",")[0]} to{" "}
+                    {item.destination.locationName}
                   </div>
-                  <div className="fs-11 textGrey1 mb-3">
-                    {item?.status === 3
-                      ? "Completed at " + formatTime(item.Trip_End_Time)
-                      : "Canceled"}
+                  <div className="fs-11 textGrey1 mb-3"> {item?.BookingStatusId?.status_description}
+                    {item?.BookingStatusId?.status_description === "Complete" && " at " + formatTime(item.Trip_End_Time)}
                   </div>
                   <Link
                     className="textBlue5 fs-14 fw-bolder text-decoration-none"
