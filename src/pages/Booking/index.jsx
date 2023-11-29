@@ -366,7 +366,7 @@ function Booking() {
   useEffect(() => {
     // Initial data load
     initData("All");
-
+    
     // Set up an interval to renew data every 30 seconds
     const intervalId = setInterval(() => {
       initData("All");

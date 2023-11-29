@@ -28,10 +28,7 @@ export default function Tracking() {
   const [isLoading, setIsLoading] = useState(true);
   const [pickup, setPickup] = useState();
   const [destination, setDestination] = useState();
-  const [driverLocation, setDriverLocation] = useState({
-    lat: 10.780987,
-    lng: 106.69747,
-  });
+  const [driverLocation, setDriverLocation] = useState(null);
   const [driverId, setDriverId] = useState();
   const [bookingForm, setBookingForm] = useState(null);
 
@@ -54,10 +51,19 @@ export default function Tracking() {
         //Status running => Có driverId => lấy thông tin driver để lấy location
         const driver = await getById(bookingFormInfo.driverId, GET_DRIVER, token);
         setDriverId(driver.id);
-        setDriverLocation({
-          lat: driver.location.coordinates[1],
-          lng: driver.location.coordinates[0]
-        })
+        if(driverLocation !== null){
+          if(driver.location.coordinates[1] !== driverLocation.lat || driver.location.coordinates[0] !== driverLocation.lng){
+            setDriverLocation({
+              lat: driver.location.coordinates[1],
+              lng: driver.location.coordinates[0]
+            })
+          }         
+        } else{
+          setDriverLocation({
+            lat: driver.location.coordinates[1],
+            lng: driver.location.coordinates[0]
+          })
+        }      
       }
       setBookingForm(bookingFormInfo);
       setPickup({
@@ -74,28 +80,14 @@ export default function Tracking() {
     }
   };
 
-  const getDriverLocation = async() => {
-    const driver = await getById(driverId, GET_DRIVER, token);
-    if(driver.location.coordinates[1] !== driverLocation.lat || driver.location.coordinates[0] !== driverLocation.lng){
-      setDriverLocation({
-        lat: driver.location.coordinates[1],
-        lng: driver.location.coordinates[0]
-      })
-    }
-  }
-
   useEffect(() => {
     initInformation();
+    const intervalId = setInterval(() => {
+      initInformation();
+    }, 30000); // 30 seconds in milliseconds
 
-    // Set up an interval to renew data every 45 seconds
-    if(bookingForm !== null){
-      const intervalId = setInterval(() => {
-        getDriverLocation();
-      }, 45000); // 45 seconds in milliseconds
-  
-      // Clear the interval when the component unmounts
-      return () => clearInterval(intervalId);
-    }
+    // Clear the interval when the component unmounts
+    return () => clearInterval(intervalId);
   }, [driverLocation]);
 
   return (
