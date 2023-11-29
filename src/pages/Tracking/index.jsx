@@ -9,7 +9,7 @@ import {
 import "./style.css";
 import "./../style.css";
 import { useNavigate, useParams } from "react-router-dom";
-import MapComponent from "./MapComponent";
+import MapComponent from "./MapComponent1";
 import { BOOKING_FORM, GET_DRIVER } from "../../utils/API";
 import { useEffect, useState } from "react";
 import getById from "../../utils/getById";
@@ -29,7 +29,6 @@ export default function Tracking() {
   const [pickup, setPickup] = useState();
   const [destination, setDestination] = useState();
   const [driverLocation, setDriverLocation] = useState(null);
-  const [driverId, setDriverId] = useState();
   const [bookingForm, setBookingForm] = useState(null);
 
   const icons = Array.from({ length: 9 }, (_, index) => (
@@ -50,7 +49,6 @@ export default function Tracking() {
       } else {
         //Status running => Có driverId => lấy thông tin driver để lấy location
         const driver = await getById(bookingFormInfo.driverId, GET_DRIVER, token);
-        setDriverId(driver.id);
         if(driverLocation !== null){
           if(driver.location.coordinates[1] !== driverLocation.lat || driver.location.coordinates[0] !== driverLocation.lng){
             setDriverLocation({

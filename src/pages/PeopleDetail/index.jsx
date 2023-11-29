@@ -148,7 +148,7 @@ export default function PeopleDetail(props) {
           </Form.Item>
         </Form>
         <div className={isCus ? "historyCusList" : "historyDriverList"}>
-          {bookingData?.map((item, index) => (
+          {bookingData?.length > 0 ? (bookingData?.map((item, index) => (
             <div className="row mb-5" key={index}>
               <div className="col-10 d-flex">
                 {item?.carType === "1" ? (
@@ -185,7 +185,7 @@ export default function PeopleDetail(props) {
                 </div>
               </div>
             </div>
-          ))}
+          ))) : <span className="fs-14 textGrey2">There is no data.</span>}
         </div>
       </div>
     </div>

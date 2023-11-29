@@ -50,14 +50,9 @@ const MapComponent = ({ driverLocation, pickup, destination, carType }) => {
   return (
     <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={12}>
       {directions && <DirectionsRenderer directions={directions} />}
-      {/* <Marker position={pickup} label="PickUpLocation" />
-      <Marker position={destination} label="Destination" /> */}
       {
         driverLocation !== null && <MarkerF position={driverLocation} icon={carType === "1"? motocycleMarkerIcon : taxiMarkerIcon}/>
       }     
-      {/* {locations.map((location, index) => (
-        <Marker key={index} position={location} />
-      ))} */}
     </GoogleMap>
   );
 };
