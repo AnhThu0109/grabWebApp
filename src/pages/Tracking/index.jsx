@@ -10,8 +10,7 @@ import "./style.css";
 import "./../style.css";
 import { useNavigate, useParams } from "react-router-dom";
 import MapComponent from "./MapComponent";
-import getLocationByName from "../../utils/getLocation";
-import { BOOKING_FORM, SEARCH_LOCATION_NAME } from "../../utils/API";
+import { BOOKING_FORM } from "../../utils/API";
 import { useEffect, useState } from "react";
 import getById from "../../utils/getById";
 import formatPeopleId from "../../utils/formatPeopleID";
@@ -48,27 +47,17 @@ export default function Tracking() {
     const bookingFormInfo = await getById(id, BOOKING_FORM, token);
     console.log(bookingFormInfo);
     if (bookingFormInfo !== "") {
-      if (bookingFormInfo.status !== 2){
+      if (bookingFormInfo.status !== 3){
         setDriverLocation(null);
       }
       setBookingForm(bookingFormInfo);
-      const pickLocation = await getLocationByName(
-        SEARCH_LOCATION_NAME,
-        bookingFormInfo.pickupLocation,
-        token
-      );
       setPickup({
-        lat: Number(pickLocation.latitude),
-        lng: Number(pickLocation.longitude),
+        lat: Number(bookingFormInfo.pickupLocation.latitude),
+        lng: Number(bookingFormInfo.pickupLocation.longitude),
       });
-      const destLocation = await getLocationByName(
-        SEARCH_LOCATION_NAME,
-        bookingFormInfo.destination,
-        token
-      );
       setDestination({
-        lat: Number(destLocation.latitude),
-        lng: Number(destLocation.longitude),
+        lat: Number(bookingFormInfo.destination.latitude),
+        lng: Number(bookingFormInfo.destination.longitude),
       });
       setIsLoading(false);
     } else {
@@ -118,24 +107,24 @@ export default function Tracking() {
                   </div>
                   <div className="py-3">
                     <div>
-                      {getShortLocationName(bookingForm?.pickupLocation)}
+                      {getShortLocationName(bookingForm?.pickupLocation?.locationName)}
                       <div className="text-black-50 fs-11">
-                        {bookingForm?.status === 3 || bookingForm?.status === 2
+                        {bookingForm?.status === 3 || bookingForm?.status === 4
                           ? formatTime(bookingForm?.Trip_Start_Time)
-                          : bookingForm?.status === 4
+                          : bookingForm?.status === 5 || bookingForm?.status === 2
                           ? "None"
                           : "On Progress"}
                       </div>
                     </div>
                     {spaces}
                     <div>
-                      {getShortLocationName(bookingForm?.destination)}
+                      {getShortLocationName(bookingForm?.destination?.locationName)}
                       <div className="text-black-50 fs-11">
-                        {bookingForm?.status === 3
+                        {bookingForm?.status === 4
                           ? formatTime(bookingForm?.Trip_End_Time)
-                          : bookingForm?.status === 2
+                          : bookingForm?.status === 3
                           ? "Ongoing"
-                          : bookingForm?.status === 4
+                          : bookingForm?.status === 5 || bookingForm?.status === 2
                           ? "None"
                           : "On Progress"}
                       </div>
@@ -184,9 +173,9 @@ export default function Tracking() {
                       {changeFareFormat(bookingForm?.Bill?.sum)}
                     </div>
                     <div className="text-black-50">
-                      {bookingForm?.status === 3
+                      {bookingForm?.status === 4
                         ? "Paid"
-                        : bookingForm?.status === 4
+                        : bookingForm?.status === 5
                         ? "Canceled"
                         : "Unpaid"}
                     </div>

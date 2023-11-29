@@ -1,5 +1,4 @@
-import { Avatar, Button, DatePicker, Form, Input, Select } from "antd";
-import { Option } from "antd/es/mentions";
+import { Avatar, Button, DatePicker, Form, Input } from "antd";
 import "./style.css";
 import { SearchOutlined } from "@ant-design/icons";
 import { Link, useParams } from "react-router-dom";
@@ -19,37 +18,6 @@ export default function PeopleDetail(props) {
   const [bookingData, setBookingData] = useState();
   const token = localStorage.getItem("token");
   const peopleID = localStorage.getItem("peopleChosenId");
-
-  const historyList = [
-    {
-      id: "TR0123",
-      pickup: "Centec Tower",
-      destination: "Gigamall Thu Duc",
-      arrivedTime: "14:00, Sep 15th 2023",
-      total: "54.000 vnd",
-    },
-    {
-      id: "TR0124",
-      pickup: "123 Nguyen Trai Street, District 1, Ho Chi Minh city",
-      destination: "32 Nguyen Thi Minh Khai, District 3, Ho Chi Minh city",
-      arrivedTime: "17:02, Sep 15th 2023",
-      total: "63.500 vnd",
-    },
-    {
-      id: "TR0125",
-      pickup: "Diamond Plaza, Ho Chi Minh city",
-      destination: "Gigamall Thu Duc",
-      arrivedTime: "09:20, Sep 17th 2023",
-      total: "72.000 vnd",
-    },
-    {
-      id: "TR0126",
-      pickup: "Etown 2",
-      destination: "Gigamall Thu Duc",
-      arrivedTime: "16:33, Sep 18th 2023",
-      total: "135.000 vnd",
-    },
-  ];
 
   const findPeopleByID = async (peopleId, URL) => {
     const response = await axios.get(`${URL}/${peopleId}`, {

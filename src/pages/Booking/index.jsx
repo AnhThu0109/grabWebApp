@@ -26,6 +26,7 @@ import { BOOKING_FORM } from "../../utils/API";
 import { Skeleton } from "@mui/material";
 import { formatDateBooking } from "../../utils/formatDate";
 import formatPeopleId from "../../utils/formatPeopleID";
+import axios from "axios";
 
 function Booking() {
   const [bookingId, setbookingId] = useState();
@@ -33,7 +34,6 @@ function Booking() {
   const [isLoading, setIsLoading] = useState(true);
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
-  const navigate = useNavigate();
 
   //Get id of chosen booking for showing modal see detail
   const bookingChosen = (id) => {
@@ -146,53 +146,36 @@ function Booking() {
       ),
   });
 
-  let bookings = [
-    {
-      id: "B00110",
-      createdAt: "Mar 20, 2023, 10:37",
-      status: "Running",
-    },
-    {
-      id: "B00109",
-      createdAt: "Mar 20, 2023, 10:20",
-      status: "Running",
-    },
-    {
-      id: "B00108",
-      createdAt: "Mar 20, 2023, 09:15",
-      status: "Running",
-    },
-    {
-      id: "B00107",
-      createdAt: "Mar 19, 2023, 17:41",
-      status: "Running",
-    },
-    {
-      id: "B0016",
-      createdAt: "Mar 19, 2023, 10:37",
-      status: "Running",
-    },
-    {
-      id: "B00105",
-      createdAt: "Mar 18, 2023, 20:20",
-      status: "Running",
-    },
-    {
-      id: "B00104",
-      createdAt: "Mar 17, 2023, 09:15",
-      status: "Running",
-    },
-    {
-      id: "B00103",
-      createdAt: "Mar 17, 2023, 08:41",
-      status: "Running",
-    },
-  ];
-
   //Function onChange for table
   const onChangeTable = (pagination, filters, sorter, extra) => {
     console.log("params", pagination, filters, sorter, extra);
   };
+
+  const resendBookingForm = async () => {
+    try {
+      const response = await axios.post(`${BOOKING_FORM}/rebook/${bookingId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      });
+      return response;
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      throw error;
+    }
+  };
+
+  const handleReSendBookingForm = async() => {
+    try {
+      resendBookingForm();
+      message.success("Booking form re-submit successfully!");  
+    } catch (error) {
+      message.error("Booking form re-submit fail!");
+      console.error("Error fetching distance data:", error);
+      throw error;
+    }
+  }
 
   //Items in dropdown button of each booking row
   const itemNormalbooking = (
@@ -204,6 +187,20 @@ function Booking() {
           to={`/booking/tracking/${bookingId}`}
         >
           See Detail
+        </Link>
+      </Menu.Item>
+    </Menu>
+  );
+
+  const itemFailbooking = (
+    <Menu>
+      <Menu.Item key="1">
+        <Link
+          rel="noopener noreferrer"
+          className="nav-link"
+          onClick={handleReSendBookingForm}
+        >
+          Resend
         </Link>
       </Menu.Item>
     </Menu>
@@ -250,26 +247,56 @@ function Booking() {
           text: "Running",
           value: "Running",
         },
+        {
+          text: "No drivers accepted",
+          value: "No drivers accepted",
+        },
       ],
-      onFilter: (value, record) => (value === "Running" && record.status === 2) || (value === "Progress" && record.status === 1),
+      onFilter: (value, record) =>
+        (value === "Running" && record.status === 3) ||
+        (value === "Progress" && record.status === 1) ||
+        (value === "No drivers accepted" && record.status === 2),
       render: (_, item) => (
         <div className="d-flex justify-content-between">
           <Tag
             bordered={false}
-            color={item.status === 2 ? "green" : "cyan"}
+            color={
+              item.status === 3
+                ? "green"
+                : item.status === 1
+                ? "cyan"
+                : "orange"
+            }
           >
-            {item.status === 2? "Running" : "On Process"}
+            {item.status === 3
+              ? "Running"
+              : item.status === 1
+              ? "On Process"
+              : "No drivers accepted"}
           </Tag>
-          <Dropdown overlay={itemNormalbooking} trigger={["click"]}>
-            <Button
-              onClick={() => bookingChosen(item.id)}
-              className="border-0"
-            >
-              <Space>
-                <FontAwesomeIcon icon={faEllipsis} className="textGrey1" />
-              </Space>
-            </Button>
-          </Dropdown>
+          {item.status === 2 ? (
+            <Dropdown overlay={itemFailbooking} trigger={["click"]}>
+              <Button
+                onClick={() => bookingChosen(item.id)}
+                className="border-0"
+              >
+                <Space>
+                  <FontAwesomeIcon icon={faEllipsis} className="textGrey1" />
+                </Space>
+              </Button>
+            </Dropdown>
+          ) : (
+            <Dropdown overlay={itemNormalbooking} trigger={["click"]}>
+              <Button
+                onClick={() => bookingChosen(item.id)}
+                className="border-0"
+              >
+                <Space>
+                  <FontAwesomeIcon icon={faEllipsis} className="textGrey1" />
+                </Space>
+              </Button>
+            </Dropdown>
+          )}
         </div>
       ),
     },
@@ -279,23 +306,30 @@ function Booking() {
     let filterData;
     if (filterItem === "All") {
       const data = await getAll(BOOKING_FORM, token);
-      filterData = data.rows.filter(item => item.status === 1 || item.status === 2);
+      filterData = data.rows.filter(
+        (item) => item.status === 1 || item.status === 2 || item.status === 3
+      );
       filterData = filterData.map((item, index) => ({
         ...item,
         bookingId: formatPeopleId(item.id, "BK"),
-        key: index + 1,
         createdAt: formatDateBooking(item.createdAt),
       }));
     } else {
       const data = await getAll(`${BOOKING_FORM}/admin/${userId}`, token);
-      filterData = data.filter(item => item.status === 1 || item.status === 2);
+      filterData = data.filter(
+        (item) => item.status === 1 || item.status === 2 || item.status === 3
+      );
       filterData = filterData.map((item, index) => ({
         ...item,
         bookingId: formatPeopleId(item.id, "BK"),
-        key: index + 1,
         createdAt: formatDateBooking(item.createdAt),
       }));
     }
+    filterData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    filterData = filterData.map((item, index) => ({
+      ...item,
+      key: index + 1,
+    }));
     setBookingData(filterData);
     setIsLoading(false);
   };
@@ -330,14 +364,23 @@ function Booking() {
   };
 
   useEffect(() => {
+    // Initial data load
     initData("All");
-  }, []);
+
+    // Set up an interval to renew data every 30 seconds
+    const intervalId = setInterval(() => {
+      initData("All");
+    }, 40000); // 40 seconds in milliseconds
+
+    // Clear the interval when the component unmounts
+    return () => clearInterval(intervalId);
+  }, [bookingData]);
 
   return (
     <>
       {isLoading === true ? (
         <div className="pt-3 px-4">
-          <Skeleton variant="rectangular" height={100} className="my-3"/>
+          <Skeleton variant="rectangular" height={100} className="my-3" />
           <Skeleton variant="rectangular" height={420} />
         </div>
       ) : (

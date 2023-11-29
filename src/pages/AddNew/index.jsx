@@ -1,7 +1,6 @@
-import { Button, Form, Input, message } from "antd";
+import { Button, Form, Input, Spin, message } from "antd";
 import "./style.css";
 import "./../style.css";
-import { useNavigate } from "react-router-dom";
 import FormGetInfo from "../subParts/Components/FormComponent";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
@@ -10,6 +9,7 @@ import {
   BOOKING_FORM,
   GET_CUSTOMER,
   SEARCH_CUSTOMER_PHONE,
+  SEARCH_LOCATION_NAME,
 } from "../../utils/API";
 import axios from "axios";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
@@ -17,11 +17,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CheckCircleFilled, CloseCircleFilled } from "@ant-design/icons";
 import { setDistanceData } from "../../redux/distanceSlide";
 import createCustomer from "../../utils/addNewCustomer";
-import { formatCurrentDate } from "../../utils/formatDate";
-import { setBookingFormData } from "../../redux/bookingFormSlide";
+import getLocationByName from "../../utils/getLocation";
 
 export default function Add() {
-  const navigate = useNavigate();
   const [phoneNo, setPhoneNo] = useState();
   const [cusName, setCusName] = useState();
   const [cusId, setCusId] = useState(0);
@@ -113,7 +111,7 @@ export default function Add() {
 
   const submitBookingForm = async (input) => {
     try {
-      const response = await axios.post(`${BOOKING_FORM}/create`, input, {
+      const response = await axios.post(`${BOOKING_FORM}/bookRide`, input, {
         headers: {
           "Content-Type": "application/json",
           Authorization: token,
@@ -140,10 +138,20 @@ export default function Add() {
           responseCusData = await createCustomer(GET_CUSTOMER, cusData);
           console.log(responseCusData);
         }
+        const pickLocation = await getLocationByName(
+          SEARCH_LOCATION_NAME,
+          distanceInfo.PickupLocation,
+          token
+        );
+        const destination = await getLocationByName(
+          SEARCH_LOCATION_NAME,
+          distanceInfo.Destination,
+          token
+        );
         const inputData = {
-          pickupLocation: distanceInfo.PickupLocation,
-          destination: distanceInfo.Destination,
-          bookingWay: 0,
+          pickupLocationId: pickLocation.id,
+          destinationId: destination.id,
+          bookingWay: 1, //using web admin
           bookingTime: distanceInfo.PickupTime,
           distance: distanceInfo.distance.distance.text,
           sum: distanceInfo?.fare[getFare(distanceInfo)],
@@ -152,18 +160,21 @@ export default function Add() {
           note: form.getFieldValue("Note"),
           service: distanceInfo.CarService,
           carType: distanceInfo.CarType,
-          status: 1
+          paymentStatus: 1,
         };
-        const response = await submitBookingForm(inputData);
-        if (response.status === 200) {
-          dispatch(setBookingFormData(response.data));
-          message.success("Booking form successfully!");
-          navigate(`/booking/tracking/${response.data.booking.id}`);
-        } else {
-          message.error("Booking form fail!");
-        }
+        submitBookingForm({data: inputData});
+        
+        // console.log("response", response);
+        // if (response.status === 200) {
+        //   dispatch(setBookingFormData(response.data));
+        message.success("Booking form submit successfully!");  
+        //   navigate(`/booking/tracking/${response.data.booking.id}`);      
+        // } else {
+        //   message.error("Booking fail!");
+        // }
       }
     } catch (error) {
+      message.error("Booking form submit fail!");
       console.error("Error fetching distance data:", error);
       throw error;
     }
@@ -176,6 +187,7 @@ export default function Add() {
 
   return (
     <div className="contentAddNew">
+      <Spin tip="Loading..." size="large">
       <div className="leftPart mx-3 pt-3">
         <h5 className="textBlue2 text-center fw-bolder">Add New Booking</h5>
         {/* Get info form */}
@@ -335,6 +347,7 @@ export default function Add() {
           </div>
         </Form>
       </div>
+      </Spin>
     </div>
   );
 }

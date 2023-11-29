@@ -14,7 +14,6 @@ import {
   Table,
   Input,
   Tag,
-  message,
 } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
@@ -144,64 +143,6 @@ function History() {
       ),
   });
 
-  let bookings = [
-    {
-      id: "B00102",
-      createdAt: "Mar 16, 2023, 21:37",
-      status: "Complete",
-    },
-    {
-      id: "B00101",
-      createdAt: "Mar 16, 2023, 20:20",
-      status: "Complete",
-    },
-    {
-      id: "B00009",
-      createdAt: "Mar 16, 2023, 15:02",
-      status: "Complete",
-    },
-    {
-      id: "B00008",
-      createdAt: "Mar 16, 2023, 12:41",
-      status: "Canceled",
-    },
-    {
-      id: "B00007",
-      createdAt: "Mar 15, 2023, 10:37",
-      status: "Complete",
-    },
-    {
-      id: "B00006",
-      createdAt: "Mar 15, 2023, 08:20",
-      status: "Canceled",
-    },
-    {
-      id: "B00005",
-      createdAt: "Mar 14, 2023, 09:15",
-      status: "Complete",
-    },
-    {
-      id: "B00004",
-      createdAt: "Mar 12, 2023, 18:41",
-      status: "Canceled",
-    },
-    {
-      id: "B00003",
-      createdAt: "Mar 12, 2023, 08:22",
-      status: "Complete",
-    },
-    {
-      id: "B00002",
-      createdAt: "Mar 12, 2023, 07:41",
-      status: "Complete",
-    },
-    {
-      id: "B00001",
-      createdAt: "Mar 12, 2023, 07:01",
-      status: "Canceled",
-    },
-  ];
-
   //Function onChange for table
   const onChangeTable = (pagination, filters, sorter, extra) => {
     console.log("params", pagination, filters, sorter, extra);
@@ -269,9 +210,9 @@ function History() {
         <div className="d-flex justify-content-between">
           <Tag
             bordered={false}
-            color={item.status === 3 ? "processing" : "error"}
+            color={item.status === 4 ? "processing" : "error"}
           >
-            {item.status === 3? "Complete" : "Canceled"}
+            {item.status === 4? "Complete" : "Canceled"}
           </Tag>
           <Dropdown overlay={itemNormalbooking} trigger={["click"]}>
             <Button
@@ -292,23 +233,26 @@ function History() {
     let filterData;
     if (filterItem === "All") {
       const data = await getAll(BOOKING_FORM, token);
-      filterData = data.rows.filter(item => item.status === 3 || item.status === 4);
+      filterData = data.rows.filter(item => item.status === 4 || item.status === 5);
       filterData = filterData.map((item, index) => ({
         ...item,
         bookingId: formatPeopleId(item.id, "BK"),
-        key: index + 1,
         createdAt: formatDateBooking(item.createdAt),
       }));
     } else {
       const data = await getAll(`${BOOKING_FORM}/admin/${userId}`, token);
-      filterData = data.filter(item => item.status === 3 || item.status === 4);
+      filterData = data.filter(item => item.status === 4 || item.status === 5);
       filterData = filterData.map((item, index) => ({
         ...item,
         bookingId: formatPeopleId(item.id, "BK"),
-        key: index + 1,
         createdAt: formatDateBooking(item.createdAt),
       }));
     }
+    filterData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    filterData = filterData.map((item, index) => ({
+      ...item,
+      key: index + 1,
+    }));
     setBookingData(filterData);
     setIsLoading(false);
   };

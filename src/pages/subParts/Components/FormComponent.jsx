@@ -47,7 +47,6 @@ export default function FormGetInfo() {
     pickUp: false,
     des: false,
   });
-  const [carServices, setCarServices] = useState();
   const [hasFeedback, setHasFeedback] = useState({
     pick: null,
     des: null,
