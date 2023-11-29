@@ -18,6 +18,7 @@ import { CheckCircleFilled, CloseCircleFilled } from "@ant-design/icons";
 import { setDistanceData } from "../../redux/distanceSlide";
 import createCustomer from "../../utils/addNewCustomer";
 import getLocationByName from "../../utils/getLocation";
+import { useNavigate } from "react-router-dom";
 
 export default function Add() {
   const [phoneNo, setPhoneNo] = useState();
@@ -27,6 +28,7 @@ export default function Add() {
   const [form] = Form.useForm();
   const [hasFeedback, setHasFeedback] = useState(null);
   const adminId = localStorage.getItem("userId");
+  const navigate = useNavigate();
 
   let distanceInfo = useSelector((state) => state.distance);
   // Dispatching actions
@@ -168,7 +170,7 @@ export default function Add() {
         // if (response.status === 200) {
         //   dispatch(setBookingFormData(response.data));
         message.success("Booking form submit successfully!");  
-        //   navigate(`/booking/tracking/${response.data.booking.id}`);      
+        navigate("/booking");      
         // } else {
         //   message.error("Booking fail!");
         // }
@@ -187,7 +189,6 @@ export default function Add() {
 
   return (
     <div className="contentAddNew">
-      <Spin tip="Loading..." size="large">
       <div className="leftPart mx-3 pt-3">
         <h5 className="textBlue2 text-center fw-bolder">Add New Booking</h5>
         {/* Get info form */}
@@ -347,7 +348,6 @@ export default function Add() {
           </div>
         </Form>
       </div>
-      </Spin>
     </div>
   );
 }

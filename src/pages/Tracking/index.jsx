@@ -10,7 +10,7 @@ import "./style.css";
 import "./../style.css";
 import { useNavigate, useParams } from "react-router-dom";
 import MapComponent from "./MapComponent";
-import { BOOKING_FORM } from "../../utils/API";
+import { BOOKING_FORM, GET_DRIVER } from "../../utils/API";
 import { useEffect, useState } from "react";
 import getById from "../../utils/getById";
 import formatPeopleId from "../../utils/formatPeopleID";
@@ -32,7 +32,8 @@ export default function Tracking() {
     lat: 10.780987,
     lng: 106.69747,
   });
-  const [bookingForm, setBookingForm] = useState();
+  const [driverId, setDriverId] = useState();
+  const [bookingForm, setBookingForm] = useState(null);
 
   const icons = Array.from({ length: 9 }, (_, index) => (
     <FontAwesomeIcon
@@ -47,8 +48,16 @@ export default function Tracking() {
     const bookingFormInfo = await getById(id, BOOKING_FORM, token);
     console.log(bookingFormInfo);
     if (bookingFormInfo !== "") {
-      if (bookingFormInfo.status !== 3){
+      if (bookingFormInfo.BookingStatusId.status_description !== "Running"){
         setDriverLocation(null);
+      } else {
+        //Status running => Có driverId => lấy thông tin driver để lấy location
+        const driver = await getById(bookingFormInfo.driverId, GET_DRIVER, token);
+        setDriverId(driver.id);
+        setDriverLocation({
+          lat: driver.location.coordinates[1],
+          lng: driver.location.coordinates[0]
+        })
       }
       setBookingForm(bookingFormInfo);
       setPickup({
@@ -65,9 +74,29 @@ export default function Tracking() {
     }
   };
 
+  const getDriverLocation = async() => {
+    const driver = await getById(driverId, GET_DRIVER, token);
+    if(driver.location.coordinates[1] !== driverLocation.lat || driver.location.coordinates[0] !== driverLocation.lng){
+      setDriverLocation({
+        lat: driver.location.coordinates[1],
+        lng: driver.location.coordinates[0]
+      })
+    }
+  }
+
   useEffect(() => {
     initInformation();
-  }, []);
+
+    // Set up an interval to renew data every 45 seconds
+    if(bookingForm !== null){
+      const intervalId = setInterval(() => {
+        getDriverLocation();
+      }, 45000); // 45 seconds in milliseconds
+  
+      // Clear the interval when the component unmounts
+      return () => clearInterval(intervalId);
+    }
+  }, [driverLocation]);
 
   return (
     <div className="p-4">

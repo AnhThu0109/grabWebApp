@@ -122,11 +122,6 @@ export default function PeopleDetail(props) {
                     ]}
                   >
                     <Input readOnly />
-                    {/* <Select disabled>
-                      <Option value="male">Male</Option>
-                      <Option value="female">Female</Option>
-                      <Option value="others">Other</Option>
-                    </Select> */}
                   </Form.Item>
                 </div>
                 <div className="col">
@@ -139,26 +134,6 @@ export default function PeopleDetail(props) {
                 </div>
               </div>
             )}
-
-            {/* <Form.Item shouldUpdate style={{ textAlign: "right" }}>
-          {() => (
-            <Button
-              htmlType="submit"
-              disabled={
-                form.getFieldValue("firstName") === undefined ||
-                form.getFieldValue("lastName") === undefined ||
-                form.getFieldValue("birth") === undefined ||
-                form.getFieldValue("gender") === undefined ||
-                form.getFieldValue("address") === undefined ||
-                !!form.getFieldsError().filter(({ errors }) => errors.length)
-                  .length || !hasFeedback
-              }
-              className="border-0 rounded-3 px-5 mt-2 w-70 text-black-60 fw-bolder updateAvatarBtn"
-            >
-              UPDATE
-            </Button>
-          )}
-        </Form.Item> */}
           </Form>
         </div>
       </div>
