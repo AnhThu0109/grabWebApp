@@ -9,9 +9,11 @@ import axios from "axios";
 import { BOOKING_FORM, GET_CUSTOMER, GET_DRIVER } from "../../utils/API";
 import getAll from "../../utils/getAll";
 import formatTime from "../../utils/formatTime";
+import { formatDateOnly } from "../../utils/formatDate";
 
 export default function PeopleDetail(props) {
   const [form] = Form.useForm();
+  const [searchForm] = Form.useForm();
   const { id } = useParams();
   const [peopleData, setPeopleData] = useState();
   const [isCus, setIsCus] = useState(false);
@@ -51,9 +53,31 @@ export default function PeopleDetail(props) {
       console.log(bookings);
     }
     const history = bookings.filter(
-      (item) => item.BookingStatusId.status_description === "Complete" || item.BookingStatusId.status_description === "Canceled"
+      (item) =>
+        item.BookingStatusId.status_description === "Complete" ||
+        item.BookingStatusId.status_description === "Canceled"
     );
     setBookingData(history);
+  };
+
+  const onFinishForm = async () => {
+    const values = searchForm.getFieldsValue();
+    console.log("values", values);
+    if(values.rangeTime !== null){
+      const startDate = values.rangeTime[0].startOf("day").toDate();
+    const endDate = values.rangeTime[1].endOf("day").toDate();
+    let history = bookingData.filter((item) =>
+      item.bookingTime === null
+        ? startDate <= new Date(item.createdAt) &&
+          endDate >= new Date(item.createdAt)
+        : startDate <= new Date(item.bookingTime) &&
+          endDate >= new Date(item.bookingTime)
+    );
+    setBookingData(history);
+    } else {
+      initData(id);
+    }
+    
   };
 
   useEffect(() => {
@@ -139,53 +163,78 @@ export default function PeopleDetail(props) {
       </div>
       <div className="bg-white rounded-3 peopleHistory mx-4 p-4">
         <h5 className="mb-3">Activity History</h5>
-        <Form className="d-flex">
-          <Form.Item>
+        <Form className="d-flex" form={searchForm} onFinish={onFinishForm}>
+          <Form.Item name="rangeTime">
             <DatePicker.RangePicker />
           </Form.Item>
           <Form.Item>
-            <Button shape="circle" icon={<SearchOutlined />} className="ms-3" />
+            <Button
+              shape="circle"
+              icon={<SearchOutlined />}
+              className="ms-3"
+              htmlType="submit"
+            />
           </Form.Item>
         </Form>
         <div className={isCus ? "historyCusList" : "historyDriverList"}>
-          {bookingData?.length > 0 ? (bookingData?.map((item, index) => (
-            <div className="row mb-5" key={index}>
-              <div className="col-10 d-flex">
-                {item?.carType === "1" ? (
-                  <img
-                    src="/images/motorcycle.png"
-                    className="iconCar me-4"
-                    alt="icon"
-                  />
-                ) : (
-                  <img
-                    src="/images/carIcon.png"
-                    className="iconCar me-4"
-                    alt="icon"
-                  />
-                )}
-                <div>
-                  <div className="fs-14 textGrey2">
-                    Trip from {item.pickupLocation.locationName.split(",")[0]} to{" "}
-                    {item.destination.locationName}
-                  </div>
-                  <div className="fs-11 textGrey1 mb-3"> {item?.BookingStatusId?.status_description}
-                    {item?.BookingStatusId?.status_description === "Complete" && " at " + formatTime(item.Trip_End_Time)}
-                  </div>
-                  <Link
-                    className="textBlue5 fs-14 fw-bolder text-decoration-none"
-                    to={`/booking/tracking/${item.id}`}
-                  >
-                    See Detail
-                    <FontAwesomeIcon
-                      icon={faArrowRight}
-                      className="ms-2 bgBlue1 p-2 rounded-circle iconArrow"
+          {bookingData?.length > 0 ? (
+            bookingData?.map((item, index) => (
+              <div className="row mb-5" key={index}>
+                <div className="col-10 d-flex">
+                  {item?.carType === "1" ? (
+                    <img
+                      src="/images/motorcycle.png"
+                      className="iconCar me-4"
+                      alt="icon"
                     />
-                  </Link>
+                  ) : (
+                    <img
+                      src="/images/carIcon.png"
+                      className="iconCar me-4"
+                      alt="icon"
+                    />
+                  )}
+                  <div>
+                    <div className="fs-14 textGrey2">
+                      Trip from {item.pickupLocation.locationName.split(",")[0]}{" "}
+                      to {item.destination.locationName}
+                    </div>
+                    <div className="fs-11 textGrey1 mb-3">
+                      {" "}
+                      {item?.BookingStatusId?.status_description}
+                      {item?.BookingStatusId?.status_description === "Complete"
+                        ? " at "
+                        : " on "}
+                      {item?.bookingTime === null
+                        ? formatDateOnly(item.createdAt)
+                        : formatDateOnly(item.bookingTime)}
+                      {item?.BookingStatusId?.status_description ===
+                        "Complete" && ", " + formatTime(item.Trip_End_Time)}
+                    </div>
+                    <Link
+                      className="textBlue5 fs-14 fw-bolder text-decoration-none"
+                      to={`/booking/tracking/${item.id}`}
+                    >
+                      See Detail
+                      <FontAwesomeIcon
+                        icon={faArrowRight}
+                        className="ms-2 bgBlue1 p-2 rounded-circle iconArrow"
+                      />
+                    </Link>
+                  </div>
                 </div>
               </div>
+            ))
+          ) : (
+            <div className="text-center pt-4">
+              <img
+                alt="noData"
+                src="/images/noData.png"
+                className="noDataImage pb-2"
+              />
+              <div className="fs-14 textGrey4">No data</div>
             </div>
-          ))) : <span className="fs-14 textGrey2">There is no data.</span>}
+          )}
         </div>
       </div>
     </div>

@@ -18,15 +18,26 @@
 
   .peopleHistory {
     box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+
     .historyCusList {
       height: 310px;
       overflow-y: auto;
       overflow-x: hidden;
     }
+
     .historyDriverList {
       height: 240px;
       overflow-y: auto;
       overflow-x: hidden;
     }
+  }
+
+  .noDataImage {
+    width: 100px;
+  }
+
+  .anticon-search svg {
+    display: inline-block;
+    margin-top: -4px;
   }
 }

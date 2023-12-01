@@ -1,4 +1,4 @@
-import { Button, Form, Input, Spin, message } from "antd";
+import { Button, Form, Input, message } from "antd";
 import "./style.css";
 import "./../style.css";
 import FormGetInfo from "../subParts/Components/FormComponent";

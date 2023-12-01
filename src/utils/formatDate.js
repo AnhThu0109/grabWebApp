@@ -102,7 +102,23 @@ const formatDateBooking = (inputDateString) => {
     inputDate
   );
 
-  return formattedDate;
+  return formattedDate; //Nov 20, 2023, 11:08 AM
+};
+
+const formatDateOnly = (inputDateString) => {
+  const inputDate = new Date(inputDateString);
+
+  const options = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  };
+
+  const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
+    inputDate
+  );
+
+  return formattedDate; //Nov 20, 2023
 };
 
 export {
@@ -110,4 +126,5 @@ export {
   changeFormatDate1,
   formatCurrentDate,
   formatDateBooking,
+  formatDateOnly
 };
