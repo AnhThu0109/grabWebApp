@@ -44,24 +44,31 @@ export default function Tracking() {
     const bookingFormInfo = await getById(id, BOOKING_FORM, token);
     console.log(bookingFormInfo);
     if (bookingFormInfo !== "") {
-      if (bookingFormInfo.BookingStatusId.status_description !== "Running"){
+      if (bookingFormInfo.BookingStatusId.status_description !== "Running") {
         setDriverLocation(null);
       } else {
         //Status running => Có driverId => lấy thông tin driver để lấy location
-        const driver = await getById(bookingFormInfo.driverId, GET_DRIVER, token);
-        if(driverLocation !== null){
-          if(driver.location.coordinates[1] !== driverLocation.lat || driver.location.coordinates[0] !== driverLocation.lng){
+        const driver = await getById(
+          bookingFormInfo.driverId,
+          GET_DRIVER,
+          token
+        );
+        if (driverLocation !== null) {
+          if (
+            driver.location.coordinates[1] !== driverLocation.lat ||
+            driver.location.coordinates[0] !== driverLocation.lng
+          ) {
             setDriverLocation({
               lat: driver.location.coordinates[1],
-              lng: driver.location.coordinates[0]
-            })
-          }         
-        } else{
+              lng: driver.location.coordinates[0],
+            });
+          }
+        } else {
           setDriverLocation({
             lat: driver.location.coordinates[1],
-            lng: driver.location.coordinates[0]
-          })
-        }      
+            lng: driver.location.coordinates[0],
+          });
+        }
       }
       setBookingForm(bookingFormInfo);
       setPickup({
@@ -126,24 +133,33 @@ export default function Tracking() {
                   </div>
                   <div className="py-3">
                     <div>
-                      {getShortLocationName(bookingForm?.pickupLocation?.locationName)}
+                      {getShortLocationName(
+                        bookingForm?.pickupLocation?.locationName
+                      )}
                       <div className="text-black-50 fs-11">
-                        {bookingForm?.status === 3 || bookingForm?.status === 4
+                        {(bookingForm?.status === 3 &&
+                          bookingForm?.Trip_Start_Time !== null) ||
+                        bookingForm?.status === 4
                           ? formatTime(bookingForm?.Trip_Start_Time)
-                          : bookingForm?.status === 5 || bookingForm?.status === 2
+                          : bookingForm?.status === 5 ||
+                            bookingForm?.status === 2
                           ? "None"
                           : "On Progress"}
                       </div>
                     </div>
                     {spaces}
                     <div>
-                      {getShortLocationName(bookingForm?.destination?.locationName)}
+                      {getShortLocationName(
+                        bookingForm?.destination?.locationName
+                      )}
                       <div className="text-black-50 fs-11">
                         {bookingForm?.status === 4
                           ? formatTime(bookingForm?.Trip_End_Time)
-                          : bookingForm?.status === 3
+                          : (bookingForm?.status === 3 &&
+                            bookingForm?.Trip_Start_Time !== null)
                           ? "Ongoing"
-                          : bookingForm?.status === 5 || bookingForm?.status === 2
+                          : bookingForm?.status === 5 ||
+                            bookingForm?.status === 2
                           ? "None"
                           : "On Progress"}
                       </div>

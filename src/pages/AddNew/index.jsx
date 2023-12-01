@@ -19,6 +19,7 @@ import { setDistanceData } from "../../redux/distanceSlide";
 import createCustomer from "../../utils/addNewCustomer";
 import getLocationByName from "../../utils/getLocation";
 import { useNavigate } from "react-router-dom";
+import formatPeopleId from "../../utils/formatPeopleID";
 
 export default function Add() {
   const [phoneNo, setPhoneNo] = useState();
@@ -122,7 +123,12 @@ export default function Add() {
       return response;
     } catch (error) {
       console.error("Error fetching user data:", error);
-      throw error;
+      if(error.response.status === 404){
+        message.error(error.response.data.message.split("!")[0] + ` cho đơn đặt xe ${formatPeopleId(error.data.data.id, "BK")}`);
+      }
+      else {
+        message.error(error.message);
+      }
     }
   };
 
@@ -160,23 +166,35 @@ export default function Add() {
           customerId: cusId === 0 ? responseCusData?.customer?.id : cusId,
           adminId: adminId,
           note: form.getFieldValue("Note"),
-          service: distanceInfo.CarService,
-          carType: distanceInfo.CarType,
+          service: distanceInfo.CarService.toString(),
+          carType: distanceInfo.CarType.toString(),
           paymentStatus: 1,
+          paymentType: 1
         };
-        submitBookingForm({data: inputData});
-        
-        // console.log("response", response);
-        // if (response.status === 200) {
-        //   dispatch(setBookingFormData(response.data));
-        message.success("Booking form submit successfully!");  
-        navigate("/booking");      
-        // } else {
-        //   message.error("Booking fail!");
-        // }
+
+      // Submit booking form without waiting
+      const submitBookingPromise = submitBookingForm({ data: inputData, bookingId: null });
+
+      message.success("Đơn đặt xe đã được gửi đi!");  
+      navigate("/"); 
+      // Now, if you need the response from submitBookingForm, you can use .then()
+      submitBookingPromise
+        .then((response) => {
+          console.log("Response from submitBookingForm:", response);
+          message.success(`Tài xế ${formatPeopleId(response.data.id, "DR")} chấp nhận đơn đặt xe ${formatPeopleId(response.data.bookingId, "BK")}!`);
+        })
+        .catch((error) => {
+          console.error("Error submitting booking form:", error);
+          message.error(error.message);
+        });
       }
     } catch (error) {
-      message.error("Booking form submit fail!");
+      if(error.response.status === 404){
+        message.error(error.response.data.message.split("!")[0] + ` cho đơn đặt xe ${formatPeopleId(error.data.data.id, "BK")}`);
+      }
+      else {
+        message.error(error.message);
+      }
       console.error("Error fetching distance data:", error);
       throw error;
     }
