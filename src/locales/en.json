@@ -1,0 +1,18 @@
+{
+  "languageKey": "en",
+  "homeMenu": "Home",
+  "accMenu": "My Account",
+  "logoutMenu": "Logout",
+  "peopleMenu": "People",
+  "historyMenu": "History",
+  "bookingMenu": "Booking",
+  "total": "Total",
+  "bookingTrips": "Booking trips",
+  "complete": "Complete",
+  "ongoing": "Ongoing",
+  "search": "Search",
+  "contact": "Contact",
+  "activity": "Activity in",
+  "cancel": "Canceled",
+  "welcomeback": "WELCOME BACK"
+}

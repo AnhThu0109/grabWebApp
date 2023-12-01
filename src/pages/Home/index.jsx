@@ -5,7 +5,6 @@ import { Divider } from "antd";
 import { fetchDataWeather, showIcon } from "../../utils/weather";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faChartColumn,
   faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
 import { changeFormatDate, changeFormatDate1 } from "../../utils/formatDate";
@@ -15,8 +14,9 @@ import Chart from "chart.js/auto";
 import setRootBackground from "../../utils/setRootBackground";
 import getAll from "../../utils/getAll";
 import { BOOKING_FORM } from "../../utils/API";
+import { Trans, useTranslation, withTranslation } from "react-i18next";
 
-const Home = () => {
+const Home = ({ t }) => {
   const [isAdmin, setAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [dataChart, setDataChart] = useState();
@@ -29,6 +29,7 @@ const Home = () => {
   };
   const chartInstance = useRef(null);
   const chartCanvas = useRef(null);
+  const { i18n } = useTranslation();
 
   const peopleList = [
     {
@@ -142,7 +143,7 @@ const Home = () => {
       labels: months,
       datasets: [
         {
-          label: "Complete",
+          label: t('complete'),
           backgroundColor: "#00D6BB",
           borderRadius: 10,
           borderSkipped: false,
@@ -150,7 +151,7 @@ const Home = () => {
           data: [45, 50, 48, 52, 60, 65, 58, 45, 80, 85, 75, 80],
         },
         {
-          label: "Canceled",
+          label: t('cancel'),
           backgroundColor: "#C51E3A",
           borderRadius: 10,
           borderSkipped: false,
@@ -209,7 +210,7 @@ const Home = () => {
         chartInstance.current.destroy();
       }
     };
-  }, [isAdmin]);
+  }, [isAdmin, t]);
 
   return (
     <>
@@ -252,7 +253,7 @@ const Home = () => {
         <>
           <div className="m-3 rounded-4 bg-white d-flex align-items-center justify-content-between px-4">
             <h3 className="fw-bolder pt-2">
-              WELCOME BACK{isAdmin === true ? ", ADMIN" : ""}!
+            <Trans i18nKey="welcomeback">WELCOME BACK</Trans>{isAdmin === true ? ", ADMIN" : ""}!
             </h3>
             <img
               src="/images/welcomeback.png"
@@ -268,11 +269,11 @@ const Home = () => {
                   <img alt="sum" src="/images/sum.png" className="iconHome" />
                 </div>
 
-                <h5 className="fw-bolder fs-16">Total</h5>
+                <h5 className="fw-bolder fs-16"><Trans i18nKey="total">Total</Trans></h5>
               </div>
               <Divider />
               <h5 className="textBlue2 fw-bolder fs-16">{allBooking?.count}</h5>
-              <small className="textGrey1">Booking trips</small>
+              <small className="textGrey1"><Trans i18nKey="bookingTrips">Booking trips</Trans></small>
             </div>
 
             <div className="col bg-white rounded-4 cardHome pb-2">
@@ -285,11 +286,11 @@ const Home = () => {
                   />
                 </div>
 
-                <h5 className="fw-bolder fs-16">Complete</h5>
+                <h5 className="fw-bolder fs-16"><Trans i18nKey="complete">Complete</Trans></h5>
               </div>
               <Divider />
               <h5 className="textBlue2 fw-bolder fs-16">{completeBooking?.length}</h5>
-              <small className="textGrey1">Booking trips</small>
+              <small className="textGrey1"><Trans i18nKey="bookingTrips">Booking trips</Trans></small>
             </div>
 
             <div className="col bg-white rounded-4 cardHome pb-2">
@@ -302,11 +303,11 @@ const Home = () => {
                   />
                 </div>
 
-                <h5 className="fw-bolder fs-16">Ongoing</h5>
+                <h5 className="fw-bolder fs-16"><Trans i18nKey="ongoing">Ongoing</Trans></h5>
               </div>
               <Divider />
               <h5 className="textBlue2 fw-bolder fs-16">{ongoingBooking?.length}</h5>
-              <small className="textGrey1">Booking trips</small>
+              <small className="textGrey1"><Trans i18nKey="bookingTrips">Booking trips</Trans></small>
             </div>
 
             {/* Show weather forecast */}
@@ -322,7 +323,7 @@ const Home = () => {
                   id="keyword"
                   value={keyWord}
                   onChange={(e) => setKeyWord(e.target.value)}
-                  placeholder="Search"
+                  placeholder={t('search')}
                 />
                 <button
                   type="submit"
@@ -381,7 +382,7 @@ const Home = () => {
           <div className="row m-3 gap-3">
             <div className="bg-white col-9 rounded-4">
               <div className="mt-3 fw-bolder">
-                Activity in 2023
+              <Trans i18nKey="activity">Activity in</Trans> 2023
               </div>
               <div className="mx-2 my-1" style={{ height: "80%" }}>
                 {dataChart && (
@@ -395,12 +396,12 @@ const Home = () => {
               style={{ height: "310px" }}
             >
               <div className="d-flex justify-content-between">
-                <h5 className="fw-bolder textGrey1">Contact</h5>
+                <h5 className="fw-bolder textGrey1"><Trans i18nKey="contact">Contact</Trans></h5>
                 <form className="searchFormContact">
                   <input
                     className="border-0 fs-14 bgBlue4 textGrey1 py-1 px-2"
                     type="text"
-                    placeholder="Search"
+                    placeholder={t('search')}
                   />
                   <button
                     type="submit"
@@ -441,4 +442,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default withTranslation()(Home);

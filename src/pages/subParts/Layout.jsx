@@ -36,6 +36,8 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import getById from "../../utils/getById";
 import { ADMIN } from "../../utils/API";
+import { Switch } from "antd";
+import { Trans, useTranslation } from "react-i18next";
 
 export default function Layout() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -54,6 +56,7 @@ export default function Layout() {
   const navigate = useNavigate();
   const activeItem = localStorage.getItem("active");
   const token = localStorage.getItem("token");
+  const { i18n } = useTranslation();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -97,6 +100,16 @@ export default function Layout() {
     }
   };
 
+  const handleChangeLang = (checked) => {
+    if (checked) {
+      // Switch is checked (En)
+      i18n.changeLanguage("en");
+    } else {
+      // Switch is unchecked (Vi)
+      i18n.changeLanguage("vi");
+    }
+  };
+
   useEffect(() => {
     //getUserInfo
     const fetchUserData = async () => {
@@ -135,7 +148,19 @@ export default function Layout() {
           </Link>
         </Typography>
         <div>
-          <Badge color="error" variant="dot" overlap="circular">
+          <Switch
+            checkedChildren="En"
+            unCheckedChildren="Vi"
+            defaultChecked
+            onChange={handleChangeLang}
+          />
+
+          <Badge
+            color="error"
+            variant="dot"
+            overlap="circular"
+            className="ms-4"
+          >
             <NotificationsIcon />
           </Badge>
 
@@ -206,7 +231,7 @@ export default function Layout() {
             <ListItemIcon>
               <Settings fontSize="medium" className="iconMenuAcc" />
             </ListItemIcon>
-            My account
+            <Trans i18nKey="accMenu">My account</Trans>
           </MenuItem>
         </Link>
         <Link
@@ -218,7 +243,7 @@ export default function Layout() {
             <ListItemIcon>
               <Logout fontSize="medium" className="iconMenuAcc" />
             </ListItemIcon>
-            Logout
+            <Trans i18nKey="logoutMenu">Logout</Trans>
           </MenuItem>
         </Link>
       </Menu>
@@ -245,7 +270,9 @@ export default function Layout() {
               ) : (
                 <HomeOutlined className="iconColor" />
               )}
-              <span className="ms-1 textColor">Home</span>
+              <span className="ms-1 textColor">
+                <Trans i18nKey="homeMenu">Home</Trans>
+              </span>
             </MenuItem>
           </Link>
           <Link
@@ -268,7 +295,9 @@ export default function Layout() {
                 }
                 className="iconColor"
               />
-              <span className="ms-1 textColor">Booking</span>
+              <span className="ms-1 textColor">
+                <Trans i18nKey="bookingMenu">Booking</Trans>
+              </span>
             </MenuItem>
           </Link>
           <Link
@@ -289,7 +318,9 @@ export default function Layout() {
               ) : (
                 <EnvironmentOutlined className="iconColor" />
               )}
-              <span className="ms-1 textColor">History</span>
+              <span className="ms-1 textColor">
+                <Trans i18nKey="historyMenu">History</Trans>
+              </span>
             </MenuItem>
           </Link>
           <Link
@@ -310,7 +341,9 @@ export default function Layout() {
                 <TeamOutlined className="iconColor" />
               )}
 
-              <span className="ms-1 textColor">People</span>
+              <span className="ms-1 textColor">
+                <Trans i18nKey="peopleMenu">People</Trans>
+              </span>
             </MenuItem>
           </Link>
           <Link
@@ -333,7 +366,9 @@ export default function Layout() {
                 }
                 className="iconColor"
               />
-              <span className="ms-1 textColor">My Account</span>
+              <span className="ms-1 textColor">
+                <Trans i18nKey="accMenu">My account</Trans>
+              </span>
             </MenuItem>
           </Link>
         </MenuList>
