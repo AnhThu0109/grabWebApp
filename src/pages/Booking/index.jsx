@@ -27,6 +27,8 @@ import { Skeleton } from "@mui/material";
 import { formatDateBooking } from "../../utils/formatDate";
 import formatPeopleId from "../../utils/formatPeopleID";
 import axios from "axios";
+import submitBookingForm from "../../utils/submitBookingForm";
+import getById from "../../utils/getById";
 
 function Booking() {
   const [bookingId, setbookingId] = useState();
@@ -151,31 +153,52 @@ function Booking() {
     console.log("params", pagination, filters, sorter, extra);
   };
 
-  const resendBookingForm = async () => {
+  const handleReSendBookingForm = async () => {
     try {
-      const response = await axios.post(`${BOOKING_FORM}/rebook/${bookingId}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
-        },
-      });
-      return response;
+      const bookingFormById = await getById(bookingId, BOOKING_FORM, token);
+      const inputData = {
+        pickupLocationId: bookingFormById.pickupLocationId,
+        destinationId: bookingFormById.destinationId,
+        bookingWay: 1, //using web admin
+        bookingTime: bookingFormById.bookingTime,
+        distance: bookingFormById.distance,
+        sum: bookingFormById.sum,
+        customerId: bookingFormById.customerId,
+        adminId: bookingFormById.adminId,
+        note: bookingFormById.note,
+        service: bookingFormById.service,
+        carType: bookingFormById.carType,
+        paymentStatus: 1,
+        paymentType: 1
+      };
+      const submitBookingPromise = submitBookingForm({ data: inputData, bookingId }, token);
+      message.success(`Đơn đặt xe ${formatPeopleId(bookingId, "BK")} đã được gửi đi!`);  
+      // Now, if you need the response from submitBookingForm, you can use .then()
+      submitBookingPromise
+        .then((response) => {
+          console.log("Response from submitBookingForm:", response);
+          message.success(`Tài xế ${formatPeopleId(response.data.id, "DR")} chấp nhận đơn đặt xe ${formatPeopleId(response.data.bookingId, "BK")}!`);
+        })
+        .catch((error) => {
+          if(error.response.status === 404){
+            message.error(error.response.data.message.split("!")[0] + ` cho đơn đặt xe ${formatPeopleId(error.data.data.id, "BK")}`);
+          }
+          else {
+            message.error(error.message);
+          }
+          console.error("Error submitting booking form:", error);
+        });
     } catch (error) {
+      if(error.response.status === 404){
+        message.error(error.response.data.message.split("!")[0] + ` cho đơn đặt xe ${formatPeopleId(error.data.data.id, "BK")}`);
+      }
+      else {
+        message.error(error.message);
+      }
       console.error("Error fetching user data:", error);
       throw error;
     }
   };
-
-  const handleReSendBookingForm = async() => {
-    try {
-      resendBookingForm();
-      message.success("Booking form re-submit successfully!");  
-    } catch (error) {
-      message.error("Booking form re-submit fail!");
-      console.error("Error fetching distance data:", error);
-      throw error;
-    }
-  }
 
   //Items in dropdown button of each booking row
   const itemNormalbooking = (

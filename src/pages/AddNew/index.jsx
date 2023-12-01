@@ -20,6 +20,7 @@ import createCustomer from "../../utils/addNewCustomer";
 import getLocationByName from "../../utils/getLocation";
 import { useNavigate } from "react-router-dom";
 import formatPeopleId from "../../utils/formatPeopleID";
+import submitBookingForm from "../../utils/submitBookingForm";
 
 export default function Add() {
   const [phoneNo, setPhoneNo] = useState();
@@ -112,25 +113,25 @@ export default function Add() {
     }
   };
 
-  const submitBookingForm = async (input) => {
-    try {
-      const response = await axios.post(`${BOOKING_FORM}/bookRide`, input, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
-        },
-      });
-      return response;
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-      if(error.response.status === 404){
-        message.error(error.response.data.message.split("!")[0] + ` cho đơn đặt xe ${formatPeopleId(error.data.data.id, "BK")}`);
-      }
-      else {
-        message.error(error.message);
-      }
-    }
-  };
+  // const submitBookingForm = async (input) => {
+  //   try {
+  //     const response = await axios.post(`${BOOKING_FORM}/bookRide`, input, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: token,
+  //       },
+  //     });
+  //     return response;
+  //   } catch (error) {
+  //     console.error("Error fetching user data:", error);
+  //     if(error.response.status === 404){
+  //       message.error(error.response.data.message.split("!")[0] + ` cho đơn đặt xe ${formatPeopleId(error.data.data.id, "BK")}`);
+  //     }
+  //     else {
+  //       message.error(error.message);
+  //     }
+  //   }
+  // };
 
   const onFinishForm = async () => {
     try {
@@ -173,10 +174,10 @@ export default function Add() {
         };
 
       // Submit booking form without waiting
-      const submitBookingPromise = submitBookingForm({ data: inputData, bookingId: null });
+      const submitBookingPromise = submitBookingForm({ data: inputData, bookingId: null }, token);
 
       message.success("Đơn đặt xe đã được gửi đi!");  
-      navigate("/"); 
+      navigate("/booking"); 
       // Now, if you need the response from submitBookingForm, you can use .then()
       submitBookingPromise
         .then((response) => {
