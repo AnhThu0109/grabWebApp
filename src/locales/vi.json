@@ -38,5 +38,11 @@
   "address": "Địa chỉ",
   "phone": "Điện thoại",
   "update": "CẬP NHẬT",
-  "chooseAva": "Chọn ảnh đại diện"
+  "chooseAva": "Chọn ảnh đại diện",
+  "updateInfoSuccessMess": "Cập nhật thông tin thành công!",
+  "updateInfoErrMess": "Cập nhật thông tin thất bại!",
+  "drivers": "Tài xế",
+  "customers": "Khách hàng",
+  "fullNameCapital": "HỌ TÊN",
+  "phoneCapital": "ĐIỆN THOẠI"
 }

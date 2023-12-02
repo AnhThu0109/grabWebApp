@@ -38,5 +38,11 @@
   "address": "Address",
   "phone": "Phone Number",
   "update": "UPDATE",
-  "chooseAva": "Choose Avatar"
+  "chooseAva": "Choose Avatar",
+  "updateInfoSuccessMess": "Update information success!",
+  "updateInfoErrMess": "Update information fail!",
+  "drivers": "Drivers",
+  "customers": "Customers",
+  "fullNameCapital": "FULL NAME",
+  "phoneCapital": "PHONE NUMBER"
 }

@@ -5,9 +5,11 @@ import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { Dropdown, Button, Space, Menu, Table, Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
+import { useTranslation } from "react-i18next";
 
 function TableComponent(props) {
   const [data, setData] = useState();
+  const { t } = useTranslation();
 
   //Get id of chosen booking for showing modal see detail
   const peopleChosen = (itemId) => {
@@ -154,7 +156,7 @@ function TableComponent(props) {
       className: "ps-5",
     },
     {
-      title: "FULL NAME",
+      title: t("fullNameCapital"),
       dataIndex: "fullname",
       key: "fullname",
       sorter: (a, b) => a.fullname.localeCompare(b.fullname),
@@ -163,7 +165,7 @@ function TableComponent(props) {
       className: "ps-5",
     },
     {
-      title: "PHONE NUMBER",
+      title: t("phoneCapital"),
       key: "phoneNo",
       dataIndex: "phoneNo",
       ...getColumnSearchProps("phoneNo"),

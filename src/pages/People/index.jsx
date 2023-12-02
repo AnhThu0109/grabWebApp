@@ -7,8 +7,9 @@ import axios from "axios";
 import { GET_CUSTOMER, GET_DRIVER } from "../../utils/API";
 import formatPeopleId from "../../utils/formatPeopleID";
 import { Skeleton } from "@mui/material";
+import { withTranslation } from "react-i18next";
 
-const People = () => {
+const People = ({t}) => {
   const [size, setSize] = useState("large");
   const [customersData, setCustomersData] = useState([]);
   const [driversData, setDriversData] = useState([]);
@@ -71,10 +72,10 @@ const People = () => {
           </>
         ) : (
           <Tabs defaultActiveKey="1" type="card" size={size} className="people">
-            <items tab={<div className="px-4 py-1 fw-bolder">Drivers</div>} key="1" className="p-3">
+            <items tab={<div className="px-4 py-1 fw-bolder">{t('drivers')}</div>} key="1" className="p-3">
               <TableComponent people={driversData}/>
             </items>
-            <items tab={<div className="px-4 py-1 fw-bolder">Customers</div>} key="2" className="p-3">
+            <items tab={<div className="px-4 py-1 fw-bolder">{t('customers')}</div>} key="2" className="p-3">
               <TableComponent people={customersData}/>
             </items>
           </Tabs>
@@ -84,4 +85,4 @@ const People = () => {
   );
 };
 
-export default People;
+export default withTranslation()(People);
