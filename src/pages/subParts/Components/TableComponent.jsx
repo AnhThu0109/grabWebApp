@@ -131,7 +131,7 @@ function TableComponent(props) {
     <Menu>
       <Menu.Item key="1">
         <Link rel="noopener noreferrer" className="nav-link" to={`/people/detail/${itemId}`}>
-          See Detail
+          {t("seeDetail")}
         </Link>
       </Menu.Item>
     </Menu>

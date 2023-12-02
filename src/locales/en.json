@@ -44,5 +44,10 @@
   "drivers": "Drivers",
   "customers": "Customers",
   "fullNameCapital": "FULL NAME",
-  "phoneCapital": "PHONE NUMBER"
+  "phoneCapital": "PHONE NUMBER",
+  "seeDetail": "See Detail",
+  "fullName": "Full Name",
+  "name": "Name",
+  "license": "License Plate",
+  "activityHis": "Activity History"
 }

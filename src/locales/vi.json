@@ -44,5 +44,10 @@
   "drivers": "Tài xế",
   "customers": "Khách hàng",
   "fullNameCapital": "HỌ TÊN",
-  "phoneCapital": "ĐIỆN THOẠI"
+  "phoneCapital": "ĐIỆN THOẠI",
+  "seeDetail": "Xem chi tiết",
+  "fullName": "Họ tên",
+  "name": "Tên",
+  "license": "Biển số xe",
+  "activityHis": "Lịch sử hoạt động"
 }

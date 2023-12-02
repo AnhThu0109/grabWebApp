@@ -10,6 +10,7 @@ import { BOOKING_FORM, GET_CUSTOMER, GET_DRIVER } from "../../utils/API";
 import getAll from "../../utils/getAll";
 import formatTime from "../../utils/formatTime";
 import { formatDateOnly } from "../../utils/formatDate";
+import { useTranslation } from "react-i18next";
 
 export default function PeopleDetail(props) {
   const [form] = Form.useForm();
@@ -20,6 +21,7 @@ export default function PeopleDetail(props) {
   const [bookingData, setBookingData] = useState();
   const token = localStorage.getItem("token");
   const peopleID = localStorage.getItem("peopleChosenId");
+  const { t } = useTranslation();
 
   const findPeopleByID = async (peopleId, URL) => {
     const response = await axios.get(`${URL}/${peopleId}`, {
@@ -115,7 +117,7 @@ export default function PeopleDetail(props) {
                   name="fullName"
                   label={
                     <div className="textBlue3">
-                      {isCus ? "Name" : "Full Name"}
+                      {isCus ? t("name") : t("fullName")}
                     </div>
                   }
                 >
@@ -125,7 +127,7 @@ export default function PeopleDetail(props) {
               <div className="col">
                 <Form.Item
                   name="phone"
-                  label={<div className="textBlue3">Phone Number</div>}
+                  label={<div className="textBlue3">{t("phone")}</div>}
                 >
                   <Input readOnly />
                 </Form.Item>
@@ -137,7 +139,7 @@ export default function PeopleDetail(props) {
                 <div className="col">
                   <Form.Item
                     name="gender"
-                    label={<div className="textBlue3">Gender</div>}
+                    label={<div className="textBlue3">{t("gender")}</div>}
                     rules={[
                       {
                         required: true,
@@ -151,7 +153,7 @@ export default function PeopleDetail(props) {
                 <div className="col">
                   <Form.Item
                     name="license"
-                    label={<div className="textBlue3">License Plate</div>}
+                    label={<div className="textBlue3">{t("license")}</div>}
                   >
                     <Input readOnly />
                   </Form.Item>
@@ -162,7 +164,7 @@ export default function PeopleDetail(props) {
         </div>
       </div>
       <div className="bg-white rounded-3 peopleHistory mx-4 p-4">
-        <h5 className="mb-3">Activity History</h5>
+        <h5 className="mb-3">{t("activityHis")}</h5>
         <Form className="d-flex" form={searchForm} onFinish={onFinishForm}>
           <Form.Item name="rangeTime">
             <DatePicker.RangePicker />

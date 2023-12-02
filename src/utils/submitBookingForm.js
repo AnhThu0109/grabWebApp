@@ -15,7 +15,7 @@ const submitBookingForm = async (input, token) => {
     } catch (error) {
       console.error("Error fetching user data:", error);
       if(error.response.status === 404){
-        message.error(error.response.data.message.split("!")[0] + ` cho đơn đặt xe ${formatPeopleId(error.data.data.id, "BK")}`);
+        message.error(error.response.data.message.split("!")[0] + ` cho đơn đặt xe ${formatPeopleId(error.response.data.data.id, "BK")}`);
       }
       else {
         message.error(error.message);

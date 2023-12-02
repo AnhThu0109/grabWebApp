@@ -156,6 +156,7 @@ export default function Add() {
           distanceInfo.Destination,
           token
         );
+        debugger;
         const inputData = {
           pickupLocationId: pickLocation.id,
           destinationId: destination.id,
@@ -180,8 +181,9 @@ export default function Add() {
       // Now, if you need the response from submitBookingForm, you can use .then()
       submitBookingPromise
         .then((response) => {
+          debugger;
           console.log("Response from submitBookingForm:", response);
-          message.success(`Tài xế ${formatPeopleId(response.data.id, "DR")} chấp nhận đơn đặt xe ${formatPeopleId(response.data.bookingId, "BK")}!`);
+          message.success(`Tài xế ${formatPeopleId(response.data.driver_accepted.id, "DR")} chấp nhận đơn đặt xe ${formatPeopleId(response.data.bookingId, "BK")}!`);
         })
         .catch((error) => {
           console.error("Error submitting booking form:", error);
@@ -190,7 +192,7 @@ export default function Add() {
       }
     } catch (error) {
       if(error.response.status === 404){
-        message.error(error.response.data.message.split("!")[0] + ` cho đơn đặt xe ${formatPeopleId(error.data.data.id, "BK")}`);
+        message.error(error.response.data.message.split("!")[0] + ` cho đơn đặt xe ${formatPeopleId(error.response.data.data.id, "BK")}`);
       }
       else {
         message.error(error.message);

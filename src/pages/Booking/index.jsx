@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEllipsis,
@@ -33,8 +33,10 @@ function Booking() {
   const [bookingId, setbookingId] = useState();
   const [bookingData, setBookingData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [filter, setFilter] = useState("All");
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
+  const navigate = useNavigate();
 
   //Get id of chosen booking for showing modal see detail
   const bookingChosen = (id) => {
@@ -176,11 +178,11 @@ function Booking() {
       submitBookingPromise
         .then((response) => {
           console.log("Response from submitBookingForm:", response);
-          message.success(`Tài xế ${formatPeopleId(response.data.id, "DR")} chấp nhận đơn đặt xe ${formatPeopleId(response.data.bookingId, "BK")}!`);
+          message.success(`Tài xế ${formatPeopleId(response.data.driver_accepted.id, "DR")} chấp nhận đơn đặt xe ${formatPeopleId(response.data.bookingId, "BK")}!`);
         })
         .catch((error) => {
           if(error.response.status === 404){
-            message.error(error.response.data.message.split("!")[0] + ` cho đơn đặt xe ${formatPeopleId(error.data.data.id, "BK")}`);
+            message.error(error.response.data.message.split("!")[0] + ` cho đơn đặt xe ${formatPeopleId(error.response.data.data.id, "BK")}`);
           }
           else {
             message.error(error.message);
@@ -189,7 +191,7 @@ function Booking() {
         });
     } catch (error) {
       if(error.response.status === 404){
-        message.error(error.response.data.message.split("!")[0] + ` cho đơn đặt xe ${formatPeopleId(error.data.data.id, "BK")}`);
+        message.error(error.response.data.message.split("!")[0] + ` cho đơn đặt xe ${formatPeopleId(error.response.data.data.id, "BK")}`);
       }
       else {
         message.error(error.message);
@@ -382,16 +384,17 @@ function Booking() {
 
   const handleClickFilter = async (filterItem) => {
     setIsLoading(true);
+    setFilter(filterItem);
     await initData(filterItem); // Call initData directly with the filterItem argument
   };
 
   useEffect(() => {
     // Initial data load
-    initData("All");
+    initData(filter);
     
     // Set up an interval to renew data every 30 seconds
     const intervalId = setInterval(() => {
-      initData("All");
+      initData(filter);
     }, 40000); // 40 seconds in milliseconds
 
     // Clear the interval when the component unmounts
