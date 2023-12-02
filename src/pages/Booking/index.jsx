@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEllipsis,
@@ -26,7 +26,6 @@ import { BOOKING_FORM } from "../../utils/API";
 import { Skeleton } from "@mui/material";
 import { formatDateBooking } from "../../utils/formatDate";
 import formatPeopleId from "../../utils/formatPeopleID";
-import axios from "axios";
 import submitBookingForm from "../../utils/submitBookingForm";
 import getById from "../../utils/getById";
 

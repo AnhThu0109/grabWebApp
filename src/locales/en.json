@@ -26,5 +26,17 @@
   "Sep": "Sep",
   "Oct": "Oct",
   "Nov": "Nov",
-  "Dec": "Dec"
+  "Dec": "Dec",
+  "changeAvatar": "Change Avatar",
+  "famName": "Family Name",
+  "givenName": "Given Name",
+  "birthday": "Date of Birth",
+  "gender": "Gender",
+  "male": "Male",
+  "female": "Female",
+  "other": "Other",
+  "address": "Address",
+  "phone": "Phone Number",
+  "update": "UPDATE",
+  "chooseAva": "Choose Avatar"
 }

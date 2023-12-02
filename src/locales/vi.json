@@ -26,5 +26,17 @@
   "Sep": "Th9",
   "Oct": "Th10",
   "Nov": "Th11",
-  "Dec": "Th12"
+  "Dec": "Th12",
+  "changeAvatar": "Đổi ảnh đại diện",
+  "famName": "Họ",
+  "givenName": "Tên",
+  "birthday": "Ngày sinh",
+  "gender": "Giới tính",
+  "male": "Nam",
+  "female": "Nữ",
+  "other": "Khác",
+  "address": "Địa chỉ",
+  "phone": "Điện thoại",
+  "update": "CẬP NHẬT",
+  "chooseAva": "Chọn ảnh đại diện"
 }

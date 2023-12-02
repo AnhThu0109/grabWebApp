@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import changeFareFormat from "../../utils/formatFare";
 import {
-  BOOKING_FORM,
   GET_CUSTOMER,
   SEARCH_CUSTOMER_PHONE,
   SEARCH_LOCATION_NAME,

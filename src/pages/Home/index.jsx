@@ -14,7 +14,7 @@ import Chart from "chart.js/auto";
 import setRootBackground from "../../utils/setRootBackground";
 import getAll from "../../utils/getAll";
 import { BOOKING_FORM } from "../../utils/API";
-import { Trans, useTranslation, withTranslation } from "react-i18next";
+import { useTranslation, withTranslation } from "react-i18next";
 
 const Home = ({ t }) => {
   const [isAdmin, setAdmin] = useState(false);

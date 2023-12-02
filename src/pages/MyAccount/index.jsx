@@ -25,6 +25,7 @@ import { setAvatarChosenPath, setAvatarPath } from "../../redux/avatarSlide";
 import { CheckCircleFilled, CloseCircleFilled } from "@ant-design/icons";
 import getUserById from "../../utils/getById";
 import formatPeopleId from "../../utils/formatPeopleID";
+import { useTranslation, withTranslation } from "react-i18next";
 
 const AvatarCarousel = ({ images }) => {
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -76,7 +77,7 @@ const AvatarCarousel = ({ images }) => {
   );
 };
 
-const MyAccount = () => {
+const MyAccount = ({ t }) => {
   const initialItemChange = {
     givenName: null,
     familyName: null,
@@ -184,8 +185,8 @@ const MyAccount = () => {
 
     fetchUserData();
     setIsDataChange(false);
-    setItemChange(initialItemChange);
-  }, [id, isDataChange]);
+    //setItemChange(initialItemChange);
+  }, [id, isDataChange, t]);
 
   return (
     <div className="myAcc">
@@ -213,7 +214,7 @@ const MyAccount = () => {
                   onClick={showModal}
                 >
                   <FontAwesomeIcon icon={faUpload} className="me-2" />
-                  Change Avatar
+                  {t('changeAvatar')}
                 </button>
               </div>
             </div>
@@ -256,7 +257,7 @@ const MyAccount = () => {
             <div className="col">
               <Form.Item
                 name="familyName"
-                label={<div className="textBlue3">Family Name</div>}
+                label={<div className="textBlue3">{t('famName')}</div>}
                 rules={[
                   {
                     required: true,
@@ -285,7 +286,7 @@ const MyAccount = () => {
             <div className="col">
               <Form.Item
                 name="givenName"
-                label={<div className="textBlue3">Given Name</div>}
+                label={<div className="textBlue3">{t('givenName')}</div>}
                 rules={[
                   {
                     required: true,
@@ -317,7 +318,7 @@ const MyAccount = () => {
             <div className="col">
               <Form.Item
                 name="birth"
-                label={<div className="textBlue3">Date of Birth</div>}
+                label={<div className="textBlue3">{t('birthday')}</div>}
                 rules={[
                   {
                     required: true,
@@ -337,7 +338,7 @@ const MyAccount = () => {
             <div className="col">
               <Form.Item
                 name="gender"
-                label={<div className="textBlue3">Gender</div>}
+                label={<div className="textBlue3">{t('gender')}</div>}
                 rules={[
                   {
                     required: true,
@@ -347,9 +348,9 @@ const MyAccount = () => {
                 hasFeedback={hasFeedback && itemChange.gender}
               >
                 <Select>
-                  <Option value="male">Male</Option>
-                  <Option value="female">Female</Option>
-                  <Option value="others">Other</Option>
+                  <Option value="male">{t('male')}</Option>
+                  <Option value="female">{t('female')}</Option>
+                  <Option value="others">{t('other')}</Option>
                 </Select>
               </Form.Item>
             </div>
@@ -359,7 +360,7 @@ const MyAccount = () => {
             <div className="col">
               <Form.Item
                 name="address"
-                label={<div className="textBlue3">Address</div>}
+                label={<div className="textBlue3">{t('address')}</div>}
                 rules={[
                   {
                     required: true,
@@ -388,7 +389,7 @@ const MyAccount = () => {
             <div className="col">
               <Form.Item
                 name="phone"
-                label={<div className="textBlue3">Phone Number</div>}
+                label={<div className="textBlue3">{t('phone')}</div>}
               >
                 <Input className="textGrey1" readOnly />
               </Form.Item>
@@ -411,7 +412,7 @@ const MyAccount = () => {
                 }
                 className="border-0 rounded-3 px-5 mt-2 w-70 text-black-60 fw-bolder updateAvatarBtn"
               >
-                UPDATE
+                {t('update')}
               </Button>
             )}
           </Form.Item>
@@ -432,7 +433,7 @@ const MyAccount = () => {
       )}
 
       <Modal
-        title="&nbsp;&nbsp;Choose Avatar"
+        title={"\u00A0\u00A0" + t('chooseAva')}
         open={open}
         onOk={handleOk}
         confirmLoading={confirmLoading}
@@ -445,4 +446,4 @@ const MyAccount = () => {
   );
 };
 
-export default MyAccount;
+export default withTranslation()(MyAccount);
