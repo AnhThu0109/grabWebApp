@@ -12,7 +12,19 @@
   "ongoing": "Ongoing",
   "search": "Search",
   "contact": "Contact",
-  "activity": "Activity in",
+  "activity": "Booking Activity in",
   "cancel": "Canceled",
-  "welcomeback": "WELCOME BACK"
+  "welcomeback": "WELCOME BACK",
+  "Jan": "Jan",
+  "Feb": "Feb",
+  "Mar": "Mar",
+  "Apr": "Apr",
+  "May": "May",
+  "Jun": "Jun",
+  "Jul": "Jul",
+  "Aug": "Aug",
+  "Sep": "Sep",
+  "Oct": "Oct",
+  "Nov": "Nov",
+  "Dec": "Dec"
 }

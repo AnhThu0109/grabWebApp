@@ -12,7 +12,19 @@
   "ongoing": "Đang thực hiện",
   "search": "Tìm kiếm",
   "contact": "Liên hệ",
-  "activity": "Hoạt động trong năm",
+  "activity": "Hoạt động đặt xe trong năm",
   "cancel": "Hủy bỏ",
-  "welcomeback": "CHÀO MỪNG TRỞ LẠI"
+  "welcomeback": "CHÀO MỪNG TRỞ LẠI",
+  "Jan": "Th1",
+  "Feb": "Th2",
+  "Mar": "Th3",
+  "Apr": "Th4",
+  "May": "Th5",
+  "Jun": "Th6",
+  "Jul": "Th7",
+  "Aug": "Th8",
+  "Sep": "Th9",
+  "Oct": "Th10",
+  "Nov": "Th11",
+  "Dec": "Th12"
 }

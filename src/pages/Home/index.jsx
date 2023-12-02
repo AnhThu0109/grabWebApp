@@ -125,18 +125,18 @@ const Home = ({ t }) => {
   // Initialize Chart
   const initializeChart = () => {
     const months = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
+      t('Jan'),
+      t('Feb'),
+      t('Mar'),
+      t('Apr'),
+      t('May'),
+      t('Jun'),
+      t('Jul'),
+      t('Aug'),
+      t('Sep'),
+      t('Oct'),
+      t('Nov'),
+      t('Dec'),
     ];
 
     const data = {
@@ -253,7 +253,7 @@ const Home = ({ t }) => {
         <>
           <div className="m-3 rounded-4 bg-white d-flex align-items-center justify-content-between px-4">
             <h3 className="fw-bolder pt-2">
-            <Trans i18nKey="welcomeback">WELCOME BACK</Trans>{isAdmin === true ? ", ADMIN" : ""}!
+            {t('welcomeback')}{isAdmin === true ? ", ADMIN" : ""}!
             </h3>
             <img
               src="/images/welcomeback.png"
@@ -269,11 +269,11 @@ const Home = ({ t }) => {
                   <img alt="sum" src="/images/sum.png" className="iconHome" />
                 </div>
 
-                <h5 className="fw-bolder fs-16"><Trans i18nKey="total">Total</Trans></h5>
+                <h5 className="fw-bolder fs-16">{t('total')}</h5>
               </div>
               <Divider />
               <h5 className="textBlue2 fw-bolder fs-16">{allBooking?.count}</h5>
-              <small className="textGrey1"><Trans i18nKey="bookingTrips">Booking trips</Trans></small>
+              <small className="textGrey1">{t('bookingTrips')}</small>
             </div>
 
             <div className="col bg-white rounded-4 cardHome pb-2">
@@ -286,11 +286,11 @@ const Home = ({ t }) => {
                   />
                 </div>
 
-                <h5 className="fw-bolder fs-16"><Trans i18nKey="complete">Complete</Trans></h5>
+                <h5 className="fw-bolder fs-16">{t('complete')}</h5>
               </div>
               <Divider />
               <h5 className="textBlue2 fw-bolder fs-16">{completeBooking?.length}</h5>
-              <small className="textGrey1"><Trans i18nKey="bookingTrips">Booking trips</Trans></small>
+              <small className="textGrey1">{t('bookingTrips')}</small>
             </div>
 
             <div className="col bg-white rounded-4 cardHome pb-2">
@@ -303,11 +303,11 @@ const Home = ({ t }) => {
                   />
                 </div>
 
-                <h5 className="fw-bolder fs-16"><Trans i18nKey="ongoing">Ongoing</Trans></h5>
+                <h5 className="fw-bolder fs-16">{t('ongoing')}</h5>
               </div>
               <Divider />
               <h5 className="textBlue2 fw-bolder fs-16">{ongoingBooking?.length}</h5>
-              <small className="textGrey1"><Trans i18nKey="bookingTrips">Booking trips</Trans></small>
+              <small className="textGrey1">{t('bookingTrips')}</small>
             </div>
 
             {/* Show weather forecast */}
@@ -382,7 +382,7 @@ const Home = ({ t }) => {
           <div className="row m-3 gap-3">
             <div className="bg-white col-9 rounded-4">
               <div className="mt-3 fw-bolder">
-              <Trans i18nKey="activity">Activity in</Trans> 2023
+              {t('activity')} {new Date().getFullYear()}
               </div>
               <div className="mx-2 my-1" style={{ height: "80%" }}>
                 {dataChart && (
@@ -396,7 +396,7 @@ const Home = ({ t }) => {
               style={{ height: "310px" }}
             >
               <div className="d-flex justify-content-between">
-                <h5 className="fw-bolder textGrey1"><Trans i18nKey="contact">Contact</Trans></h5>
+                <h5 className="fw-bolder textGrey1">{t('contact')}</h5>
                 <form className="searchFormContact">
                   <input
                     className="border-0 fs-14 bgBlue4 textGrey1 py-1 px-2"
