@@ -3,9 +3,15 @@ import "./style.css";
 import { Badge, Popover } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import { deleteNotification, updateNotification } from "../../../utils/notification";
+import {
+  deleteNotification,
+  updateNotification,
+} from "../../../utils/notification";
 import { useDispatch } from "react-redux";
-import { deleteNotificationById, updateIsRead } from "../../../redux/notificationSlide";
+import {
+  deleteNotificationById,
+  updateIsRead,
+} from "../../../redux/notificationSlide";
 
 export function Noti(props) {
   return (
@@ -32,12 +38,14 @@ export function PopoverComponent(props) {
   const dispatch = useDispatch();
   const token = localStorage.getItem("token");
 
-  const handleReadNoti = async(id) => {
-    dispatch(updateIsRead({ id, isRead: true }));
-    await updateNotification(id, true, token);
+  const handleReadNoti = async (id, isReadNoti) => {
+    if (!isReadNoti) {
+      dispatch(updateIsRead({ id, isRead: true }));
+      await updateNotification(id, true, token);
+    }
   };
 
-  const handleDeleteNoti = async(id) => {
+  const handleDeleteNoti = async (id) => {
     dispatch(deleteNotificationById(id));
     await deleteNotification(id, token);
   };
@@ -49,7 +57,7 @@ export function PopoverComponent(props) {
           {props.content.length > 0 ? (
             props.content.map((item, index) => (
               <ul className="d-flex justify-content-between">
-                <div onClick={() => handleReadNoti(item.id)}>
+                <div onClick={() => handleReadNoti(item.id, item.isRead)}>
                   <Noti
                     key={index}
                     notiContent={item.text}
