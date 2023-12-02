@@ -20,6 +20,7 @@ import getLocationByName from "../../utils/getLocation";
 import { useNavigate } from "react-router-dom";
 import formatPeopleId from "../../utils/formatPeopleID";
 import submitBookingForm from "../../utils/submitBookingForm";
+import { createNotification } from "../../utils/notification";
 
 export default function Add() {
   const [phoneNo, setPhoneNo] = useState();
@@ -112,26 +113,6 @@ export default function Add() {
     }
   };
 
-  // const submitBookingForm = async (input) => {
-  //   try {
-  //     const response = await axios.post(`${BOOKING_FORM}/bookRide`, input, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: token,
-  //       },
-  //     });
-  //     return response;
-  //   } catch (error) {
-  //     console.error("Error fetching user data:", error);
-  //     if(error.response.status === 404){
-  //       message.error(error.response.data.message.split("!")[0] + ` cho đơn đặt xe ${formatPeopleId(error.data.data.id, "BK")}`);
-  //     }
-  //     else {
-  //       message.error(error.message);
-  //     }
-  //   }
-  // };
-
   const onFinishForm = async () => {
     try {
       if (distanceInfo != null) {
@@ -156,7 +137,6 @@ export default function Add() {
           distanceInfo.Destination,
           token
         );
-        debugger;
         const inputData = {
           pickupLocationId: pickLocation.id,
           destinationId: destination.id,
@@ -170,33 +150,71 @@ export default function Add() {
           service: distanceInfo.CarService.toString(),
           carType: distanceInfo.CarType.toString(),
           paymentStatus: 1,
-          paymentType: 1
+          paymentType: 1,
         };
 
-      // Submit booking form without waiting
-      const submitBookingPromise = submitBookingForm({ data: inputData, bookingId: null }, token);
+        // Submit booking form without waiting
+        const submitBookingPromise = submitBookingForm(
+          { data: inputData, bookingId: null }, adminId,
+          token, dispatch
+        );
 
-      message.success("Đơn đặt xe đã được gửi đi!");  
-      navigate("/booking"); 
-      // Now, if you need the response from submitBookingForm, you can use .then()
-      submitBookingPromise
-        .then((response) => {
-          debugger;
-          console.log("Response from submitBookingForm:", response);
-          message.success(`Tài xế ${formatPeopleId(response.data.driver_accepted.id, "DR")} chấp nhận đơn đặt xe ${formatPeopleId(response.data.bookingId, "BK")}!`);
-        })
-        .catch((error) => {
-          console.error("Error submitting booking form:", error);
-          message.error(error.message);
-        });
+        message.success("Đơn đặt xe đã được gửi đi!");
+        navigate("/booking");
+        // Now, if you need the response from submitBookingForm, you can use .then()
+        submitBookingPromise
+          .then((response) => {
+            console.log("Response from submitBookingForm:", response);
+            if(response !== undefined){
+              const notification = `Tài xế ${formatPeopleId(
+                response.data.driver_accepted.id,
+                "DR"
+              )} chấp nhận đơn đặt xe ${formatPeopleId(
+                response.data.bookingId,
+                "BK"
+              )}!`;
+              message.success(notification);
+              const input = {
+                text: notification, 
+                adminId, 
+                isErrorNoti: true
+              }
+              createNotification(input, token)
+                .then((createNotificationResponse) => {
+                  debugger;
+                  // Continue with any other actions based on createNotificationResponse if needed
+                })
+                .catch((createNotificationError) => {
+                  console.error(
+                    "Error creating notification:",
+                    createNotificationError
+                  );
+                });
+            }           
+          })
+          .catch((error) => {
+            console.error("Error submitting booking form:", error);
+            message.error(error.message);
+          });
       }
     } catch (error) {
-      if(error.response.status === 404){
-        message.error(error.response.data.message.split("!")[0] + ` cho đơn đặt xe ${formatPeopleId(error.response.data.data.id, "BK")}`);
-      }
-      else {
-        message.error(error.message);
-      }
+      // if (error.response.status === 404) {
+      //   const notification = error.response.data.message.split("!")[0] + " cho đơn đặt xe " + formatPeopleId(error.response.data.data.id, "BK");
+      //   message.error(notification);
+      //   createNotification(notification, adminId, token)
+      //         .then((createNotificationResponse) => {
+      //           debugger;
+      //           // Continue with any other actions based on createNotificationResponse if needed
+      //         })
+      //         .catch((createNotificationError) => {
+      //           console.error(
+      //             "Error creating notification:",
+      //             createNotificationError
+      //           );
+      //         });
+      // } else {
+      //   message.error(error.message);
+      // }
       console.error("Error fetching distance data:", error);
       throw error;
     }

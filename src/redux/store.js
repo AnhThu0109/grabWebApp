@@ -5,6 +5,7 @@ import avatarReducer from "./avatarSlide";
 import carTypeReducer from "./carTypeSlide";
 import carServiceReducer from "./carServiceSlide";
 import bookingFormReducer from "./bookingFormSlide";
+import notificationReducer from "./notificationSlide";
 
 export default configureStore({
 	reducer: {
@@ -14,5 +15,6 @@ export default configureStore({
         carType: carTypeReducer,
         carService: carServiceReducer,
         bookingForm: bookingFormReducer,
+        notification: notificationReducer,
     },
 });

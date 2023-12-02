@@ -31,13 +31,15 @@ import {
   TeamOutlined,
 } from "@ant-design/icons";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Badge } from "@mui/material";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import getById from "../../utils/getById";
 import { ADMIN } from "../../utils/API";
-import { Switch } from "antd";
+import { Badge, Switch } from "antd";
 import { Trans, useTranslation } from "react-i18next";
+import { getNotificationsById } from "../../utils/notification";
+import { setNotificationData } from "../../redux/notificationSlide";
+import { PopoverComponent } from "./Components/Popover";
 
 export default function Layout() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -53,6 +55,8 @@ export default function Layout() {
   const [userData, setUserData] = useState();
   const dispatch = useDispatch();
   const avatar = useSelector((state) => state.avatar.avatarPath);
+  const notificationData = useSelector((state) => state.notification.notiData);
+  const isAnyUnread = useSelector((state) => state.notification.isAnyUnread);
   const navigate = useNavigate();
   const activeItem = localStorage.getItem("active");
   const token = localStorage.getItem("token");
@@ -115,7 +119,10 @@ export default function Layout() {
     const fetchUserData = async () => {
       try {
         const user = await getById(id, ADMIN, token);
+        const noti = await getNotificationsById(id, token);
+        noti.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setUserData(user);
+        dispatch(setNotificationData(noti));
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -134,7 +141,7 @@ export default function Layout() {
   }, []);
 
   return (
-    <div className="ps-3 pt-3" style={{ height: "100vh" }}>
+    <div className="ps-3 pt-3 layout" style={{ height: "100vh" }}>
       <Box className="mx-4 d-flex align-items-center justify-content-between text-center">
         <Typography sx={{ minWidth: 100 }}>
           <Link
@@ -155,14 +162,20 @@ export default function Layout() {
             onChange={handleChangeLang}
           />
 
-          <Badge
-            color="error"
-            variant="dot"
-            overlap="circular"
-            className="ms-4"
-          >
-            <NotificationsIcon />
-          </Badge>
+          <PopoverComponent
+            content={notificationData}
+            title={<div className="d-flex justify-content-between"><div className="fw-bolder">Notifications</div><small className="fw-lighter textBlue2"><a>Mark all as read</a></small></div>}
+            object={
+                <Badge
+                  dot={isAnyUnread}
+                  size="small"
+                  color="red"
+                  className="ms-4"
+                >
+                  <NotificationsIcon id="iconNoti"></NotificationsIcon>
+                </Badge>
+            }
+          ></PopoverComponent>
 
           <IconButton
             className="ms-4"

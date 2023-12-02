@@ -1,9 +1,11 @@
 /* LocationSearch.css */
-.location-search-container, .location-search-container2 {
+.location-search-container,
+.location-search-container2 {
     position: relative;
 }
 
-.predictions-list, .predictions-list2 {
+.predictions-list,
+.predictions-list2 {
     position: absolute;
     top: 100%;
     left: 0;
@@ -18,11 +20,42 @@
     z-index: 100;
 }
 
-.predictions-list li, .predictions-list2 li {
+.predictions-list li,
+.predictions-list2 li {
     padding: 10px;
     cursor: pointer;
 }
 
-.predictions-list li:hover, .predictions-list2 li:hover {
+.predictions-list li:hover,
+.predictions-list2 li:hover {
     background-color: #f5f5f5;
+}
+
+.iconNotiMess {
+    width: 30px;
+}
+
+.notiContent :where(.css-dev-only-do-not-override-1me4733).ant-badge.ant-badge-status .ant-badge-status-processing {
+    position: absolute !important;
+    color: red !important;
+    background-color: red !important;
+}
+
+.deleteIcon{
+    width: 20px;
+    color: grey ;
+}
+
+.notiList ul.d-flex.justify-content-between {
+    padding: 5px 0px;
+    margin: 0px;
+    border-bottom: 1px solid rgb(228, 225, 225);
+}
+
+.notiList ul.d-flex.justify-content-between:last-child {
+    border-bottom: none !important;
+}
+
+.notiList ul.d-flex.justify-content-between:hover {
+    background-color: var(--blue-color1);
 }

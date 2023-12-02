@@ -1,59 +1,65 @@
-.linkNormal{
+.linkNormal {
     text-decoration: none;
 }
 
-.heading{
+.heading {
     font-size: 22px;
 }
 
-.textGreen1{
+.textGreen1 {
     color: var(--green-color1) !important;
 }
 
-.iconMenuAcc{
+.iconMenuAcc {
     background-color: var(--blue-color1);
     color: var(--blue-color2);
     padding: 2px;
     border-radius: 12px;
 }
 
-.menuActive{
+.menuActive {
     background-color: var(--blue-color2) !important;
     border-radius: 10px !important;
 }
 
-.menuActive .iconColor{
+.menuActive .iconColor {
     padding: 4px;
     color: var(--green-color1) !important;
     font-size: 20px;
     margin-bottom: 4px;
 }
 
-.menuActive .textColor{
+.menuActive .textColor {
     color: white !important;
 }
 
-.menuInactive:hover{
+.menuInactive:hover {
     border-radius: 10px;
 }
 
-.menuInactive .iconColor{
+.menuInactive .iconColor {
     padding: 4px;
     color: var(--blue-color2) !important;
     font-size: 20px;
     margin-bottom: 4px;
 }
 
-.menuInactive .textColor{
+.menuInactive .textColor {
     color: var(--grey-color1) !important;
 }
 
-.outlet{
+.outlet {
     background-color: var(--blue-color1);
     border-top-left-radius: 20px;
     overflow: hidden;
 }
 
-.logoImg{
+.logoImg {
     width: 100px;
+}
+
+.ant-popover-inner {
+    width: 280px !important;
+    max-height: 200px;
+    overflow-y: auto;
 }

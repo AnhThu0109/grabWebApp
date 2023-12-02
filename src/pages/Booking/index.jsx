@@ -28,6 +28,7 @@ import { formatDateBooking } from "../../utils/formatDate";
 import formatPeopleId from "../../utils/formatPeopleID";
 import submitBookingForm from "../../utils/submitBookingForm";
 import getById from "../../utils/getById";
+import { useDispatch } from "react-redux";
 
 function Booking() {
   const [bookingId, setbookingId] = useState();
@@ -35,8 +36,9 @@ function Booking() {
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState("All");
   const token = localStorage.getItem("token");
-  const userId = localStorage.getItem("userId");
+  const adminId = localStorage.getItem("adminId");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   //Get id of chosen booking for showing modal see detail
   const bookingChosen = (id) => {
@@ -172,7 +174,7 @@ function Booking() {
         paymentStatus: 1,
         paymentType: 1
       };
-      const submitBookingPromise = submitBookingForm({ data: inputData, bookingId }, token);
+      const submitBookingPromise = submitBookingForm({ data: inputData, bookingId }, adminId, token, dispatch);
       message.success(`Đơn đặt xe ${formatPeopleId(bookingId, "BK")} đã được gửi đi!`);  
       // Now, if you need the response from submitBookingForm, you can use .then()
       submitBookingPromise
@@ -190,12 +192,12 @@ function Booking() {
           console.error("Error submitting booking form:", error);
         });
     } catch (error) {
-      if(error.response.status === 404){
-        message.error(error.response.data.message.split("!")[0] + ` cho đơn đặt xe ${formatPeopleId(error.response.data.data.id, "BK")}`);
-      }
-      else {
-        message.error(error.message);
-      }
+      // if(error.response.status === 404){
+      //   message.error(error.response.data.message.split("!")[0] + ` cho đơn đặt xe ${formatPeopleId(error.response.data.data.id, "BK")}`);
+      // }
+      // else {
+      //   message.error(error.message);
+      // }
       console.error("Error fetching user data:", error);
       throw error;
     }
@@ -339,7 +341,7 @@ function Booking() {
         createdAt: formatDateBooking(item.createdAt),
       }));
     } else {
-      const data = await getAll(`${BOOKING_FORM}/admin/${userId}`, token);
+      const data = await getAll(`${BOOKING_FORM}/admin/${adminId}`, token);
       filterData = data.filter(
         (item) => item.status === 1 || item.status === 2 || item.status === 3
       );
