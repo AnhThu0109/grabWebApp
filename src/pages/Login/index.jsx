@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Input, Checkbox, Button, Form, message } from "antd";
 import "./style.css";
@@ -8,7 +8,6 @@ import axios from "axios";
 import { LOGIN } from "../../utils/API";
 
 export default function Login() {
-  const [data, setData] = useState();
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const setRootBackground = () => {
@@ -30,14 +29,13 @@ export default function Login() {
       });
 
       console.log("Response:", response.data);
-      setData(response.data);
-      message.success("Login successful!");
+      message.success("Đăng nhập thành công!");
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("userId", response.data.data.id);
       navigate("/welcome");
     } catch (error) {
       console.error(error);
-      message.error("Username or Password not correct.");
+      message.error("Username hoặc Password không đúng.");
       handleClearInput();
     }
   };

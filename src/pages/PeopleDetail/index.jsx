@@ -65,21 +65,20 @@ export default function PeopleDetail(props) {
   const onFinishForm = async () => {
     const values = searchForm.getFieldsValue();
     console.log("values", values);
-    if(values.rangeTime !== null){
+    if (values.rangeTime !== null) {
       const startDate = values.rangeTime[0].startOf("day").toDate();
-    const endDate = values.rangeTime[1].endOf("day").toDate();
-    let history = bookingData.filter((item) =>
-      item.bookingTime === null
-        ? startDate <= new Date(item.createdAt) &&
-          endDate >= new Date(item.createdAt)
-        : startDate <= new Date(item.bookingTime) &&
-          endDate >= new Date(item.bookingTime)
-    );
-    setBookingData(history);
+      const endDate = values.rangeTime[1].endOf("day").toDate();
+      let history = bookingData.filter((item) =>
+        item.bookingTime === null
+          ? startDate <= new Date(item.createdAt) &&
+            endDate >= new Date(item.createdAt)
+          : startDate <= new Date(item.bookingTime) &&
+            endDate >= new Date(item.bookingTime)
+      );
+      setBookingData(history);
     } else {
       initData(id);
     }
-    
   };
 
   useEffect(() => {
@@ -198,8 +197,9 @@ export default function PeopleDetail(props) {
                   )}
                   <div>
                     <div className="fs-14 textGrey2">
-                      Trip from {item.pickupLocation.locationName.split(",")[0]}{" "}
-                      to {item.destination.locationName}
+                      {t("tripFrom")}{" "}
+                      {item.pickupLocation.locationName.split(",")[0]} {t("to")}{" "}
+                      {item.destination.locationName}
                     </div>
                     <div className="fs-11 textGrey1 mb-3">
                       {" "}
@@ -217,7 +217,7 @@ export default function PeopleDetail(props) {
                       className="textBlue5 fs-14 fw-bolder text-decoration-none"
                       to={`/booking/tracking/${item.id}`}
                     >
-                      See Detail
+                      {t("seeDetail")}
                       <FontAwesomeIcon
                         icon={faArrowRight}
                         className="ms-2 bgBlue1 p-2 rounded-circle iconArrow"

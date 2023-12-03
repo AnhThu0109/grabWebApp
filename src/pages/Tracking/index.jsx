@@ -17,6 +17,7 @@ import formatPeopleId from "../../utils/formatPeopleID";
 import getShortLocationName from "../../utils/getShortLocationName";
 import formatTime from "../../utils/formatTime";
 import changeFareFormat from "../../utils/formatFare";
+import { useTranslation } from "react-i18next";
 
 export default function Tracking() {
   const { id } = useParams();
@@ -30,6 +31,7 @@ export default function Tracking() {
   const [destination, setDestination] = useState();
   const [driverLocation, setDriverLocation] = useState(null);
   const [bookingForm, setBookingForm] = useState(null);
+  const {t} = useTranslation();
 
   const icons = Array.from({ length: 9 }, (_, index) => (
     <FontAwesomeIcon
@@ -111,7 +113,7 @@ export default function Tracking() {
                 onClick={handleReturn}
               >
                 <FontAwesomeIcon icon={faCircleLeft} className="me-2" />
-                Return
+                {t("return")}
               </Button>
             </div>
             <div className="col row bg-white rounded-3 p-3 fs-14 me-3">
@@ -120,7 +122,7 @@ export default function Tracking() {
                   <div>
                     {bookingForm?.service === "1" ? "Standard" : "Plus"} Service
                   </div>
-                  <div>{bookingForm?.distance}</div>
+                  {/* <div>{bookingForm?.distance}</div> */}
                 </div>
                 <div className="d-flex">
                   <div className="d-flex flex-column me-2 py-3">
@@ -169,25 +171,25 @@ export default function Tracking() {
               </div>
               <div className="col secondColumn">
                 <div className="d-flex justify-content-between">
-                  <div>Guest</div>
+                  <div>{t("guest")}</div>
                   <div className="fw-bolder">
                     {bookingForm?.Customer?.fullname}
                   </div>
                 </div>
                 <div className="d-flex justify-content-between">
-                  <div>Phone Number</div>
+                  <div>{t("phone")}</div>
                   <div className="fw-bolder">
                     {bookingForm?.Customer?.phoneNo}
                   </div>
                 </div>
                 <div className="d-flex justify-content-between">
-                  <div>Admin</div>
+                  <div>{t("admin")}</div>
                   <div className="fw-bolder">
                     {formatPeopleId(bookingForm?.adminId, "AD")}
                   </div>
                 </div>
                 <div className="d-flex justify-content-between">
-                  <div>Driver</div>
+                  <div>{t("driver")}</div>
                   <div className="fw-bolder">
                     {bookingForm?.driverId === null
                       ? "Finding Driver..."
@@ -195,24 +197,24 @@ export default function Tracking() {
                   </div>
                 </div>
                 <div className="d-flex justify-content-between">
-                  <div>Car Type</div>
+                  <div>{t("carType")}</div>
                   <div className="fw-bolder">
-                    {bookingForm?.carType === "1" ? "Motorcycle" : "Car"}
+                    {bookingForm?.carType === "1" ? t("motorcycle") : t("car")}
                   </div>
                 </div>
                 <hr />
                 <div className="d-flex justify-content-between">
-                  <div>Total (Vnd)</div>
+                  <div>{t("total")} (Vnd)</div>
                   <div>
                     <div className="fw-bolder textOrange1">
                       {changeFareFormat(bookingForm?.Bill?.sum)}
                     </div>
                     <div className="text-black-50">
                       {bookingForm?.status === 4
-                        ? "Paid"
+                        ? t("paid")
                         : bookingForm?.status === 5
-                        ? "Canceled"
-                        : "Unpaid"}
+                        ? t("cancel")
+                        : t("unpaid")}
                     </div>
                   </div>
                 </div>

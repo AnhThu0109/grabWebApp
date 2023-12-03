@@ -49,5 +49,16 @@
   "fullName": "Full Name",
   "name": "Name",
   "license": "License Plate",
-  "activityHis": "Activity History"
+  "activityHis": "Activity History",
+  "tripFrom": "Trip from",
+  "to": "to",
+  "return": "Return",
+  "guest": "Guest",
+  "admin": "Admin",
+  "driver": "Driver",
+  "carType": "Car Type",
+  "motorcycle": "Motorcycle",
+  "car": "Car",
+  "paid": "Paid",
+  "unpaid": "Unpaid"
 }

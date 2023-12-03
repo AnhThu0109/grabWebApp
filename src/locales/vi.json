@@ -13,7 +13,7 @@
   "search": "Tìm kiếm",
   "contact": "Liên hệ",
   "activity": "Hoạt động đặt xe trong năm",
-  "cancel": "Hủy bỏ",
+  "cancel": "Đã hủy bỏ",
   "welcomeback": "CHÀO MỪNG TRỞ LẠI",
   "Jan": "Th1",
   "Feb": "Th2",
@@ -49,5 +49,16 @@
   "fullName": "Họ tên",
   "name": "Tên",
   "license": "Biển số xe",
-  "activityHis": "Lịch sử hoạt động"
+  "activityHis": "Lịch sử hoạt động",
+  "tripFrom": "Chuyến đi từ",
+  "to": "đến",
+  "return": "Quay lại",
+  "guest": "Khách hàng",
+  "admin": "Tổng đài viên",
+  "driver": "Tài xế",
+  "carType": "Loại xe",
+  "motorcycle": "Xe máy",
+  "car": "Ô tô",
+  "paid": "Đã thanh toán",
+  "unpaid": "Chưa thanh toán"
 }
