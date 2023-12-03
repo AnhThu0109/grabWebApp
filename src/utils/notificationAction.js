@@ -8,7 +8,7 @@ const createNotification = async (input, token) => {
       {
         text: input.text,
         adminId: input.adminId,
-        isErrorNoti: input.isErrorNoti
+        isErrorNoti: input.isErrorNoti,
       },
       {
         headers: {
@@ -19,7 +19,7 @@ const createNotification = async (input, token) => {
     );
     return response;
   } catch (error) {
-    console.error("Error fetching user data:", error);
+    console.error("Error create notification:", error);
     throw error;
   }
 };
@@ -34,7 +34,7 @@ const getNotificationsById = async (adminId, token) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Error fetching user data:", error);
+    console.error("Error fetching notifications:", error);
     throw error;
   }
 };
@@ -55,7 +55,7 @@ const updateNotification = async (id, isRead, token) => {
     );
     return response;
   } catch (error) {
-    console.error("Error fetching user data:", error);
+    console.error("Error update notification:", error);
     throw error;
   }
 };
@@ -70,9 +70,34 @@ const deleteNotification = async (id, token) => {
     });
     return response;
   } catch (error) {
-    console.error("Error fetching user data:", error);
+    console.error("Error delete notifications:", error);
     throw error;
   }
 };
 
-export {getNotificationsById, createNotification, updateNotification, deleteNotification};
+const updateAllNotifications = async (id, token) => {
+  try {
+    const response = await axios.put(
+      `${NOTIFICATION}/updateAll/${id}`,
+      {},
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      }
+    );
+    return response;
+  } catch (error) {
+    console.error("Error update all notifications:", error);
+    throw error;
+  }
+};
+
+export {
+  getNotificationsById,
+  createNotification,
+  updateNotification,
+  deleteNotification,
+  updateAllNotifications,
+};

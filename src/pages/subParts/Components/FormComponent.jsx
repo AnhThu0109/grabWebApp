@@ -77,7 +77,6 @@ export default function FormGetInfo() {
     if (inputValue !== "") {
       // Search in database first
       const locations = await searchLocationInDatabase(inputValue);
-      console.log("database location", locations);
       //setLocations(locations);
       const predictLocationsDB = locations.map((item) => item.locationName);
       inputName === "PickupLocation"
@@ -107,7 +106,7 @@ export default function FormGetInfo() {
             }
           );
         });
-        console.log(predictions);
+
         //Filter predictions to include only items with different description
         const filteredPredictions = predictions.filter(
           (livePrediction) =>
@@ -116,9 +115,8 @@ export default function FormGetInfo() {
                 livePrediction.description === databasePrediction
             )
         );
-        console.log("filter", filteredPredictions);
 
-        // Just take 4 results
+        // Just take 3 results
         if (filteredPredictions.length > 3) {
           filteredPredictions.splice(3);
         }

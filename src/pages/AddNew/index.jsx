@@ -19,8 +19,9 @@ import createCustomer from "../../utils/addNewCustomer";
 import getLocationByName from "../../utils/getLocation";
 import { useNavigate } from "react-router-dom";
 import formatPeopleId from "../../utils/formatPeopleID";
-import submitBookingForm from "../../utils/submitBookingForm";
-import { createNotification } from "../../utils/notification";
+import {submitBookingForm} from "../../utils/bookingFormAction";
+import { createNotification } from "../../utils/notificationAction";
+import { addNotification } from "../../redux/notificationSlide";
 
 export default function Add() {
   const [phoneNo, setPhoneNo] = useState();
@@ -177,12 +178,12 @@ export default function Add() {
               const input = {
                 text: notification, 
                 adminId, 
-                isErrorNoti: true
+                isErrorNoti: false
               }
               createNotification(input, token)
                 .then((createNotificationResponse) => {
-                  debugger;
-                  // Continue with any other actions based on createNotificationResponse if needed
+                  console.log("createNotificationResponse", createNotificationResponse);
+                  dispatch(addNotification(createNotificationResponse.data));
                 })
                 .catch((createNotificationError) => {
                   console.error(
@@ -198,23 +199,6 @@ export default function Add() {
           });
       }
     } catch (error) {
-      // if (error.response.status === 404) {
-      //   const notification = error.response.data.message.split("!")[0] + " cho đơn đặt xe " + formatPeopleId(error.response.data.data.id, "BK");
-      //   message.error(notification);
-      //   createNotification(notification, adminId, token)
-      //         .then((createNotificationResponse) => {
-      //           debugger;
-      //           // Continue with any other actions based on createNotificationResponse if needed
-      //         })
-      //         .catch((createNotificationError) => {
-      //           console.error(
-      //             "Error creating notification:",
-      //             createNotificationError
-      //           );
-      //         });
-      // } else {
-      //   message.error(error.message);
-      // }
       console.error("Error fetching distance data:", error);
       throw error;
     }

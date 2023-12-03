@@ -26,9 +26,14 @@ import { BOOKING_FORM } from "../../utils/API";
 import { Skeleton } from "@mui/material";
 import { formatDateBooking } from "../../utils/formatDate";
 import formatPeopleId from "../../utils/formatPeopleID";
-import submitBookingForm from "../../utils/submitBookingForm";
+import {
+  cancelBookingForm,
+  submitBookingForm,
+} from "../../utils/bookingFormAction";
 import getById from "../../utils/getById";
 import { useDispatch } from "react-redux";
+import { createNotification } from "../../utils/notificationAction";
+import { addNotification } from "../../redux/notificationSlide";
 
 function Booking() {
   const [bookingId, setbookingId] = useState();
@@ -172,34 +177,73 @@ function Booking() {
         service: bookingFormById.service,
         carType: bookingFormById.carType,
         paymentStatus: 1,
-        paymentType: 1
+        paymentType: 1,
       };
-      const submitBookingPromise = submitBookingForm({ data: inputData, bookingId }, adminId, token, dispatch);
-      message.success(`Đơn đặt xe ${formatPeopleId(bookingId, "BK")} đã được gửi đi!`);  
+      const submitBookingPromise = submitBookingForm(
+        { data: inputData, bookingId },
+        adminId,
+        token,
+        dispatch
+      );
+      message.success(
+        `Đơn đặt xe ${formatPeopleId(bookingId, "BK")} đã được gửi đi!`
+      );
       // Now, if you need the response from submitBookingForm, you can use .then()
       submitBookingPromise
         .then((response) => {
           console.log("Response from submitBookingForm:", response);
-          message.success(`Tài xế ${formatPeopleId(response.data.driver_accepted.id, "DR")} chấp nhận đơn đặt xe ${formatPeopleId(response.data.bookingId, "BK")}!`);
+          if (response !== undefined) {
+            const notification = `Tài xế ${formatPeopleId(
+              response.data.driver_accepted.id,
+              "DR"
+            )} chấp nhận đơn đặt xe ${formatPeopleId(
+              response.data.bookingId,
+              "BK"
+            )}!`;
+            message.success(notification);
+            const input = {
+              text: notification,
+              adminId,
+              isErrorNoti: false,
+            };
+            createNotification(input, token)
+              .then((createNotificationResponse) => {
+                console.log(
+                  "createNotificationResponse",
+                  createNotificationResponse
+                );
+                dispatch(
+                  addNotification({
+                    text: createNotificationResponse.data.text,
+                    isRead: false,
+                  })
+                );
+              })
+              .catch((createNotificationError) => {
+                console.error(
+                  "Error creating notification:",
+                  createNotificationError
+                );
+              });
+          }
         })
         .catch((error) => {
-          if(error.response.status === 404){
-            message.error(error.response.data.message.split("!")[0] + ` cho đơn đặt xe ${formatPeopleId(error.response.data.data.id, "BK")}`);
-          }
-          else {
-            message.error(error.message);
-          }
           console.error("Error submitting booking form:", error);
+          message.error(error.message);
         });
     } catch (error) {
-      // if(error.response.status === 404){
-      //   message.error(error.response.data.message.split("!")[0] + ` cho đơn đặt xe ${formatPeopleId(error.response.data.data.id, "BK")}`);
-      // }
-      // else {
-      //   message.error(error.message);
-      // }
       console.error("Error fetching user data:", error);
       throw error;
+    }
+  };
+
+  const handleCancelBookingForm = async () => {
+    const input = {
+      status: 5,
+    };
+    const response = await cancelBookingForm(bookingId, input, token);
+    if(response.status===200){
+      message.success(`Đơn đặt xe ${formatPeopleId(bookingId, "BK")} đã được hủy thành công!`)
     }
   };
 
@@ -227,6 +271,15 @@ function Booking() {
           onClick={handleReSendBookingForm}
         >
           Resend
+        </Link>
+      </Menu.Item>
+      <Menu.Item key="2">
+        <Link
+          rel="noopener noreferrer"
+          className="nav-link"
+          onClick={handleCancelBookingForm}
+        >
+          Cancel
         </Link>
       </Menu.Item>
     </Menu>
@@ -279,9 +332,13 @@ function Booking() {
         },
       ],
       onFilter: (value, record) =>
-        (value === "Running" && record?.BookingStatusId?.status_description === "Running") ||
-        (value === "Progress" && record?.BookingStatusId?.status_description === "On Progress") ||
-        (value === "No drivers accepted" && record?.BookingStatusId?.status_description === "No drivers accepted"),
+        (value === "Running" &&
+          record?.BookingStatusId?.status_description === "Running") ||
+        (value === "Progress" &&
+          record?.BookingStatusId?.status_description === "On Progress") ||
+        (value === "No drivers accepted" &&
+          record?.BookingStatusId?.status_description ===
+            "No drivers accepted"),
       render: (_, item) => (
         <div className="d-flex justify-content-between">
           <Tag
@@ -393,7 +450,7 @@ function Booking() {
   useEffect(() => {
     // Initial data load
     initData(filter);
-    
+
     // Set up an interval to renew data every 30 seconds
     const intervalId = setInterval(() => {
       initData(filter);

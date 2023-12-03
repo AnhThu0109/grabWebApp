@@ -253,7 +253,6 @@ function History() {
       ...item,
       key: index + 1,
     }));
-    console.log(filterData);
     setBookingData(filterData);
     setIsLoading(false);
   };

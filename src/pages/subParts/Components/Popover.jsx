@@ -6,7 +6,7 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import {
   deleteNotification,
   updateNotification,
-} from "../../../utils/notification";
+} from "../../../utils/notificationAction";
 import { useDispatch } from "react-redux";
 import {
   deleteNotificationById,

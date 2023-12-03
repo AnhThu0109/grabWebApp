@@ -37,8 +37,8 @@ import getById from "../../utils/getById";
 import { ADMIN } from "../../utils/API";
 import { Badge, Switch } from "antd";
 import { Trans, useTranslation } from "react-i18next";
-import { getNotificationsById } from "../../utils/notification";
-import { setNotificationData } from "../../redux/notificationSlide";
+import { getNotificationsById, updateAllNotifications } from "../../utils/notificationAction";
+import { setNotificationData, updateAllAsRead } from "../../redux/notificationSlide";
 import { PopoverComponent } from "./Components/Popover";
 
 export default function Layout() {
@@ -114,6 +114,16 @@ export default function Layout() {
     }
   };
 
+  const handleMarkAllNotiRead = async (userId, userToken) => {
+    try {
+      const response = await updateAllNotifications(userId, userToken);
+      dispatch(updateAllAsRead());
+      console.log(response);
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
+    }
+  };
+
   useEffect(() => {
     //getUserInfo
     const fetchUserData = async () => {
@@ -164,7 +174,7 @@ export default function Layout() {
 
           <PopoverComponent
             content={notificationData}
-            title={<div className="d-flex justify-content-between"><div className="fw-bolder">Notifications</div><small className="fw-lighter textBlue2"><a>Mark all as read</a></small></div>}
+            title={<div className="d-flex justify-content-between"><div className="fw-bolder">Notifications</div><button className="border-0 bg-transparent" onClick={() => handleMarkAllNotiRead(id, token)}><small className="textBlue2">Mark all as read</small></button></div>}
             object={
                 <Badge
                   dot={isAnyUnread}
