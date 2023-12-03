@@ -6,15 +6,7 @@ import {
   faFilter,
   faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
-import {
-  Dropdown,
-  Button,
-  Space,
-  Menu,
-  Table,
-  Input,
-  Tag,
-} from "antd";
+import { Dropdown, Button, Space, Menu, Table, Input, Tag } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import "./style.css";
@@ -24,6 +16,7 @@ import getAll from "../../utils/getAll";
 import { BOOKING_FORM } from "../../utils/API";
 import formatPeopleId from "../../utils/formatPeopleID";
 import { formatDateBooking } from "../../utils/formatDate";
+import { useTranslation } from "react-i18next";
 
 function History() {
   const [bookingId, setbookingId] = useState();
@@ -31,6 +24,7 @@ function History() {
   const [bookingData, setBookingData] = useState([]);
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
+  const { t } = useTranslation();
 
   //Get id of chosen booking for showing modal see detail
   const bookingChosen = (id) => {
@@ -108,7 +102,7 @@ function History() {
               close();
             }}
           >
-            close
+            Close
           </Button>
         </Space>
       </div>
@@ -157,7 +151,7 @@ function History() {
           className="nav-link"
           to={`/booking/tracking/${bookingId}`}
         >
-          See Detail
+          {t("seeDetail")}
         </Link>
       </Menu.Item>
     </Menu>
@@ -182,7 +176,7 @@ function History() {
       className: "ps-5",
     },
     {
-      title: "CREATED AT",
+      title: t("createdAtCapital"),
       dataIndex: "createdAt",
       key: "createdAt",
       sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
@@ -191,34 +185,35 @@ function History() {
       className: "ps-5",
     },
     {
-      title: "STATUS",
+      title: t("statusCapital"),
       key: "status",
       dataIndex: "status",
       className: "ps-5",
       filters: [
         {
-          text: "Complete",
+          text: t("complete"),
           value: "Complete",
         },
         {
-          text: "Canceled",
+          text: t("canceled"),
           value: "Canceled",
         },
       ],
-      onFilter: (value, record) => (value === "Complete" && record?.BookingStatusId?.status_description === "Complete") || (value === "Canceled" && record?.BookingStatusId?.status_description === "Canceled"),
+      onFilter: (value, record) =>
+        (value === "Complete" &&
+          record?.BookingStatusId?.status_description === "Complete") ||
+        (value === "Canceled" &&
+          record?.BookingStatusId?.status_description === "Canceled"),
       render: (_, item) => (
         <div className="d-flex justify-content-between">
           <Tag
             bordered={false}
             color={item.status === 4 ? "processing" : "error"}
           >
-            {item.status === 4? "Complete" : "Canceled"}
+            {item.status === 4 ? t("complete") : t("canceled")}
           </Tag>
           <Dropdown overlay={itemNormalbooking} trigger={["click"]}>
-            <Button
-              onClick={() => bookingChosen(item.id)}
-              className="border-0"
-            >
+            <Button onClick={() => bookingChosen(item.id)} className="border-0">
               <Space>
                 <FontAwesomeIcon icon={faEllipsis} className="textGrey1" />
               </Space>
@@ -233,7 +228,9 @@ function History() {
     let filterData;
     if (filterItem === "All") {
       const data = await getAll(BOOKING_FORM, token);
-      filterData = data.rows.filter(item => item.status === 4 || item.status === 5);
+      filterData = data.rows.filter(
+        (item) => item.status === 4 || item.status === 5
+      );
       filterData = filterData.map((item, index) => ({
         ...item,
         bookingId: formatPeopleId(item.id, "BK"),
@@ -241,7 +238,9 @@ function History() {
       }));
     } else {
       const data = await getAll(`${BOOKING_FORM}/admin/${userId}`, token);
-      filterData = data.filter(item => item.status === 4 || item.status === 5);
+      filterData = data.filter(
+        (item) => item.status === 4 || item.status === 5
+      );
       filterData = filterData.map((item, index) => ({
         ...item,
         bookingId: formatPeopleId(item.id, "BK"),
@@ -266,7 +265,7 @@ function History() {
           className="nav-link"
           onClick={() => handleClickFilter("All")}
         >
-          Show All
+          {t("showAll")}
         </Link>
       </Menu.Item>
       <Menu.Item key="2">
@@ -275,13 +274,13 @@ function History() {
           className="nav-link"
           onClick={() => handleClickFilter("Mine")}
         >
-          Show Mine
+          {t("showMine")}
         </Link>
       </Menu.Item>
     </Menu>
   );
 
-  const handleClickFilter = async(filterItem) => {
+  const handleClickFilter = async (filterItem) => {
     setIsLoading(true);
     await initData(filterItem);
   };
@@ -301,7 +300,7 @@ function History() {
         <>
           <div className="d-flex justify-content-between pt-4">
             <h5 className="px-3 mt-2 textGrey1">
-              {bookingData?.length} in total.
+              {bookingData?.length} {t("inTotal")}.
             </h5>
             <Dropdown overlay={filterItems} trigger={["click"]}>
               <button
@@ -313,7 +312,7 @@ function History() {
                     icon={faFilter}
                     className="me-1"
                   ></FontAwesomeIcon>
-                  Filter
+                  {t("filter")}
                   <FontAwesomeIcon
                     icon={faChevronDown}
                     className="me-1"

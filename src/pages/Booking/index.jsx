@@ -34,6 +34,7 @@ import getById from "../../utils/getById";
 import { useDispatch } from "react-redux";
 import { createNotification } from "../../utils/notificationAction";
 import { addNotification } from "../../redux/notificationSlide";
+import { useTranslation } from "react-i18next";
 
 function Booking() {
   const [bookingId, setbookingId] = useState();
@@ -42,8 +43,8 @@ function Booking() {
   const [filter, setFilter] = useState("All");
   const token = localStorage.getItem("token");
   const adminId = localStorage.getItem("adminId");
-  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const {t} = useTranslation();
 
   //Get id of chosen booking for showing modal see detail
   const bookingChosen = (id) => {
@@ -121,7 +122,7 @@ function Booking() {
               close();
             }}
           >
-            close
+            Close
           </Button>
         </Space>
       </div>
@@ -256,7 +257,7 @@ function Booking() {
           className="nav-link"
           to={`/booking/tracking/${bookingId}`}
         >
-          See Detail
+          {t("seeDetail")}
         </Link>
       </Menu.Item>
     </Menu>
@@ -270,7 +271,7 @@ function Booking() {
           className="nav-link"
           onClick={handleReSendBookingForm}
         >
-          Resend
+          {t("resend")}
         </Link>
       </Menu.Item>
       <Menu.Item key="2">
@@ -279,7 +280,7 @@ function Booking() {
           className="nav-link"
           onClick={handleCancelBookingForm}
         >
-          Cancel
+          {t("cancel")}
         </Link>
       </Menu.Item>
     </Menu>
@@ -304,7 +305,7 @@ function Booking() {
       className: "ps-5",
     },
     {
-      title: "CREATED AT",
+      title: t("createdAtCapital"),
       dataIndex: "createdAt",
       key: "createdAt",
       sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
@@ -313,21 +314,21 @@ function Booking() {
       className: "ps-5",
     },
     {
-      title: "STATUS",
+      title: t("statusCapital"),
       key: "status",
       dataIndex: "status",
       className: "ps-5",
       filters: [
         {
-          text: "On Progress",
+          text: t("onProgress"),
           value: "Progress",
         },
         {
-          text: "Running",
+          text: t("running"),
           value: "Running",
         },
         {
-          text: "No drivers accepted",
+          text: t("noDrivers"),
           value: "No drivers accepted",
         },
       ],
@@ -352,10 +353,10 @@ function Booking() {
             }
           >
             {item.status === 3
-              ? "Running"
+              ? t("running")
               : item.status === 1
-              ? "On Process"
-              : "No drivers accepted"}
+              ? t("onProgress")
+              : t("noDrivers")}
           </Tag>
           {item.status === 2 ? (
             <Dropdown overlay={itemFailbooking} trigger={["click"]}>
@@ -426,7 +427,7 @@ function Booking() {
           className="nav-link"
           onClick={() => handleClickFilter("All")}
         >
-          Show All
+          {t("showAll")}
         </Link>
       </Menu.Item>
       <Menu.Item key="2">
@@ -435,7 +436,7 @@ function Booking() {
           className="nav-link"
           onClick={() => handleClickFilter("Mine")}
         >
-          Show Mine
+          {t("showMine")}
         </Link>
       </Menu.Item>
     </Menu>
@@ -471,7 +472,7 @@ function Booking() {
         <>
           <div className="d-flex justify-content-between pt-4">
             <h5 className="px-3 mt-2 textGrey1">
-              {bookingData?.length} in total.
+              {bookingData?.length} {t("inTotal")}.
             </h5>
             <div>
               <Dropdown overlay={filterItems} trigger={["click"]}>
@@ -484,7 +485,7 @@ function Booking() {
                       icon={faFilter}
                       className="me-1"
                     ></FontAwesomeIcon>
-                    Filter
+                    {t("filter")}
                     <FontAwesomeIcon
                       icon={faChevronDown}
                       className="me-1"
@@ -498,7 +499,7 @@ function Booking() {
                     icon={faPlus}
                     className="me-2"
                   ></FontAwesomeIcon>
-                  Add New
+                  {t("addNew")}
                 </Link>
               </button>
             </div>

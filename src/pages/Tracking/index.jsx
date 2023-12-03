@@ -191,8 +191,8 @@ export default function Tracking() {
                 <div className="d-flex justify-content-between">
                   <div>{t("driver")}</div>
                   <div className="fw-bolder">
-                    {bookingForm?.driverId === null
-                      ? "Finding Driver..."
+                    {bookingForm?.driverId === null && bookingForm?.status !== 5
+                      ? t("finding") : bookingForm?.driverId === null && bookingForm?.status === 5? t("none")
                       : formatPeopleId(bookingForm?.driverId, "DR")}
                   </div>
                 </div>
@@ -213,7 +213,7 @@ export default function Tracking() {
                       {bookingForm?.status === 4
                         ? t("paid")
                         : bookingForm?.status === 5
-                        ? t("cancel")
+                        ? t("canceled")
                         : t("unpaid")}
                     </div>
                   </div>

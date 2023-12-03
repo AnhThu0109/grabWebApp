@@ -11,7 +11,7 @@ const isLogin = () => {
 {/* if login successful ==> link to chosen component || link to login page */}
 const UserRoutes = ({Component}) => {
     const result = isLogin();
-    return result == false? <Navigate to="/login"/> : <Component />;
+    return result === false? <Navigate to="/login"/> : <Component />;
 };
 
 export {isLogin, UserRoutes};
