@@ -151,7 +151,7 @@ const Home = ({ t }) => {
           data: [45, 50, 48, 52, 60, 65, 58, 45, 80, 85, 75, 80],
         },
         {
-          label: t('cancel'),
+          label: t('canceled'),
           backgroundColor: "#C51E3A",
           borderRadius: 10,
           borderSkipped: false,

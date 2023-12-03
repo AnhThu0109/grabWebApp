@@ -34,6 +34,7 @@ import { CheckCircleFilled, CloseCircleFilled } from "@ant-design/icons";
 import getAll from "../../../utils/getAll";
 import { setCarTypeData } from "../../../redux/carTypeSlide";
 import { setCarServiceData } from "../../../redux/carServiceSlide";
+import { useTranslation } from "react-i18next";
 
 export default function FormGetInfo() {
   const [form] = Form.useForm();
@@ -57,6 +58,7 @@ export default function FormGetInfo() {
   const carServiceInfo = useSelector((state) => state.carService);
   // Dispatching actions
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const handleInputChange = async (e, inputName) => {
     if (inputName === "PickupLocation") {
@@ -337,7 +339,7 @@ export default function FormGetInfo() {
         allFieldValues = {
           ...allFieldValues,
           PickupTime: allFieldValues?.PickupTime
-            ? allFieldValues?.PickupTime.format('YYYY-MM-DD HH:mm:ss.SSSZ')
+            ? allFieldValues?.PickupTime.format("YYYY-MM-DD HH:mm:ss.SSSZ")
             : null,
         };
         const response = await getDistance(pickUp, destination);
@@ -379,13 +381,18 @@ export default function FormGetInfo() {
       autoComplete="off"
       className="bookingForm"
     >
-      <h6 className="fw-bolder">Basic Information</h6>
+      <h6 className="fw-bolder">{t("basicInfo")}</h6>
       <div className="row">
         <div className="col">
           <Form.Item
+            rules={[
+              {
+                required: true,
+              },
+            ]}
             className="location-search-container"
             name="PickupLocation"
-            label={<div className="textBlue3">Pickup Location</div>}
+            label={<div className="textBlue3">{t("pickup")}</div>}
             validateStatus={hasFeedback.pick === false ? "error" : ""}
             help={
               hasFeedback.pick === false ? "Please input Pickup location!" : ""
@@ -453,7 +460,7 @@ export default function FormGetInfo() {
                       icon={faMagnifyingGlass}
                       className="me-1 text-black-50"
                     />
-                    No results were found
+                    {t("noResult")}
                   </li>
                 )}
             </ul>
@@ -461,8 +468,13 @@ export default function FormGetInfo() {
         </div>
         <div className="col">
           <Form.Item
+            rules={[
+              {
+                required: true,
+              },
+            ]}
             name="Destination"
-            label={<div className="textBlue3">Destination</div>}
+            label={<div className="textBlue3">{t("destination")}</div>}
             validateStatus={hasFeedback.des === false ? "error" : ""}
             help={hasFeedback.des === false ? "Please input Destination!" : ""}
           >
@@ -529,7 +541,7 @@ export default function FormGetInfo() {
                       icon={faMagnifyingGlass}
                       className="me-1 text-black-50"
                     />
-                    No results were found
+                    {t("noResult")}
                   </li>
                 )}
             </ul>
@@ -541,7 +553,9 @@ export default function FormGetInfo() {
         <div className="col">
           <Form.Item
             name="PickupTime"
-            label={<div className="textBlue3">Pickup Time (Optional)</div>}
+            label={
+              <div className="textBlue3">{t("pickupTime")} (Optional)</div>
+            }
           >
             <DatePicker
               showTime
@@ -557,7 +571,7 @@ export default function FormGetInfo() {
         <div className="col">
           <Form.Item
             name="NoOfGuest"
-            label={<div className="textBlue3">No. of Guest</div>}
+            label={<div className="textBlue3">{t("guestNo")}</div>}
             rules={[
               {
                 required: true,
@@ -580,7 +594,7 @@ export default function FormGetInfo() {
         <div className="col">
           <Form.Item
             name="CarType"
-            label={<div className="textBlue3">Car Type</div>}
+            label={<div className="textBlue3">{t("carType")}</div>}
             rules={[
               {
                 required: true,
@@ -591,10 +605,7 @@ export default function FormGetInfo() {
           >
             <Select>
               {carTypeInfo?.map((item) => (
-                <Option
-                  key={item.id}
-                  value={item.id}
-                >
+                <Option key={item.id} value={item.id}>
                   {item.car_type}
                 </Option>
               ))}
@@ -604,7 +615,7 @@ export default function FormGetInfo() {
         <div className="col">
           <Form.Item
             name="CarService"
-            label={<div className="textBlue3">Car Service</div>}
+            label={<div className="textBlue3">{t("carService")}</div>}
             rules={[
               {
                 required: true,
@@ -657,7 +668,7 @@ export default function FormGetInfo() {
                 : ""
             }
           >
-            Apply
+            {t("apply")}
           </Button>
         )}
       </Form.Item>

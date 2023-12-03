@@ -44,7 +44,7 @@ function Booking() {
   const token = localStorage.getItem("token");
   const adminId = localStorage.getItem("adminId");
   const dispatch = useDispatch();
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   //Get id of chosen booking for showing modal see detail
   const bookingChosen = (id) => {
@@ -243,8 +243,10 @@ function Booking() {
       status: 5,
     };
     const response = await cancelBookingForm(bookingId, input, token);
-    if(response.status===200){
-      message.success(`Đơn đặt xe ${formatPeopleId(bookingId, "BK")} đã được hủy thành công!`)
+    if (response.status === 200) {
+      message.success(
+        `Đơn đặt xe ${formatPeopleId(bookingId, "BK")} đã được hủy thành công!`
+      );
     }
   };
 

@@ -19,9 +19,10 @@ import createCustomer from "../../utils/addNewCustomer";
 import getLocationByName from "../../utils/getLocation";
 import { useNavigate } from "react-router-dom";
 import formatPeopleId from "../../utils/formatPeopleID";
-import {submitBookingForm} from "../../utils/bookingFormAction";
+import { submitBookingForm } from "../../utils/bookingFormAction";
 import { createNotification } from "../../utils/notificationAction";
 import { addNotification } from "../../redux/notificationSlide";
+import { useTranslation } from "react-i18next";
 
 export default function Add() {
   const [phoneNo, setPhoneNo] = useState();
@@ -32,6 +33,7 @@ export default function Add() {
   const [hasFeedback, setHasFeedback] = useState(null);
   const adminId = localStorage.getItem("userId");
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   let distanceInfo = useSelector((state) => state.distance);
   // Dispatching actions
@@ -156,8 +158,10 @@ export default function Add() {
 
         // Submit booking form without waiting
         const submitBookingPromise = submitBookingForm(
-          { data: inputData, bookingId: null }, adminId,
-          token, dispatch
+          { data: inputData, bookingId: null },
+          adminId,
+          token,
+          dispatch
         );
 
         message.success("Đơn đặt xe đã được gửi đi!");
@@ -166,7 +170,7 @@ export default function Add() {
         submitBookingPromise
           .then((response) => {
             console.log("Response from submitBookingForm:", response);
-            if(response !== undefined){
+            if (response !== undefined) {
               const notification = `Tài xế ${formatPeopleId(
                 response.data.driver_accepted.id,
                 "DR"
@@ -176,13 +180,16 @@ export default function Add() {
               )}!`;
               message.success(notification);
               const input = {
-                text: notification, 
-                adminId, 
-                isErrorNoti: false
-              }
+                text: notification,
+                adminId,
+                isErrorNoti: false,
+              };
               createNotification(input, token)
                 .then((createNotificationResponse) => {
-                  console.log("createNotificationResponse", createNotificationResponse);
+                  console.log(
+                    "createNotificationResponse",
+                    createNotificationResponse
+                  );
                   dispatch(addNotification(createNotificationResponse.data));
                 })
                 .catch((createNotificationError) => {
@@ -191,7 +198,7 @@ export default function Add() {
                     createNotificationError
                   );
                 });
-            }           
+            }
           })
           .catch((error) => {
             console.error("Error submitting booking form:", error);
@@ -212,10 +219,12 @@ export default function Add() {
   return (
     <div className="contentAddNew">
       <div className="leftPart mx-3 pt-3">
-        <h5 className="textBlue2 text-center fw-bolder">Add New Booking</h5>
+        <h5 className="textBlue2 text-center fw-bolder">
+          {t("addNewBooking")}
+        </h5>
         {/* Get info form */}
         <FormGetInfo />
-        <h6 className="fw-bolder">Guest Detail</h6>
+        <h6 className="fw-bolder">{t("guestDetail")}</h6>
         <Form
           form={form}
           layout="vertical"
@@ -227,7 +236,12 @@ export default function Add() {
             <div className="col">
               <Form.Item
                 name="PhoneNumber"
-                label={<div className="textBlue3">Phone Number</div>}
+                label={<div className="textBlue3">{t("phone")}</div>}
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
                 validateStatus={hasFeedback === false ? "error" : ""}
                 help={
                   hasFeedback === false
@@ -264,7 +278,7 @@ export default function Add() {
             <div className="col">
               <Form.Item
                 name="Name"
-                label={<div className="textBlue3">Name</div>}
+                label={<div className="textBlue3">{t("name")}</div>}
                 rules={[
                   {
                     required: true,
@@ -283,60 +297,62 @@ export default function Add() {
           </div>
           <Form.Item
             name="Note"
-            label={<div className="textBlue3">Note (Optional)</div>}
+            label={<div className="textBlue3">{t("note")} (Optional)</div>}
           >
             <Input.TextArea allowClear />
           </Form.Item>
           <div className="rightPart">
-            <h6 className="fw-bolder">Booking Summary</h6>
+            <h6 className="fw-bolder">{t("bookingSummary")}</h6>
             <div className="fs-14 mt-3 lh-lg">
               {distanceInfo == null ? (
-                "No information"
+                t("noInfo")
               ) : (
                 <>
                   <div>
-                    Kilometer:{" "}
+                    {t("km")}:{" "}
                     <b className="float-end me-5 pe-2">
                       {distanceInfo?.distance
                         ? distanceInfo?.distance?.distance?.text
-                        : "Unknown"}
+                        : t("unknown")}
                     </b>
                   </div>
                   <div>
-                    Duration:{" "}
+                    {t("duration")}:{" "}
                     <b className="float-end me-5 pe-2">
                       {distanceInfo?.distance
                         ? distanceInfo?.distance?.duration?.text
-                        : "Unknown"}
+                        : t("unknown")}
                     </b>
                   </div>
                   <div>
-                    Car Type:{" "}
+                    {t("carType")}:{" "}
                     <b className="float-end me-5 pe-2">
                       {distanceInfo?.CarType}
                     </b>
                   </div>
                   <div>
-                    Car Service:{" "}
+                    {t("carService")}:{" "}
                     <b className="float-end me-5 pe-2">
                       {distanceInfo?.CarService}
                     </b>
                   </div>
                   <div>
-                    VIP Booking:{" "}
+                    {t("vip")}:{" "}
                     <b className="float-end me-5 pe-2">
-                      {distanceInfo?.PickupTime === undefined ? "None" : "Yes"}
+                      {distanceInfo?.PickupTime === null
+                        ? t("none")
+                        : t("yes")}
                     </b>
                   </div>
                   <hr />
                   <div className="fw-bolder textOrange1">
-                    Total (Vnd):{" "}
+                    {t("total")} (Vnd):{" "}
                     <span className="float-end me-5 pe-2 fs-18">
                       {distanceInfo?.fare
                         ? changeFareFormat(
                             distanceInfo?.fare[getFare(distanceInfo)]
                           )
-                        : "Unknown"}
+                        : t("unknown")}
                     </span>
                   </div>
                 </>
@@ -363,7 +379,7 @@ export default function Add() {
                     distanceInfo === null
                   }
                 >
-                  BOOK
+                  {t("book")}
                 </Button>
               )}
             </Form.Item>
