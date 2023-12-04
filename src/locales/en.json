@@ -93,5 +93,8 @@
   "destination": "Destination",
   "pickupTime": "Pickup Time",
   "guestNo": "No. of Guest", 
-  "apply": "Apply"
+  "apply": "Apply",
+  "messSameLocation": "Pickup Location and Destination are the same. Please choose again!",
+  "messSuccessSubmit": "Submit success!",
+  "messErrSubmit": "Submit fail!"
 }

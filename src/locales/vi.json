@@ -93,5 +93,8 @@
   "destination": "Điểm đến",
   "pickupTime": "Thời gian đón",
   "guestNo": "Số lượng khách", 
-  "apply": "Áp dụng"
+  "apply": "Áp dụng",
+  "messSameLocation": "Điểm đón và điểm đến giống nhau. Hãy chọn lại!",
+  "messSuccessSubmit": "Gửi thông tin thành công!",
+  "messErrSubmit": "Gửi thông tin thất bại!"
 }

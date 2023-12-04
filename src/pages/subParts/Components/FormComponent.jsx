@@ -330,9 +330,7 @@ export default function FormGetInfo() {
     if (
       form.getFieldValue("PickupLocation") === form.getFieldValue("Destination")
     ) {
-      message.error(
-        "Pickup Location and Destination are the same. Please choose again!"
-      );
+      message.error(t("messSameLocation"));
     } else {
       try {
         let allFieldValues = form.getFieldsValue();
@@ -346,7 +344,7 @@ export default function FormGetInfo() {
         const dataTranfer = { ...allFieldValues, ...response.data };
         console.log("data", dataTranfer);
         dispatch(setDistanceData(dataTranfer));
-        message.success("Submit success!");
+        message.success(t(""));
       } catch (error) {
         console.error("Error fetching distance data:", error);
         throw error; // Re-throw the error to handle it elsewhere if needed
@@ -354,7 +352,7 @@ export default function FormGetInfo() {
     }
   };
   const onFinishFailed = () => {
-    message.error("Submit failed!");
+    message.error(t("messErrSubmit"));
   };
 
   const getInitInformation = async () => {
