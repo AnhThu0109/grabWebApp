@@ -11,6 +11,7 @@ import getAll from "../../utils/getAll";
 import formatTime from "../../utils/formatTime";
 import { formatDateOnly } from "../../utils/formatDate";
 import { useTranslation } from "react-i18next";
+import getShortLocationName from "../../utils/getShortLocationName";
 
 export default function PeopleDetail(props) {
   const [form] = Form.useForm();
@@ -37,13 +38,14 @@ export default function PeopleDetail(props) {
     let bookings;
     if (id.includes("CUS")) {
       const customer = await findPeopleByID(peopleID, GET_CUSTOMER);
+      setPeopleData(customer);
       setIsCus(true);
       form.setFieldValue("fullName", customer?.fullname);
       form.setFieldValue("phone", customer?.phoneNo);
       bookings = await getAll(`${BOOKING_FORM}/customer/${peopleID}`, token);
     } else {
       const driver = await findPeopleByID(peopleID, GET_DRIVER);
-      console.log(driver);
+      setPeopleData(driver);
       setIsCus(false);
       form.setFieldsValue({
         fullName: driver?.fullname,
@@ -59,7 +61,8 @@ export default function PeopleDetail(props) {
         item.BookingStatusId.status_description === "Complete" ||
         item.BookingStatusId.status_description === "Canceled"
     );
-    setBookingData(history);
+    const sortHistory = history.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+    setBookingData(sortHistory);
   };
 
   const onFinishForm = async () => {
@@ -198,8 +201,7 @@ export default function PeopleDetail(props) {
                   <div>
                     <div className="fs-14 textGrey2">
                       {t("tripFrom")}{" "}
-                      {item.pickupLocation.locationName.split(",")[0]} {t("to")}{" "}
-                      {item.destination.locationName}
+                      {getShortLocationName(item.pickupLocation.locationName)}{" "}{t("to")}{" "}{getShortLocationName(item.destination.locationName)}
                     </div>
                     <div className="fs-11 textGrey1 mb-3">
                       {" "}

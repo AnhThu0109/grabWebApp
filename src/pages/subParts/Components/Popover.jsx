@@ -12,6 +12,7 @@ import {
   deleteNotificationById,
   updateIsRead,
 } from "../../../redux/notificationSlide";
+import { useTranslation } from "react-i18next";
 
 export function Noti(props) {
   return (
@@ -50,6 +51,8 @@ export function PopoverComponent(props) {
     await deleteNotification(id, token);
   };
 
+  const {t} = useTranslation();
+
   return (
     <Popover
       content={
@@ -74,7 +77,7 @@ export function PopoverComponent(props) {
               </ul>
             ))
           ) : (
-            <ul>Good job! Looks like you're all caught up.</ul>
+            <ul><small><img alt="nonNoti" className="iconNotiMess me-1" src="/images/noNoti.png" />{t("nonNoti")}</small></ul>
           )}
         </li>
       }

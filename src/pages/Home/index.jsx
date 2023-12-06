@@ -29,7 +29,6 @@ const Home = ({ t }) => {
   };
   const chartInstance = useRef(null);
   const chartCanvas = useRef(null);
-  const { i18n } = useTranslation();
 
   const peopleList = [
     {
@@ -122,47 +121,24 @@ const Home = ({ t }) => {
     }
   };
 
-  // Initialize Chart
-  const initializeChart = () => {
-    const months = [
-      t('Jan'),
-      t('Feb'),
-      t('Mar'),
-      t('Apr'),
-      t('May'),
-      t('Jun'),
-      t('Jul'),
-      t('Aug'),
-      t('Sep'),
-      t('Oct'),
-      t('Nov'),
-      t('Dec'),
-    ];
-
-    const data = {
-      labels: months,
-      datasets: [
-        {
-          label: t('complete'),
-          backgroundColor: "#00D6BB",
-          borderRadius: 10,
-          borderSkipped: false,
-          barPercentage: 0.5,
-          data: [45, 50, 48, 52, 60, 65, 58, 45, 80, 85, 75, 80],
-        },
-        {
-          label: t('canceled'),
-          backgroundColor: "#C51E3A",
-          borderRadius: 10,
-          borderSkipped: false,
-          barPercentage: 0.5,
-          data: [5, 12, 9, 6, 11, 5, 8, 12, 9, 10, 5, 15],
-        },
-      ],
-    };
-
-    setDataChart(data);
-  };
+  //Get data booking of month
+  const getBookingNumberMonth = async(status) => {
+    const data = await getAll(BOOKING_FORM, token);
+    const dataFilter = data.rows.filter(item => item.BookingStatusId.status_description === status)
+    let dataChart = [];  
+    for(let i = 0; i< 12; i++){    
+      let a = 0;
+      if(dataFilter.length > 0){
+        dataFilter.forEach(element => {
+          if(new Date(element.createdAt).getMonth() === i){
+            a = a + 1;
+          }
+        });
+      }
+      dataChart.push(a);
+    }
+    return dataChart;
+  }
 
   const options = {
     responsive: true,
@@ -177,7 +153,7 @@ const Home = ({ t }) => {
     },
   };
 
-  const getAllBookings = async() => {
+  const getBookingsData = async() => {
     const data = await getAll(BOOKING_FORM, token);
     setAllBooking(data);
     const complete = data?.rows?.filter(item => item.status === 4);
@@ -187,8 +163,47 @@ const Home = ({ t }) => {
   }
 
   const initData = async() => {
-    await getAllBookings();
+    await getBookingsData();
     await fetchWeather();
+
+    //initial data chart
+    const months = [
+      t('Jan'),
+      t('Feb'),
+      t('Mar'),
+      t('Apr'),
+      t('May'),
+      t('Jun'),
+      t('Jul'),
+      t('Aug'),
+      t('Sep'),
+      t('Oct'),
+      t('Nov'),
+      t('Dec'),
+    ];
+    const data = {
+      labels: months,
+      datasets: [
+        {
+          label: t('complete'),
+          backgroundColor: "#00D6BB",
+          borderRadius: 10,
+          borderSkipped: false,
+          barPercentage: 0.5,
+          data: await getBookingNumberMonth("Complete"),
+        },
+        {
+          label: t('canceled'),
+          backgroundColor: "#C51E3A",
+          borderRadius: 10,
+          borderSkipped: false,
+          barPercentage: 0.5,
+          data: await getBookingNumberMonth("Canceled"),
+        },
+      ],
+    };
+
+    setDataChart(data);
   }
 
   useEffect(() => {
@@ -200,9 +215,6 @@ const Home = ({ t }) => {
 
     //Init data
     initData()
-
-    // Initialize the chart
-    initializeChart();
 
     // Cleanup the chart on component unmount
     return () => {

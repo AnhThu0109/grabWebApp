@@ -6,10 +6,12 @@ import "./../style.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 import { LOGIN } from "../../utils/API";
+import { useTranslation } from "react-i18next";
 
 export default function Login() {
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const { i18n } = useTranslation();
   const setRootBackground = () => {
     document.documentElement.style.setProperty(
       "--bg-color1",
@@ -28,10 +30,10 @@ export default function Login() {
         headers: { "Content-Type": "application/json" },
       });
 
-      console.log("Response:", response.data);
       message.success("Đăng nhập thành công!");
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("userId", response.data.data.id);
+      i18n.changeLanguage("en");
       navigate("/welcome");
     } catch (error) {
       console.error(error);

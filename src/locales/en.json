@@ -96,5 +96,8 @@
   "apply": "Apply",
   "messSameLocation": "Pickup Location and Destination are the same. Please choose again!",
   "messSuccessSubmit": "Submit success!",
-  "messErrSubmit": "Submit fail!"
+  "messErrSubmit": "Submit fail!",
+  "notification": "Notifications",
+  "nonNoti": "No notifications yet.",
+  "markAll": "Mark all as read"
 }

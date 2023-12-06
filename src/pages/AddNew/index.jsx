@@ -327,13 +327,13 @@ export default function Add() {
                   <div>
                     {t("carType")}:{" "}
                     <b className="float-end me-5 pe-2">
-                      {distanceInfo?.CarType}
+                      {distanceInfo?.CarType === 1? t("motorcycle"): t("car")}
                     </b>
                   </div>
                   <div>
                     {t("carService")}:{" "}
                     <b className="float-end me-5 pe-2">
-                      {distanceInfo?.CarService}
+                      {distanceInfo?.CarService === 1? "Standard": "Plus"}
                     </b>
                   </div>
                   <div>

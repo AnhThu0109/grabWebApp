@@ -53,7 +53,6 @@ export default function FormGetInfo() {
     des: null,
   });
   const token = localStorage.getItem("token");
-  const distanceInfo = useSelector((state) => state.distance);
   const carTypeInfo = useSelector((state) => state.carType);
   const carServiceInfo = useSelector((state) => state.carService);
   // Dispatching actions
@@ -344,7 +343,7 @@ export default function FormGetInfo() {
         const dataTranfer = { ...allFieldValues, ...response.data };
         console.log("data", dataTranfer);
         dispatch(setDistanceData(dataTranfer));
-        message.success(t(""));
+        message.success(t("messSuccessSubmit"));
       } catch (error) {
         console.error("Error fetching distance data:", error);
         throw error; // Re-throw the error to handle it elsewhere if needed

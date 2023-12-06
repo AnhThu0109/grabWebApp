@@ -174,7 +174,7 @@ export default function Layout() {
 
           <PopoverComponent
             content={notificationData}
-            title={<div className="d-flex justify-content-between"><div className="fw-bolder">Notifications</div><button className="border-0 bg-transparent" onClick={() => handleMarkAllNotiRead(id, token)}><small className="textBlue2">Mark all as read</small></button></div>}
+            title={<div className="d-flex justify-content-between"><div className="fw-bolder"><Trans i18nKey="notification">Notifications</Trans></div><button className="border-0 bg-transparent" onClick={() => handleMarkAllNotiRead(id, token)}><small className="textBlue2"><Trans i18nKey="markAll">Mark all as read</Trans></small></button></div>}
             object={
                 <Badge
                   dot={isAnyUnread}

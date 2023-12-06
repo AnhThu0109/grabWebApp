@@ -96,5 +96,8 @@
   "apply": "Áp dụng",
   "messSameLocation": "Điểm đón và điểm đến giống nhau. Hãy chọn lại!",
   "messSuccessSubmit": "Gửi thông tin thành công!",
-  "messErrSubmit": "Gửi thông tin thất bại!"
+  "messErrSubmit": "Gửi thông tin thất bại!",
+  "notification": "Thông báo",
+  "nonNoti": "Hiện không có thông báo nào.",
+  "markAll": "Đọc tất cả"
 }
