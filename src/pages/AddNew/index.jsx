@@ -170,6 +170,7 @@ export default function Add() {
         submitBookingPromise
           .then((response) => {
             console.log("Response from submitBookingForm:", response);
+            debugger;
             if (response !== undefined) {
               const notification = `Tài xế ${formatPeopleId(
                 response.data.driver_accepted.id,
@@ -184,6 +185,7 @@ export default function Add() {
                 adminId,
                 isErrorNoti: false,
               };
+              console.log("input noti", input);
               createNotification(input, token)
                 .then((createNotificationResponse) => {
                   console.log(

@@ -5,7 +5,7 @@ import formatPeopleId from "./formatPeopleID";
 import { createNotification } from "./notificationAction";
 import { addNotification } from "../redux/notificationSlide";
 
-const submitBookingForm = async (input, adminId, token, dispatch) => {
+const submitBookingForm = async (input, id, token, dispatch) => {
   try {
     const response = await axios.post(`${BOOKING_FORM}/bookRide`, input, {
       headers: {
@@ -15,6 +15,7 @@ const submitBookingForm = async (input, adminId, token, dispatch) => {
     });
     return response;
   } catch (error) {
+    debugger;
     console.error("Error submit booking form:", error);
     if (error.response.status === 404) {
       const notification =
@@ -23,12 +24,12 @@ const submitBookingForm = async (input, adminId, token, dispatch) => {
       message.error(notification);
       const input = {
         text: notification,
-        adminId,
+        adminId: id,
         isErrorNoti: true,
       };
       const resNoti = await createNotification(input, token);
       if (resNoti.status === 200) {
-        dispatch(addNotification(resNoti.data.text));
+        dispatch(addNotification(resNoti.data));
       }
     } else {
       message.error(error.message);
