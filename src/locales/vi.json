@@ -57,7 +57,7 @@
   "admin": "Tổng đài viên",
   "driver": "Tài xế",
   "carType": "Loại xe",
-  "motorcycle": "Xe máy",
+  "motorcycle": "Xe hai bánh",
   "car": "Ô tô",
   "paid": "Đã thanh toán",
   "unpaid": "Chưa thanh toán",
@@ -99,5 +99,7 @@
   "messErrSubmit": "Gửi thông tin thất bại!",
   "notification": "Thông báo",
   "nonNoti": "Hiện không có thông báo nào.",
-  "markAll": "Đọc tất cả"
+  "markAll": "Đọc tất cả",
+  "car-4": "Xe bốn chỗ",
+  "car-7": "Xe bảy chỗ"
 }

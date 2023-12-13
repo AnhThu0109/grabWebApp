@@ -13,8 +13,9 @@ import { Bar } from "react-chartjs-2";
 import Chart from "chart.js/auto";
 import setRootBackground from "../../utils/setRootBackground";
 import getAll from "../../utils/getAll";
-import { BOOKING_FORM } from "../../utils/API";
+import { ADMIN, BOOKING_FORM } from "../../utils/API";
 import { useTranslation, withTranslation } from "react-i18next";
+import formatPeopleId from "../../utils/formatPeopleID";
 
 const Home = ({ t }) => {
   const [isAdmin, setAdmin] = useState(false);
@@ -23,6 +24,7 @@ const Home = ({ t }) => {
   const [allBooking, setAllBooking] = useState();
   const [completeBooking, setCompleteBooking] = useState();
   const [ongoingBooking, setOngoingBooking] = useState();
+  const [adminList, setAdminList] = useState([]);
   const token = localStorage.getItem("token");
   const isAdminLogin = () => {
     localStorage.getItem(isAdmin) === "true" ? setAdmin(true) : setAdmin(false);
@@ -165,6 +167,9 @@ const Home = ({ t }) => {
   const initData = async() => {
     await getBookingsData();
     await fetchWeather();
+    const admins = await getAll(`${ADMIN}/all`, token);
+    console.log("admins", admins);
+    setAdminList(admins);
 
     //initial data chart
     const months = [
@@ -429,19 +434,19 @@ const Home = ({ t }) => {
               </div>
               <hr className="textGrey4" />
               <div className="contactList">
-                {peopleList.map((item, index) => (
+                {adminList.length > 0 && adminList.map((item, index) => (
                   <div className="row pb-3" key={index}>
                     <div className="col-3">
                       <img
-                        src={item.avatarPath}
+                        src={item.avatarPath !== null ? item.avatarPath : "https://secure.gravatar.com/avatar/11273dbd2dcbfb87e3061eef1b3a5fe9?s=500&d=mm&r=g"}
                         alt="avatar"
                         className="rounded-circle avatarContact"
                       />
                     </div>
 
                     <div className="col">
-                      <b>{item.username}</b>
-                      <div className="fs-14 textGrey1">{item.onlineTime}</div>
+                      <b>{item.fullname}</b>
+                      <div className="fs-14 textGrey1">{formatPeopleId(item.id, "AD")}</div>
                     </div>
                   </div>
                 ))}

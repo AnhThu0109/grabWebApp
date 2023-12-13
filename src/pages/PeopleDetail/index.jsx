@@ -95,7 +95,7 @@ export default function PeopleDetail(props) {
             src={
               peopleData?.avatarPath != null
                 ? peopleData?.avatarPath
-                : "https://lh3.googleusercontent.com/ED85u6aQ2oseaV3Zi4ff-DyLnQpc-02EbG328ilQChGqg-4OkQuDzfirfuCnRP_Sv9DWwkI3iG_DALmWPVRr-SxO"
+                : "https://secure.gravatar.com/avatar/11273dbd2dcbfb87e3061eef1b3a5fe9?s=500&d=mm&r=g"
             }
             alt="avatar"
             className="avatarImg me-5"

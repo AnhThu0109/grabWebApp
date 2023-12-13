@@ -454,13 +454,13 @@ function Booking() {
     // Initial data load
     initData(filter);
 
-    // Set up an interval to renew data every 30 seconds
-    const intervalId = setInterval(() => {
-      initData(filter);
-    }, 40000); // 40 seconds in milliseconds
+    // // Set up an interval to renew data every 30 seconds
+    // const intervalId = setInterval(() => {
+    //   initData(filter);
+    // }, 40000); // 40 seconds in milliseconds
 
-    // Clear the interval when the component unmounts
-    return () => clearInterval(intervalId);
+    // // Clear the interval when the component unmounts
+    // return () => clearInterval(intervalId);
   }, [bookingData]);
 
   return (

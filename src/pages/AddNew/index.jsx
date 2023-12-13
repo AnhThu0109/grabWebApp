@@ -329,7 +329,7 @@ export default function Add() {
                   <div>
                     {t("carType")}:{" "}
                     <b className="float-end me-5 pe-2">
-                      {distanceInfo?.CarType === 1? t("motorcycle"): t("car")}
+                      {distanceInfo?.CarType === 1? t("motorcycle"): distanceInfo?.CarType === 3? t("car-4") : t("car-7")}
                     </b>
                   </div>
                   <div>

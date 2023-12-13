@@ -43,6 +43,7 @@ export default function FormGetInfo() {
   const [predictionsDesDB, setPredictionsDesDB] = useState([]);
   const [predictionsDesLive, setPredictionsDesLive] = useState([]);
   const [pickUp, setPickUp] = useState();
+  const [carTypeList, setCarTypeList] = useState([]);
   const [destination, setDestination] = useState();
   const [isChooseLocation, setIsChooseLocation] = useState({
     pickUp: false,
@@ -52,6 +53,7 @@ export default function FormGetInfo() {
     pick: null,
     des: null,
   });
+  const [isDisabledCarService, setIsDisabledCarService] = useState(false);
   const token = localStorage.getItem("token");
   const carTypeInfo = useSelector((state) => state.carType);
   const carServiceInfo = useSelector((state) => state.carService);
@@ -315,13 +317,25 @@ export default function FormGetInfo() {
 
   const handleChangeGuestNo = (e) => {
     const noOfGuest = form.getFieldValue("NoOfGuest");
-    if (noOfGuest > 1) {
-      const filteredCarTypes = carTypeInfo.filter(
-        (item) => item.car_type !== "Motorcycle"
+    if (noOfGuest > 1 && noOfGuest < 4) {
+      form.setFieldValue("CarType", null);
+      const filteredCarTypes = carTypeList.filter(
+        (item) => item.car_type !== "Xe hai bánh"
       );
       dispatch(setCarTypeData(filteredCarTypes));
+      setIsDisabledCarService(false);
+    } else if (noOfGuest > 3) {
+      form.setFieldValue("CarType", null);
+      const filteredCarTypes = carTypeList.filter(
+        (item) =>
+          item.car_type !== "Xe hai bánh" && item.car_type !== "Xe bốn chỗ"
+      );
+      dispatch(setCarTypeData(filteredCarTypes));
+      form.setFieldValue("CarService", 1);
+      setIsDisabledCarService(true);
     } else {
       getInitInformation();
+      setIsDisabledCarService(false);
     }
   };
 
@@ -340,6 +354,7 @@ export default function FormGetInfo() {
             : null,
         };
         const response = await getDistance(pickUp, destination);
+        console.log("distance", response);
         const dataTranfer = { ...allFieldValues, ...response.data };
         console.log("data", dataTranfer);
         dispatch(setDistanceData(dataTranfer));
@@ -356,7 +371,9 @@ export default function FormGetInfo() {
 
   const getInitInformation = async () => {
     const type = await getAll(GET_CARTYPE, token);
-    dispatch(setCarTypeData(type));
+    const typeFilter = type.filter((item) => item.car_type !== "Xe tay ga");
+    dispatch(setCarTypeData(typeFilter));
+    setCarTypeList(typeFilter);
     const service = await getAll(GET_SERVICE, token);
     dispatch(setCarServiceData(service));
   };
@@ -579,7 +596,7 @@ export default function FormGetInfo() {
           >
             <InputNumber
               min={1}
-              max={10}
+              max={6}
               className="w-100"
               onChange={handleChangeGuestNo}
             />
@@ -598,7 +615,7 @@ export default function FormGetInfo() {
                 message: "Please select Car Type",
               },
             ]}
-            hasFeedback
+            hasFeedback={form.getFieldValue("CarType") !== null ? true : false}
           >
             <Select>
               {carTypeInfo?.map((item) => (
@@ -619,9 +636,9 @@ export default function FormGetInfo() {
                 message: "Please select Car Service",
               },
             ]}
-            hasFeedback
+            hasFeedback={!isDisabledCarService}
           >
-            <Select>
+            <Select disabled={isDisabledCarService}>
               {carServiceInfo?.map((item) => (
                 <Option key={item.id} value={item.id}>
                   {item.serviceName}
@@ -645,6 +662,7 @@ export default function FormGetInfo() {
               form.getFieldValue("Destination") === "" ||
               form.getFieldValue("NoOfGuest") === undefined ||
               form.getFieldValue("CarType") === undefined ||
+              form.getFieldValue("CarType") === null ||
               form.getFieldValue("CarService") === undefined ||
               !!form.getFieldsError().filter(({ errors }) => errors.length)
                 .length ||
@@ -657,7 +675,7 @@ export default function FormGetInfo() {
               form.getFieldValue("Destination") !== undefined &&
               form.getFieldValue("Destination") !== "" &&
               form.getFieldValue("NoOfGuest") !== undefined &&
-              form.getFieldValue("CarType") !== undefined &&
+              form.getFieldValue("CarType") !== undefined && form.getFieldValue("CarType") !== null &&
               form.getFieldValue("CarService") !== undefined &&
               !form.getFieldsError().filter(({ errors }) => errors.length)
                 .length
