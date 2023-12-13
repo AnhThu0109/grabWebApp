@@ -40,6 +40,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { getNotificationsById, updateAllNotifications } from "../../utils/notificationAction";
 import { setNotificationData, updateAllAsRead } from "../../redux/notificationSlide";
 import { PopoverComponent } from "./Components/Popover";
+import { Skeleton } from "@mui/material";
 
 export default function Layout() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -53,6 +54,7 @@ export default function Layout() {
     activeMyAcc: false,
   });
   const [userData, setUserData] = useState();
+  const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
   const avatar = useSelector((state) => state.avatar.avatarPath);
   const notificationData = useSelector((state) => state.notification.notiData);
@@ -124,21 +126,22 @@ export default function Layout() {
     }
   };
 
-  useEffect(() => {
+  const initData = async() => {
     //getUserInfo
-    const fetchUserData = async () => {
-      try {
-        const user = await getById(id, ADMIN, token);
-        const noti = await getNotificationsById(id, token);
-        noti.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        setUserData(user);
-        dispatch(setNotificationData(noti));
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
+    try {
+      const user = await getById(id, ADMIN, token);
+      setUserData(user);
+      setIsLoading(false);
+      const noti = await getNotificationsById(id, token);
+      noti.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      dispatch(setNotificationData(noti));
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  }
 
-    fetchUserData();
+  useEffect(() => {
+    initData();
     // Set the initial title and active menu item based on the current URL
     setTitleCurrentURL();
     // Add an event listener to update the title and active menu item when the user clicks the browser's back or forward button
@@ -164,7 +167,7 @@ export default function Layout() {
             <MenuIcon fontSize="large" className="textGreen1" />
           </Link>
         </Typography>
-        <div>
+        <div className="d-flex align-items-center">
           <Switch
             checkedChildren="En"
             unCheckedChildren="Vi"
@@ -186,8 +189,11 @@ export default function Layout() {
                 </Badge>
             }
           ></PopoverComponent>
-
-          <IconButton
+          {
+            isLoading ? (
+              <Skeleton className="ms-4" variant="circular" width={33} height={33} />
+            ) : (
+              <IconButton
             className="ms-4"
             onClick={handleClick}
             size="small"
@@ -202,11 +208,14 @@ export default function Layout() {
                   ? avatar
                   : userData?.avatarPath
                   ? userData?.avatarPath
-                  : "https://lh3.googleusercontent.com/ED85u6aQ2oseaV3Zi4ff-DyLnQpc-02EbG328ilQChGqg-4OkQuDzfirfuCnRP_Sv9DWwkI3iG_DALmWPVRr-SxO"
+                  : "https://secure.gravatar.com/avatar/11273dbd2dcbfb87e3061eef1b3a5fe9?s=500&d=mm&r=g"
               }
               alt="avatar"
             />
           </IconButton>
+            )
+          }
+          
         </div>
       </Box>
       <Menu
