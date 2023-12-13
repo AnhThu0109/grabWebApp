@@ -124,7 +124,7 @@ const MyAccount = ({ t }) => {
   const onFinish = async (values) => {
     const data = {
       fullname: `${values.familyName} ${values.givenName}`,
-      birthday: values.birth,
+      birthday: values.birth.format('YYYY-MM-DD'),
       gender: values.gender,
       address: values.address,
       avatarPath: avatar,

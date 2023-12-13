@@ -15,7 +15,6 @@ const submitBookingForm = async (input, id, token, dispatch) => {
     });
     return response;
   } catch (error) {
-    debugger;
     console.error("Error submit booking form:", error);
     if (error.response.status === 404) {
       const notification =
