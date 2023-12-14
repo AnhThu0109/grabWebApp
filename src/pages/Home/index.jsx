@@ -124,9 +124,9 @@ const Home = ({ t }) => {
   };
 
   //Get data booking of month
-  const getBookingNumberMonth = async(status) => {
+  const getBookingNumberMonth = async(statusId) => {
     const data = await getAll(BOOKING_FORM, token);
-    const dataFilter = data.rows.filter(item => item.BookingStatusId.status_description === status)
+    const dataFilter = data.rows.filter(item => item.BookingStatusId.id === statusId)
     let dataChart = [];  
     for(let i = 0; i< 12; i++){    
       let a = 0;
@@ -158,9 +158,9 @@ const Home = ({ t }) => {
   const getBookingsData = async() => {
     const data = await getAll(BOOKING_FORM, token);
     setAllBooking(data);
-    const complete = data?.rows?.filter(item => item.status === 4);
+    const complete = data?.rows?.filter(item => item.status === 7);
     setCompleteBooking(complete);
-    const ongoing = data?.rows?.filter(item => item.status === 3);
+    const ongoing = data?.rows?.filter(item => item.status === 5);
     setOngoingBooking(ongoing);
   }
 
@@ -195,7 +195,7 @@ const Home = ({ t }) => {
           borderRadius: 10,
           borderSkipped: false,
           barPercentage: 0.5,
-          data: await getBookingNumberMonth("Complete"),
+          data: await getBookingNumberMonth(7),
         },
         {
           label: t('canceled'),
@@ -203,7 +203,7 @@ const Home = ({ t }) => {
           borderRadius: 10,
           borderSkipped: false,
           barPercentage: 0.5,
-          data: await getBookingNumberMonth("Canceled"),
+          data: await getBookingNumberMonth(8),
         },
       ],
     };

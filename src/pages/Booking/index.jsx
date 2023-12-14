@@ -240,7 +240,7 @@ function Booking() {
 
   const handleCancelBookingForm = async () => {
     const input = {
-      status: 5,
+      status: 8,
     };
     const response = await cancelBookingForm(bookingId, input, token);
     if (response.status === 200) {
@@ -336,31 +336,30 @@ function Booking() {
       ],
       onFilter: (value, record) =>
         (value === "Running" &&
-          record?.BookingStatusId?.status_description === "Running") ||
+          record?.BookingStatusId?.id === 5) ||
         (value === "Progress" &&
-          record?.BookingStatusId?.status_description === "On Progress") ||
+          record?.BookingStatusId?.id === 2) ||
         (value === "No drivers accepted" &&
-          record?.BookingStatusId?.status_description ===
-            "No drivers accepted"),
+          record?.BookingStatusId?.id === 10),
       render: (_, item) => (
         <div className="d-flex justify-content-between">
           <Tag
             bordered={false}
             color={
-              item.status === 3
+              item.status === 5
                 ? "green"
-                : item.status === 1
+                : item.status === 2
                 ? "cyan"
                 : "orange"
             }
           >
-            {item.status === 3
+            {item.status === 5
               ? t("running")
-              : item.status === 1
+              : item.status === 2
               ? t("onProgress")
               : t("noDrivers")}
           </Tag>
-          {item.status === 2 ? (
+          {item.status === 10 ? (
             <Dropdown overlay={itemFailbooking} trigger={["click"]}>
               <Button
                 onClick={() => bookingChosen(item.id)}
@@ -393,7 +392,7 @@ function Booking() {
     if (filterItem === "All") {
       const data = await getAll(BOOKING_FORM, token);
       filterData = data.rows.filter(
-        (item) => item.status === 1 || item.status === 2 || item.status === 3
+        (item) => item.status === 5 || item.status === 2 || item.status === 10
       );
       filterData = filterData.map((item, index) => ({
         ...item,
@@ -403,7 +402,7 @@ function Booking() {
     } else {
       const data = await getAll(`${BOOKING_FORM}/admin/${adminId}`, token);
       filterData = data.filter(
-        (item) => item.status === 1 || item.status === 2 || item.status === 3
+        (item) => item.status === 5 || item.status === 2 || item.status === 10
       );
       filterData = filterData.map((item, index) => ({
         ...item,
@@ -454,14 +453,7 @@ function Booking() {
     // Initial data load
     initData(filter);
 
-    // // Set up an interval to renew data every 30 seconds
-    // const intervalId = setInterval(() => {
-    //   initData(filter);
-    // }, 40000); // 40 seconds in milliseconds
-
-    // // Clear the interval when the component unmounts
-    // return () => clearInterval(intervalId);
-  }, [bookingData]);
+  }, []); //bookingData
 
   return (
     <>

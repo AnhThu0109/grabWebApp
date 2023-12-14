@@ -201,16 +201,16 @@ function History() {
       ],
       onFilter: (value, record) =>
         (value === "Complete" &&
-          record?.BookingStatusId?.status_description === "Complete") ||
+          record?.BookingStatusId?.id === 7) ||
         (value === "Canceled" &&
-          record?.BookingStatusId?.status_description === "Canceled"),
+          record?.BookingStatusId?.id === 8),
       render: (_, item) => (
         <div className="d-flex justify-content-between">
           <Tag
             bordered={false}
-            color={item.status === 4 ? "processing" : "error"}
+            color={item.status === 7 ? "processing" : "error"}
           >
-            {item.status === 4 ? t("complete") : t("canceled")}
+            {item.status === 7 ? t("complete") : t("canceled")}
           </Tag>
           <Dropdown overlay={itemNormalbooking} trigger={["click"]}>
             <Button onClick={() => bookingChosen(item.id)} className="border-0">
@@ -229,7 +229,7 @@ function History() {
     if (filterItem === "All") {
       const data = await getAll(BOOKING_FORM, token);
       filterData = data.rows.filter(
-        (item) => item.status === 4 || item.status === 5
+        (item) => item.status === 7 || item.status === 8
       );
       filterData = filterData.map((item, index) => ({
         ...item,
@@ -239,7 +239,7 @@ function History() {
     } else {
       const data = await getAll(`${BOOKING_FORM}/admin/${userId}`, token);
       filterData = data.filter(
-        (item) => item.status === 4 || item.status === 5
+        (item) => item.status === 7 || item.status === 8
       );
       filterData = filterData.map((item, index) => ({
         ...item,
