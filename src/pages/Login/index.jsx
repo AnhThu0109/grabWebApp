@@ -5,8 +5,9 @@ import "./style.css";
 import "./../style.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
-import { LOGIN } from "../../utils/API";
+import { LOGIN, SERVER_URL } from "../../utils/API";
 import { useTranslation } from "react-i18next";
+import io from 'socket.io-client';
 
 export default function Login() {
   const [form] = Form.useForm();
@@ -49,6 +50,22 @@ export default function Login() {
 
   useEffect(() => {
     setRootBackground();
+
+    // // Connect to the Socket.IO server
+    // const socket = io(SERVER_URL);
+
+    // // Event listener for when the connection is established
+    // socket.on('connect', (socket) => {
+    //   console.log(socket);
+    //   console.log('Connected to Socket.IO server');
+    //   //save socket id to database
+    // });
+
+    // // Cleanup: disconnect from the server when the component unmounts
+    // return () => {
+    //   socket.disconnect();
+    //   console.log('Disconnected from Socket.IO server');
+    // };
   }, []);
 
   return (

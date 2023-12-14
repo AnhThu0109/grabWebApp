@@ -22,7 +22,7 @@ import Highlighter from "react-highlight-words";
 import "./style.css";
 import "./../style.css";
 import getAll from "../../utils/getAll";
-import { BOOKING_FORM } from "../../utils/API";
+import { BOOKING_FORM, SERVER_URL } from "../../utils/API";
 import { Skeleton } from "@mui/material";
 import { formatDateBooking } from "../../utils/formatDate";
 import formatPeopleId from "../../utils/formatPeopleID";
@@ -35,6 +35,7 @@ import { useDispatch } from "react-redux";
 import { createNotification } from "../../utils/notificationAction";
 import { addNotification } from "../../redux/notificationSlide";
 import { useTranslation } from "react-i18next";
+import io from 'socket.io-client';
 
 function Booking() {
   const [bookingId, setbookingId] = useState();
@@ -166,13 +167,13 @@ function Booking() {
     try {
       const bookingFormById = await getById(bookingId, BOOKING_FORM, token);
       const inputData = {
-        pickupLocationId: bookingFormById.pickupLocationId,
-        destinationId: bookingFormById.destinationId,
+        pickupLocationId: bookingFormById.pickupLocation.id,
+        destinationId: bookingFormById.destination.id,
         bookingWay: 1, //using web admin
         bookingTime: bookingFormById.bookingTime,
         distance: bookingFormById.distance,
-        sum: bookingFormById.sum,
-        customerId: bookingFormById.customerId,
+        sum: bookingFormById.Bill.sum,
+        customerId: bookingFormById.Customer.id,
         adminId: bookingFormById.adminId,
         note: bookingFormById.note,
         service: bookingFormById.service,
@@ -230,7 +231,7 @@ function Booking() {
         })
         .catch((error) => {
           console.error("Error submitting booking form:", error);
-          message.error(error.message);
+          message.error(t("errorMess"));
         });
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -402,7 +403,7 @@ function Booking() {
     } else {
       const data = await getAll(`${BOOKING_FORM}/admin/${adminId}`, token);
       filterData = data.filter(
-        (item) => item.status === 5 || item.status === 2 || item.status === 10
+        (item) => item.status === 5 || item.status === 2 || item.status === 10 || item.status === 1
       );
       filterData = filterData.map((item, index) => ({
         ...item,
@@ -453,6 +454,25 @@ function Booking() {
     // Initial data load
     initData(filter);
 
+    // // Connect to the Socket.IO server
+    // const socket = io(SERVER_URL);
+
+    // // Event listener for custom events from the server
+    // socket.on('bookingStatusChange', ({ bookingId, newStatus }) => {
+    //   console.log('Received custom event:', bookingId);
+    //   if(bookingData.length > 0){
+    //     bookingData.map(item => {
+    //       if(item.id === bookingId){
+    //         item.status = newStatus;
+    //       }
+    //     })
+    //   }
+    // });
+    // Cleanup: disconnect from the server when the component unmounts
+    // return () => {
+    //   socket.disconnect();
+    //   console.log('Disconnected from Socket.IO server');
+    // };
   }, []); //bookingData
 
   return (

@@ -23,9 +23,9 @@ import { Skeleton } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { setAvatarChosenPath, setAvatarPath } from "../../redux/avatarSlide";
 import { CheckCircleFilled, CloseCircleFilled } from "@ant-design/icons";
-import getUserById from "../../utils/getById";
 import formatPeopleId from "../../utils/formatPeopleID";
 import { withTranslation } from "react-i18next";
+import getById from "../../utils/getById";
 
 const AvatarCarousel = ({ images }) => {
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -166,7 +166,7 @@ const MyAccount = ({ t }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const user = await getUserById(id, ADMIN, token);
+        const user = await getById(id, ADMIN, token);
         setUserData(user);
         setInitialData({
           givenName: splitFullName(user?.fullname).splice(1).join(" "),

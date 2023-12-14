@@ -153,7 +153,7 @@ export default function Add() {
           service: distanceInfo.CarService.toString(),
           carType: distanceInfo.CarType.toString(),
           paymentStatus: 1,
-          paymentType: 1,
+          paymentType: 1
         };
 
         // Submit booking form without waiting
@@ -204,7 +204,7 @@ export default function Add() {
           })
           .catch((error) => {
             console.error("Error submitting booking form:", error);
-            message.error(error.message);
+            message.error(t("errorMess"));
           });
       }
     } catch (error) {

@@ -12,6 +12,7 @@ import formatTime from "../../utils/formatTime";
 import { formatDateOnly } from "../../utils/formatDate";
 import { useTranslation } from "react-i18next";
 import getShortLocationName from "../../utils/getShortLocationName";
+import capitalizeFirstLetter from "../../utils/capitalFirstLeter";
 
 export default function PeopleDetail(props) {
   const [form] = Form.useForm();
@@ -49,7 +50,7 @@ export default function PeopleDetail(props) {
       setIsCus(false);
       form.setFieldsValue({
         fullName: driver?.fullname,
-        gender: driver?.gender ? driver?.gender : "Unknown",
+        gender: driver?.gender ? capitalizeFirstLetter(driver?.gender) : "Unknown",
         license: driver?.licensePlate,
         phone: driver?.phoneNo,
       });
