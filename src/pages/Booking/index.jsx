@@ -27,7 +27,7 @@ import { Skeleton } from "@mui/material";
 import { formatDateBooking } from "../../utils/formatDate";
 import formatPeopleId from "../../utils/formatPeopleID";
 import {
-  cancelBookingForm,
+  updateBookingForm,
   submitBookingForm,
 } from "../../utils/bookingFormAction";
 import getById from "../../utils/getById";
@@ -243,7 +243,7 @@ function Booking() {
     const input = {
       status: 8,
     };
-    const response = await cancelBookingForm(bookingId, input, token);
+    const response = await updateBookingForm(bookingId, input, token);
     if (response.status === 200) {
       message.success(
         `Đơn đặt xe ${formatPeopleId(bookingId, "BK")} đã được hủy thành công!`
@@ -450,6 +450,15 @@ function Booking() {
     await initData(filterItem); // Call initData directly with the filterItem argument
   };
 
+  // Function to change the status of a booking
+  const handleChangeStatus = async(bookingId, newStatus) => {
+    const input = {
+      status: newStatus,
+    };
+    const response = await updateBookingForm(bookingId, input, token);
+    console.log("handle change booking form", response);
+  };
+
   useEffect(() => {
     // Initial data load
     initData(filter);
@@ -489,6 +498,9 @@ function Booking() {
               {bookingData?.length} {t("inTotal")}.
             </h5>
             <div>
+            <button className="border-0 bgBlue2 addNewBtn px-3 py-2 me-3 rounded-3" onClick={() => handleChangeStatus(107, 3)}>
+                change status
+              </button>
               <Dropdown overlay={filterItems} trigger={["click"]}>
                 <button
                   onClick={(e) => e.preventDefault()}

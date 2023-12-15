@@ -36,7 +36,7 @@ const submitBookingForm = async (input, id, token, dispatch) => {
   }
 };
 
-const cancelBookingForm = async (id, input, token) => {
+const updateBookingForm = async (id, input, token) => {
   try {
     const response = await axios.put(`${BOOKING_FORM}/${id}/update`, input, {
       headers: {
@@ -49,4 +49,5 @@ const cancelBookingForm = async (id, input, token) => {
     console.error("Error cancel booking form:", error);
   }
 };
-export { submitBookingForm, cancelBookingForm };
+
+export { submitBookingForm, updateBookingForm };
