@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialState = null;
+const initialState = [];
 
 export const socketSlice = createSlice({
   name: 'socket',
@@ -11,12 +11,6 @@ export const socketSlice = createSlice({
     },
   },
 });
-
-// Use an async thunk action creator
-export const setSocketDataAsync = (socket) => (dispatch) => {
-  // const serializableData = serializeSocket(socket);
-  // dispatch(socketSlice.actions.setSocketData(serializableData));
-};
 
 export const { setSocketData } = socketSlice.actions;
 

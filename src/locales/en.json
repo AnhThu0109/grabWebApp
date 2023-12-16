@@ -105,5 +105,6 @@
   "errorMess": "Error when booking form",
   "driverAccepted": "Driver Accepted",
   "driverPickup-ing": "Picking Up Passengers",
-  "driverPickup": "Picked Up Passengers"
+  "driverPickup": "Picked Up Passengers",
+  "notFoundAdmin": "Not found"
 }

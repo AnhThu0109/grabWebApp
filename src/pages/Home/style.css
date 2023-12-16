@@ -70,3 +70,7 @@
 :where(.css-dev-only-do-not-override-1me4733).ant-modal .ant-modal-footer .ant-btn+.ant-btn:not(.ant-dropdown-trigger) {
     background-color: var(--green-color3);
 }
+
+.notfoundImage{
+    width: 80px;
+}

@@ -16,6 +16,7 @@ import { withTranslation } from "react-i18next";
 import formatPeopleId from "../../utils/formatPeopleID";
 import getById from "../../utils/getById";
 import capitalizeFirstLetter from "../../utils/capitalFirstLeter";
+import searchAdminByKeyword from "../../utils/searchAdmin";
 
 const Home = ({ t }) => {
   const [isAdmin, setAdmin] = useState(false);
@@ -27,6 +28,7 @@ const Home = ({ t }) => {
   const [adminList, setAdminList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [avatarChosenAdmin, setAvatarChosenAdmin] = useState();
+  const [keyWordName, setKeyWordName] = useState("");
   const token = localStorage.getItem("token");
   const adminId = localStorage.getItem("userId");
   const isAdminLogin = () => {
@@ -34,7 +36,7 @@ const Home = ({ t }) => {
   };
   const chartInstance = useRef(null);
   const chartCanvas = useRef(null);
-  const [form] = Form.useForm();
+  const [formAdminInfo] = Form.useForm();
 
   //Fetching weather in 3 days
   const [weather, setWeather] = useState();
@@ -130,6 +132,26 @@ const Home = ({ t }) => {
     setOngoingBooking(ongoing);
   };
 
+  //Search name admin
+  const handleSearchName = async(e) => {
+    e.preventDefault();
+    if (keyWordName.trim() !== "") {
+      console.log("searchKeyword", keyWordName);
+      const response = await searchAdminByKeyword(ADMIN, keyWordName, token);
+      console.log("response",response);
+      if(response?.status === 200) {
+        const adminsFilter = response.data.filter((item) => item.id !== Number(adminId));
+        setAdminList(adminsFilter);
+      } else {
+        setAdminList([]);
+      }
+    } else {
+      const admins = await getAll(`${ADMIN}/all`, token);
+      const adminsFilter = admins.filter((item) => item.id !== Number(adminId));
+      setAdminList(adminsFilter);
+    }
+  }
+
   const initData = async () => {
     await getBookingsData();
     await fetchWeather();
@@ -182,7 +204,7 @@ const Home = ({ t }) => {
     setIsModalOpen(true);
     const user = await getById(id, ADMIN, token);
     setAvatarChosenAdmin(user.avatarPath);
-    form.setFieldsValue({
+    formAdminInfo.setFieldsValue({
       fullName: user?.fullname,
       gender: capitalizeFirstLetter(user?.gender),
       birthday: user?.birthday,
@@ -210,6 +232,10 @@ const Home = ({ t }) => {
       }
     };
   }, [isAdmin, t]);
+
+  useEffect(() => {
+
+  }, [adminList])
 
   return (
     <>
@@ -399,16 +425,19 @@ const Home = ({ t }) => {
             >
               <div className="d-flex justify-content-between">
                 <h5 className="fw-bolder textGrey1">{t("contact")}</h5>
-                <form className="searchFormContact">
+                <form className="searchFormContact" onSubmit={handleSearchName}>
                   <input
+                    name="keyWordName"
                     className="border-0 fs-14 bgBlue4 textGrey1 py-1 px-2"
                     type="text"
+                    value={keyWordName}
                     placeholder={t("search")}
+                    onChange={(e) => setKeyWordName(e.target.value)}
                   />
                   <button
                     type="submit"
                     className="border-0 bgBlue4 py-1 px-2 fs-14"
-                    onClick={(e) => e.preventDefault()}
+                    onClick={handleSearchName}
                   >
                     <FontAwesomeIcon
                       icon={faMagnifyingGlass}
@@ -419,8 +448,8 @@ const Home = ({ t }) => {
               </div>
               <hr className="textGrey4" />
               <ul className="contactList">
-                {adminList.length > 0 &&
-                  adminList.map((item, index) => (
+                {adminList.length > 0 ?
+                  (adminList.map((item, index) => (
                     <li
                       className="row pb-3"
                       key={index}
@@ -445,7 +474,14 @@ const Home = ({ t }) => {
                         </div>
                       </div>
                     </li>
-                  ))}
+                  ))) : (<div className="text-center">
+                  <img
+                    alt="noData"
+                    src="/images/noData.png"
+                    className="notfoundImage"
+                  />
+                  <div className="fs-14 textGrey4">{t("notFoundAdmin")}</div>
+                </div>)}
               </ul>
             </div>
           </div>
@@ -465,7 +501,7 @@ const Home = ({ t }) => {
               className="rounded-circle avatarChosenAdmin"
             />
             <Form
-              form={form}
+              form={formAdminInfo}
               layout="vertical"
               className="me-2"
               autoComplete="off"
@@ -495,12 +531,6 @@ const Home = ({ t }) => {
                   <Form.Item
                     name="gender"
                     label={<div className="textBlue3">{t("gender")}</div>}
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please select your Gender",
-                      },
-                    ]}
                   >
                     <Input readOnly />
                   </Form.Item>

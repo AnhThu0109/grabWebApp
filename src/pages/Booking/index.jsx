@@ -46,10 +46,10 @@ function Booking() {
   const adminId = localStorage.getItem("userId");
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const bookingDataRef = useRef(bookingData);
   const socketData = useSocket();
   const [isChangeBookingData, setChangeBookingData] = useState(false);
-  const navigate = useNavigate();
+  const [completeBookingId, setCompleteBookingId] = useState(-1);
+  const bookingIdChangeStatus = useRef(-1);
 
   //Get id of chosen booking for showing modal see detail
   const bookingChosen = (id) => {
@@ -167,8 +167,33 @@ function Booking() {
     console.log("params", pagination, filters, sorter, extra);
   };
 
+  const displayAndCreateNotification = (noti) => {
+    message.success(noti);
+
+    const input = {
+      text: noti,
+      adminId: Number(adminId),
+      isErrorNoti: false,
+    };
+
+    createNotification(input, token)
+      .then((createNotificationResponse) => {
+        console.log("createNotificationResponse", createNotificationResponse);
+        dispatch(
+          addNotification({
+            text: createNotificationResponse.data.text,
+            isRead: false,
+          })
+        );
+      })
+      .catch((createNotificationError) => {
+        console.error("Error creating notification:", createNotificationError);
+      });
+  };
+
   const handleReSendBookingForm = async () => {
     try {
+      debugger;
       const bookingFormById = await getById(bookingId, BOOKING_FORM, token);
       const inputData = {
         pickupLocationId: bookingFormById.pickupLocation.id,
@@ -184,6 +209,7 @@ function Booking() {
         carType: bookingFormById.carType,
         paymentStatus: 1,
         paymentType: 1,
+        socketid: socketData.id,
       };
       console.log(inputData);
       const submitBookingPromise = submitBookingForm(
@@ -192,7 +218,7 @@ function Booking() {
         token,
         dispatch
       );
-      setChangeBookingData(true)
+      setChangeBookingData(true);
       message.success(
         `Đơn đặt xe ${formatPeopleId(bookingId, "BK")} đã được gửi đi!`
       );
@@ -209,33 +235,8 @@ function Booking() {
               response.data.bookingId,
               "BK"
             )}!`;
-            message.success(notification);
-            const input = {
-              text: notification,
-              adminId,
-              isErrorNoti: false,
-            };
-            createNotification(input, token)
-              .then((createNotificationResponse) => {
-                console.log(
-                  "createNotificationResponse",
-                  createNotificationResponse
-                );
-                dispatch(
-                  addNotification({
-                    text: createNotificationResponse.data.text,
-                    isRead: false,
-                  })
-                );
-              })
-              .catch((createNotificationError) => {
-                console.error(
-                  "Error creating notification:",
-                  createNotificationError
-                );
-              });
-          }
-          else {
+            displayAndCreateNotification(notification);
+          } else {
             setChangeBookingData(true);
           }
         })
@@ -347,12 +348,9 @@ function Booking() {
         },
       ],
       onFilter: (value, record) =>
-        (value === "Running" &&
-          record?.BookingStatusId?.id === 5) ||
-        (value === "Progress" &&
-          record?.BookingStatusId?.id === 2) ||
-        (value === "No drivers accepted" &&
-          record?.BookingStatusId?.id === 10),
+        (value === "Running" && record?.BookingStatusId?.id === 5) ||
+        (value === "Progress" && record?.BookingStatusId?.id === 2) ||
+        (value === "No drivers accepted" && record?.BookingStatusId?.id === 10),
       render: (_, item) => (
         <div className="d-flex justify-content-between">
           <Tag
@@ -362,13 +360,21 @@ function Booking() {
                 ? "orange"
                 : item.status === 2 || item.status === 1
                 ? "geekblue"
-                : item.status === 3 || item.status === 4? "cyan" : "green"
+                : item.status === 3 || item.status === 4
+                ? "cyan"
+                : "green"
             }
           >
             {item.status === 5
               ? t("running")
               : item.status === 2 || item.status === 1
-              ? t("onProgress") : item.status === 3 ? t("driverAccepted") : item.status === 4 ? t("driverPickup-ing") : item.status === 11 ? t("driverPickup") 
+              ? t("onProgress")
+              : item.status === 3
+              ? t("driverAccepted")
+              : item.status === 4
+              ? t("driverPickup-ing")
+              : item.status === 11
+              ? t("driverPickup")
               : t("noDrivers")}
           </Tag>
           {item.status === 10 ? (
@@ -405,7 +411,12 @@ function Booking() {
     // if (filterItem === "All") {
     //   const data = await getAll(BOOKING_FORM, token);
     //   filterData = data.rows.filter(
-    //     (item) => item.status === 5 || item.status === 2 || item.status === 10
+    //     (item) => item.status === 1 ||
+    //     item.status === 2 ||
+    //     item.status === 3 ||
+    //     item.status === 4 ||
+    //     item.status === 5 ||
+    //     item.status === 10
     //   );
     //   filterData = filterData.map((item, index) => ({
     //     ...item,
@@ -415,7 +426,13 @@ function Booking() {
     // } else {
     //   const data = await getAll(`${BOOKING_FORM}/admin/${adminId}`, token);
     //   filterData = data.filter(
-    //     (item) => item.status === 1 || item.status === 2 || item.status === 3 || item.status === 4 || item.status === 5 || item.status === 10
+    //     (item) =>
+    //       item.status === 1 ||
+    //       item.status === 2 ||
+    //       item.status === 3 ||
+    //       item.status === 4 ||
+    //       item.status === 5 ||
+    //       item.status === 10
     //   );
     //   filterData = filterData.map((item, index) => ({
     //     ...item,
@@ -425,7 +442,13 @@ function Booking() {
     // }
     const data = await getAll(`${BOOKING_FORM}/admin/${adminId}`, token);
       filterData = data.filter(
-        (item) => item.status === 1 || item.status === 2 || item.status === 3 || item.status === 4 || item.status === 5 || item.status === 10
+        (item) =>
+          item.status === 1 ||
+          item.status === 2 ||
+          item.status === 3 ||
+          item.status === 4 ||
+          item.status === 5 ||
+          item.status === 10
       );
       filterData = filterData.map((item, index) => ({
         ...item,
@@ -439,7 +462,6 @@ function Booking() {
     }));
     setBookingData(filterData);
     setIsLoading(false);
-    listenBookingStatusChange();
   };
 
   //Filter items
@@ -471,59 +493,126 @@ function Booking() {
     setFilter(filterItem);
     await initData(); // Call initData directly with the filterItem argument
   };
+  //   debugger;
+  //   console.log("bookingId", bookingId);
+  //   console.log("bookingId", status);
+  //   if (bookingId && status) {
+  //     let index = -1;
 
-  const listenBookingStatusChange = useCallback(() => {
-    socketData.on('booking_status', ({ bookingId, status }) => {
-      console.log("bookingId", bookingId);
-      console.log("bookingId", status);
-      if (bookingId && status) {
-        let index = -1;
+  //     //Find booking and check it belong to web admin or not
+  //     const booking = await getById(bookingId, BOOKING_FORM, token);
+  //     if(booking?.bookingWay === 1){
+  //       bookingData.map(item => {
+  //         if(item.id === bookingId && item.status !== status?.id){
+  //           index = item.id;
+  //         }
+  //       });
+
+  //       if(booking?.adminId === Number(adminId) && status?.id === 7){
+  //         const noti = `Đơn đặt xe ${formatPeopleId(bookingId,"BK")} đã hoàn thành!`;
+  //         message.success(noti);
+  //         const input = {
+  //           text: noti,
+  //           adminId,
+  //           isErrorNoti: false,
+  //         };
+
+  //         //Create notification
+  //         createNotification(input, token)
+  //           .then((createNotificationResponse) => {
+  //             console.log(
+  //               "createNotificationResponse",
+  //               createNotificationResponse
+  //             );
+  //             dispatch(
+  //               addNotification({
+  //                 text: createNotificationResponse.data.text,
+  //                 isRead: false,
+  //               })
+  //             );
+  //           })
+  //           .catch((createNotificationError) => {
+  //             console.error(
+  //               "Error creating notification:",
+  //               createNotificationError
+  //             );
+  //           });
+  //       }
+  //     }
+
+  //     if(index !== -1){
+  //       let newListBooking = [...bookingData]
+  //       newListBooking[index].status = status?.id;
+
+  //       //Find booking Id belong to admin or not
+
+  //       // setBookingData((prevData) => {
+  //       //   return prevData.map((item) =>
+  //       //     item.id === bookingId && item.status === status? item : { ...item, status: status }
+  //       //   );
+  //       // });
+  //       setBookingData(newListBooking);
+  //       // bookingDataRef.current =  newListBooking;
+  //     }
+  //   }
+  // });
+
+  const updateBookingData = (index, newStatusId) => {
+    const updatedBookingData = [...bookingData];
+    updatedBookingData.map(item => {
+      if(item.id === index){
+        item.status = newStatusId;
+      }
+    })
+    const filter = updatedBookingData.filter(item => item.id !== index);
+    setBookingData(filter);
+  };
+
+  socketData &&
+    socketData.on("admin_check_status", async ({ bookingId, status }) => {
+      if (!bookingId || !status) {
+        return;
+      }
+      
+      // Find booking and check if it belongs to web admin or not
+      const booking = await getById(bookingId, BOOKING_FORM, token);
+      if (booking?.bookingWay === 1) {
+        let updatedBookingIndex = -1;
         bookingData.map(item => {
-          if(item.id === bookingId && item.status !== Number(status)){
-            index = item.id;
+          if(item.id === bookingId && item.status !== status?.id){
+            updatedBookingIndex = item.id;
           }
-        })
-        if(index !== -1){
-          let newListBooking = [...bookingData]
-          newListBooking[index].status = Number(status);
-          // setBookingData((prevData) => {
-          //   return prevData.map((item) =>
-          //     item.id === bookingId && item.status === status? item : { ...item, status: status } 
-          //   );
-          // });
-          setBookingData(newListBooking);
-          bookingDataRef.current =  newListBooking;
-        }       
+        });     
+
+        if (booking?.adminId === Number(adminId) && status?.id === 7) {
+          displayAndCreateNotification(
+            `Đơn đặt xe ${formatPeopleId(bookingId, "BK")} đã hoàn thành!`
+          );        
+        }
+
+        if (updatedBookingIndex !== -1) {
+          updateBookingData(updatedBookingIndex, status?.id);
+        }
       }
     });
-  }, []);
-
-  // const listenBookingStatusChange = () => {
-  //   socket.on('bookingStatusChange', ({ bookingId, newStatus }) => {
-  //     console.log('Received custom event:', bookingId);
-  //     console.log('Received custom event:', newStatus);
-  //     if (bookingData > 0) {
-  //       setBookingData((prevData) => {
-  //         return prevData.map((item) =>
-  //           item.id === bookingId ? { ...item, status: newStatus } : item
-  //         );
-  //       });
-  //     }
-  //   });
-  // }
+  
 
   useEffect(() => {
     // Initial data load
     initData();
     setChangeBookingData(false);
-    
-    const intervalId = setInterval(() => {
-      initData();
-    }, 15000); // 15 seconds in milliseconds
 
-    // Clear the interval when the component unmounts
-    return () => clearInterval(intervalId);
-  }, [bookingDataRef, isChangeBookingData]); //bookingData
+    // const intervalId = setInterval(() => {
+    //   initData();
+    // }, 15000); // 15 seconds in milliseconds
+
+    // // Clear the interval when the component unmounts
+    // return () => clearInterval(intervalId);
+  }, [isChangeBookingData]); //bookingData
+
+  useEffect(() => {
+    console.log("bookingData", bookingData);
+  }, [bookingData]);
 
   return (
     <>
