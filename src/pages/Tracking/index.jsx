@@ -46,7 +46,8 @@ export default function Tracking() {
     const bookingFormInfo = await getById(id, BOOKING_FORM, token);
     console.log(bookingFormInfo);
     if (bookingFormInfo !== "") {
-      if (bookingFormInfo.BookingStatusId.status_description !== "Running") {
+      const bookingId = bookingFormInfo.BookingStatusId.id;
+      if (bookingId !== 3 && bookingId !== 4 && bookingId !== 5 && bookingId !== 6) {
         setDriverLocation(null);
       } else {
         //Status running => Có driverId => lấy thông tin driver để lấy location
@@ -54,7 +55,7 @@ export default function Tracking() {
           bookingFormInfo.driverId,
           GET_DRIVER,
           token
-        );
+        );  
         if (driverLocation !== null) {
           if (
             driver.location.coordinates[1] !== driverLocation.lat ||
@@ -91,7 +92,7 @@ export default function Tracking() {
     initInformation();
     const intervalId = setInterval(() => {
       initInformation();
-    }, 30000); // 30 seconds in milliseconds
+    }, 20000); // 30 seconds in milliseconds
 
     // Clear the interval when the component unmounts
     return () => clearInterval(intervalId);
@@ -139,12 +140,10 @@ export default function Tracking() {
                         bookingForm?.pickupLocation?.locationName
                       )}
                       <div className="text-black-50 fs-11">
-                        {(bookingForm?.status === 3 &&
-                          bookingForm?.Trip_Start_Time !== null) ||
-                        bookingForm?.status === 4
+                        {bookingForm?.BookingStatusId?.id === 6 || bookingForm?.BookingStatusId?.id === 5 ||
+                        bookingForm?.BookingStatusId?.id === 7 
                           ? formatTime(bookingForm?.Trip_Start_Time)
-                          : bookingForm?.status === 5 ||
-                            bookingForm?.status === 2
+                          : bookingForm?.BookingStatusId?.id === 8
                           ? "None"
                           : "On Progress"}
                       </div>
@@ -155,13 +154,11 @@ export default function Tracking() {
                         bookingForm?.destination?.locationName
                       )}
                       <div className="text-black-50 fs-11">
-                        {bookingForm?.status === 4
+                        {bookingForm?.BookingStatusId?.id === 7
                           ? formatTime(bookingForm?.Trip_End_Time)
-                          : (bookingForm?.status === 3 &&
-                            bookingForm?.Trip_Start_Time !== null)
+                          : (bookingForm?.BookingStatusId?.id === 5)
                           ? "Ongoing"
-                          : bookingForm?.status === 5 ||
-                            bookingForm?.status === 2
+                          : bookingForm?.BookingStatusId?.id === 8
                           ? "None"
                           : "On Progress"}
                       </div>
@@ -210,9 +207,9 @@ export default function Tracking() {
                       {changeFareFormat(bookingForm?.Bill?.sum)}
                     </div>
                     <div className="text-black-50">
-                      {bookingForm?.status === 4
+                      {bookingForm?.BookingStatusId?.id === 7
                         ? t("paid")
-                        : bookingForm?.status === 5
+                        : bookingForm?.BookingStatusId?.id === 8
                         ? t("canceled")
                         : t("unpaid")}
                     </div>

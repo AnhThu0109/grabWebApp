@@ -31,7 +31,7 @@ const submitBookingForm = async (input, id, token, dispatch) => {
         dispatch(addNotification(resNoti.data));
       }
     } else {
-      message.error(error.message);
+      console.log(error);
     }
   }
 };

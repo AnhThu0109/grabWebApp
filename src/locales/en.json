@@ -102,5 +102,8 @@
   "markAll": "Mark all as read",
   "car-4": "4-seater car",
   "car-7": "7-seater car",
-  "errorMess": "Error when booking form"
+  "errorMess": "Error when booking form",
+  "driverAccepted": "Driver Accepted",
+  "driverPickup-ing": "Picking Up Passengers",
+  "driverPickup": "Picked Up Passengers"
 }

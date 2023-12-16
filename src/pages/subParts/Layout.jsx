@@ -22,7 +22,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import MenuIcon from "@mui/icons-material/Menu";
 import "./style.css";
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   HomeOutlined,
   HomeFilled,
@@ -34,13 +34,21 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import getById from "../../utils/getById";
-import { ADMIN } from "../../utils/API";
+import { ADMIN, SERVER_URL } from "../../utils/API";
 import { Badge, Switch } from "antd";
 import { Trans, useTranslation } from "react-i18next";
-import { getNotificationsById, updateAllNotifications } from "../../utils/notificationAction";
-import { setNotificationData, updateAllAsRead } from "../../redux/notificationSlide";
+import {
+  getNotificationsById,
+  updateAllNotifications,
+} from "../../utils/notificationAction";
+import {
+  setNotificationData,
+  updateAllAsRead,
+} from "../../redux/notificationSlide";
 import { PopoverComponent } from "./Components/Popover";
 import { Skeleton } from "@mui/material";
+import socketIO from "socket.io-client";
+import { SocketProvider } from "../../utils/socketContext";
 
 export default function Layout() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -62,6 +70,7 @@ export default function Layout() {
   const navigate = useNavigate();
   const activeItem = localStorage.getItem("active");
   const token = localStorage.getItem("token");
+  const socket = useRef(null);
   const { i18n } = useTranslation();
 
   const handleClick = (event) => {
@@ -126,9 +135,27 @@ export default function Layout() {
     }
   };
 
-  const initData = async() => {
+  const socketConnect = async () => {
+    const newSocket = socketIO.connect(SERVER_URL);
+    newSocket.connect();
+
+    // Wait for the connection to be established
+    await new Promise((resolve) => {
+      newSocket.on("connect", () => {
+        console.log("Socket connected:", newSocket.id);
+        resolve();
+      });
+    });
+
+    socket.current = newSocket;
+    return newSocket; // Return the created socket
+  };
+
+  const initData = async () => {
     //getUserInfo
     try {
+      const socketData = await socketConnect();
+      console.log("socketData", socketData);
       const user = await getById(id, ADMIN, token);
       setUserData(user);
       setIsLoading(false);
@@ -138,7 +165,7 @@ export default function Layout() {
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
-  }
+  };
 
   useEffect(() => {
     initData();
@@ -154,6 +181,7 @@ export default function Layout() {
   }, []);
 
   return (
+    <SocketProvider socket={socket.current}>
     <div className="ps-3 pt-3 layout" style={{ height: "100vh" }}>
       <Box className="mx-4 d-flex align-items-center justify-content-between text-center">
         <Typography sx={{ minWidth: 100 }}>
@@ -177,45 +205,61 @@ export default function Layout() {
 
           <PopoverComponent
             content={notificationData}
-            title={<div className="d-flex justify-content-between"><div className="fw-bolder"><Trans i18nKey="notification">Notifications</Trans></div><button className="border-0 bg-transparent" onClick={() => handleMarkAllNotiRead(id, token)}><small className="textBlue2"><Trans i18nKey="markAll">Mark all as read</Trans></small></button></div>}
-            object={
-                <Badge
-                  dot={isAnyUnread}
-                  size="small"
-                  color="red"
-                  className="ms-4"
+            title={
+              <div className="d-flex justify-content-between">
+                <div className="fw-bolder">
+                  <Trans i18nKey="notification">Notifications</Trans>
+                </div>
+                <button
+                  className="border-0 bg-transparent"
+                  onClick={() => handleMarkAllNotiRead(id, token)}
                 >
-                  <NotificationsIcon id="iconNoti"></NotificationsIcon>
-                </Badge>
+                  <small className="textBlue2">
+                    <Trans i18nKey="markAll">Mark all as read</Trans>
+                  </small>
+                </button>
+              </div>
+            }
+            object={
+              <Badge
+                dot={isAnyUnread}
+                size="small"
+                color="red"
+                className="ms-4"
+              >
+                <NotificationsIcon id="iconNoti"></NotificationsIcon>
+              </Badge>
             }
           ></PopoverComponent>
-          {
-            isLoading ? (
-              <Skeleton className="ms-4" variant="circular" width={33} height={33} />
-            ) : (
-              <IconButton
-            className="ms-4"
-            onClick={handleClick}
-            size="small"
-            aria-controls={open ? "account-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
-          >
-            <Avatar
-              sx={{ width: 32, height: 32 }}
-              src={
-                avatar !== ""
-                  ? avatar
-                  : userData?.avatarPath
-                  ? userData?.avatarPath
-                  : "https://secure.gravatar.com/avatar/11273dbd2dcbfb87e3061eef1b3a5fe9?s=500&d=mm&r=g"
-              }
-              alt="avatar"
+          {isLoading ? (
+            <Skeleton
+              className="ms-4"
+              variant="circular"
+              width={33}
+              height={33}
             />
-          </IconButton>
-            )
-          }
-          
+          ) : (
+            <IconButton
+              className="ms-4"
+              onClick={handleClick}
+              size="small"
+              aria-controls={open ? "account-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? "true" : undefined}
+            >
+              <Avatar
+                sx={{ width: 32, height: 32 }}
+                src={
+                  avatar !== ""
+                    ? avatar
+                    : userData?.avatarPath
+                    ? userData?.avatarPath
+                    : "https://secure.gravatar.com/avatar/11273dbd2dcbfb87e3061eef1b3a5fe9?s=500&d=mm&r=g"
+                }
+                alt="avatar"
+              />
+            </IconButton>
+          )}
         </div>
       </Box>
       <Menu
@@ -409,5 +453,6 @@ export default function Layout() {
         </div>
       </div>
     </div>
+    </SocketProvider>
   );
 }

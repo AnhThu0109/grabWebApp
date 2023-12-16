@@ -53,7 +53,6 @@ const Home = ({ t }) => {
         fetchDataWeather(`${latitude},${longitude}`)
           .then((json) => {
             setIsLoading(false);
-            console.log("weather data", json);
             setWeather(json);
             setCurrentIcon(showIcon(json.current.condition.text));
           })
@@ -203,7 +202,7 @@ const Home = ({ t }) => {
 
     //Init data
     initData();
-
+   
     // Cleanup the chart on component unmount
     return () => {
       if (chartInstance.current) {

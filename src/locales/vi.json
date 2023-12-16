@@ -102,5 +102,8 @@
   "markAll": "Đọc tất cả",
   "car-4": "Xe bốn chỗ",
   "car-7": "Xe bảy chỗ",
-  "errorMess": "Có lỗi khi đặt xe"
+  "errorMess": "Có lỗi khi đặt xe",
+  "driverAccepted": "Tài xế đã nhận cuốc xe",
+  "driverPickup-ing": "Tài xế đang đón khách",
+  "driverPickup": "Tài xế đã đón khách"
 }

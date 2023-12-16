@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEllipsis,
@@ -35,7 +35,7 @@ import { useDispatch } from "react-redux";
 import { createNotification } from "../../utils/notificationAction";
 import { addNotification } from "../../redux/notificationSlide";
 import { useTranslation } from "react-i18next";
-import io from 'socket.io-client';
+import { useSocket } from "../../utils/socketContext";
 
 function Booking() {
   const [bookingId, setbookingId] = useState();
@@ -46,6 +46,10 @@ function Booking() {
   const adminId = localStorage.getItem("userId");
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const bookingDataRef = useRef(bookingData);
+  const socketData = useSocket();
+  const [isChangeBookingData, setChangeBookingData] = useState(false);
+  const navigate = useNavigate();
 
   //Get id of chosen booking for showing modal see detail
   const bookingChosen = (id) => {
@@ -176,17 +180,19 @@ function Booking() {
         customerId: bookingFormById.Customer.id,
         adminId: bookingFormById.adminId,
         note: bookingFormById.note,
-        service: bookingFormById.service,
+        serviceId: bookingFormById.service,
         carType: bookingFormById.carType,
         paymentStatus: 1,
         paymentType: 1,
       };
+      console.log(inputData);
       const submitBookingPromise = submitBookingForm(
         { data: inputData, bookingId },
         adminId,
         token,
         dispatch
       );
+      setChangeBookingData(true)
       message.success(
         `Đơn đặt xe ${formatPeopleId(bookingId, "BK")} đã được gửi đi!`
       );
@@ -195,6 +201,7 @@ function Booking() {
         .then((response) => {
           console.log("Response from submitBookingForm:", response);
           if (response !== undefined) {
+            setChangeBookingData(true);
             const notification = `Tài xế ${formatPeopleId(
               response.data.driver_accepted.id,
               "DR"
@@ -228,6 +235,9 @@ function Booking() {
                 );
               });
           }
+          else {
+            setChangeBookingData(true);
+          }
         })
         .catch((error) => {
           console.error("Error submitting booking form:", error);
@@ -245,6 +255,7 @@ function Booking() {
     };
     const response = await updateBookingForm(bookingId, input, token);
     if (response.status === 200) {
+      setChangeBookingData(true);
       message.success(
         `Đơn đặt xe ${formatPeopleId(bookingId, "BK")} đã được hủy thành công!`
       );
@@ -347,17 +358,17 @@ function Booking() {
           <Tag
             bordered={false}
             color={
-              item.status === 5
-                ? "green"
-                : item.status === 2
-                ? "cyan"
-                : "orange"
+              item.status === 10
+                ? "orange"
+                : item.status === 2 || item.status === 1
+                ? "geekblue"
+                : item.status === 3 || item.status === 4? "cyan" : "green"
             }
           >
             {item.status === 5
               ? t("running")
-              : item.status === 2
-              ? t("onProgress")
+              : item.status === 2 || item.status === 1
+              ? t("onProgress") : item.status === 3 ? t("driverAccepted") : item.status === 4 ? t("driverPickup-ing") : item.status === 11 ? t("driverPickup") 
               : t("noDrivers")}
           </Tag>
           {item.status === 10 ? (
@@ -388,29 +399,39 @@ function Booking() {
     },
   ];
 
-  const initData = async (filterItem) => {
+  const initData = async () => {
+    console.log("Socket Booking", socketData);
     let filterData;
-    if (filterItem === "All") {
-      const data = await getAll(BOOKING_FORM, token);
-      filterData = data.rows.filter(
-        (item) => item.status === 5 || item.status === 2 || item.status === 10
-      );
-      filterData = filterData.map((item, index) => ({
-        ...item,
-        bookingId: formatPeopleId(item.id, "BK"),
-        createdAt: formatDateBooking(item.createdAt),
-      }));
-    } else {
-      const data = await getAll(`${BOOKING_FORM}/admin/${adminId}`, token);
+    // if (filterItem === "All") {
+    //   const data = await getAll(BOOKING_FORM, token);
+    //   filterData = data.rows.filter(
+    //     (item) => item.status === 5 || item.status === 2 || item.status === 10
+    //   );
+    //   filterData = filterData.map((item, index) => ({
+    //     ...item,
+    //     bookingId: formatPeopleId(item.id, "BK"),
+    //     createdAt: formatDateBooking(item.createdAt),
+    //   }));
+    // } else {
+    //   const data = await getAll(`${BOOKING_FORM}/admin/${adminId}`, token);
+    //   filterData = data.filter(
+    //     (item) => item.status === 1 || item.status === 2 || item.status === 3 || item.status === 4 || item.status === 5 || item.status === 10
+    //   );
+    //   filterData = filterData.map((item, index) => ({
+    //     ...item,
+    //     bookingId: formatPeopleId(item.id, "BK"),
+    //     createdAt: formatDateBooking(item.createdAt),
+    //   }));
+    // }
+    const data = await getAll(`${BOOKING_FORM}/admin/${adminId}`, token);
       filterData = data.filter(
-        (item) => item.status === 5 || item.status === 2 || item.status === 10 || item.status === 1
+        (item) => item.status === 1 || item.status === 2 || item.status === 3 || item.status === 4 || item.status === 5 || item.status === 10
       );
       filterData = filterData.map((item, index) => ({
         ...item,
         bookingId: formatPeopleId(item.id, "BK"),
         createdAt: formatDateBooking(item.createdAt),
       }));
-    }
     filterData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     filterData = filterData.map((item, index) => ({
       ...item,
@@ -418,6 +439,7 @@ function Booking() {
     }));
     setBookingData(filterData);
     setIsLoading(false);
+    listenBookingStatusChange();
   };
 
   //Filter items
@@ -447,42 +469,61 @@ function Booking() {
   const handleClickFilter = async (filterItem) => {
     setIsLoading(true);
     setFilter(filterItem);
-    await initData(filterItem); // Call initData directly with the filterItem argument
+    await initData(); // Call initData directly with the filterItem argument
   };
 
-  // Function to change the status of a booking
-  const handleChangeStatus = async(bookingId, newStatus) => {
-    const input = {
-      status: newStatus,
-    };
-    const response = await updateBookingForm(bookingId, input, token);
-    console.log("handle change booking form", response);
-  };
+  const listenBookingStatusChange = useCallback(() => {
+    socketData.on('booking_status', ({ bookingId, status }) => {
+      console.log("bookingId", bookingId);
+      console.log("bookingId", status);
+      if (bookingId && status) {
+        let index = -1;
+        bookingData.map(item => {
+          if(item.id === bookingId && item.status !== Number(status)){
+            index = item.id;
+          }
+        })
+        if(index !== -1){
+          let newListBooking = [...bookingData]
+          newListBooking[index].status = Number(status);
+          // setBookingData((prevData) => {
+          //   return prevData.map((item) =>
+          //     item.id === bookingId && item.status === status? item : { ...item, status: status } 
+          //   );
+          // });
+          setBookingData(newListBooking);
+          bookingDataRef.current =  newListBooking;
+        }       
+      }
+    });
+  }, []);
+
+  // const listenBookingStatusChange = () => {
+  //   socket.on('bookingStatusChange', ({ bookingId, newStatus }) => {
+  //     console.log('Received custom event:', bookingId);
+  //     console.log('Received custom event:', newStatus);
+  //     if (bookingData > 0) {
+  //       setBookingData((prevData) => {
+  //         return prevData.map((item) =>
+  //           item.id === bookingId ? { ...item, status: newStatus } : item
+  //         );
+  //       });
+  //     }
+  //   });
+  // }
 
   useEffect(() => {
     // Initial data load
-    initData(filter);
+    initData();
+    setChangeBookingData(false);
+    
+    const intervalId = setInterval(() => {
+      initData();
+    }, 20000); // 20 seconds in milliseconds
 
-    // // Connect to the Socket.IO server
-    // const socket = io(SERVER_URL);
-
-    // // Event listener for custom events from the server
-    // socket.on('bookingStatusChange', ({ bookingId, newStatus }) => {
-    //   console.log('Received custom event:', bookingId);
-    //   if(bookingData.length > 0){
-    //     bookingData.map(item => {
-    //       if(item.id === bookingId){
-    //         item.status = newStatus;
-    //       }
-    //     })
-    //   }
-    // });
-    // Cleanup: disconnect from the server when the component unmounts
-    // return () => {
-    //   socket.disconnect();
-    //   console.log('Disconnected from Socket.IO server');
-    // };
-  }, []); //bookingData
+    // Clear the interval when the component unmounts
+    return () => clearInterval(intervalId);
+  }, [bookingDataRef, isChangeBookingData]); //bookingData
 
   return (
     <>
@@ -498,10 +539,7 @@ function Booking() {
               {bookingData?.length} {t("inTotal")}.
             </h5>
             <div>
-            <button className="border-0 bgBlue2 addNewBtn px-3 py-2 me-3 rounded-3" onClick={() => handleChangeStatus(107, 3)}>
-                change status
-              </button>
-              <Dropdown overlay={filterItems} trigger={["click"]}>
+              {/* <Dropdown overlay={filterItems} trigger={["click"]}>
                 <button
                   onClick={(e) => e.preventDefault()}
                   className="border-0 filterBtn px-3 py-2 me-3 rounded-3 bg-white"
@@ -518,7 +556,7 @@ function Booking() {
                     ></FontAwesomeIcon>
                   </Space>
                 </button>
-              </Dropdown>
+              </Dropdown> */}
               <button className="border-0 bgBlue2 addNewBtn px-3 py-2 me-3 rounded-3">
                 <Link to="/booking/add">
                   <FontAwesomeIcon

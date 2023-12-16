@@ -18,11 +18,13 @@ import { setDistanceData } from "../../redux/distanceSlide";
 import createCustomer from "../../utils/addNewCustomer";
 import getLocationByName from "../../utils/getLocation";
 import { useNavigate } from "react-router-dom";
-import formatPeopleId from "../../utils/formatPeopleID";
 import { submitBookingForm } from "../../utils/bookingFormAction";
+import { useTranslation } from "react-i18next";
+import socketIO from "socket.io-client";
+import { useSocket } from "../../utils/socketContext";
+import formatPeopleId from "../../utils/formatPeopleID";
 import { createNotification } from "../../utils/notificationAction";
 import { addNotification } from "../../redux/notificationSlide";
-import { useTranslation } from "react-i18next";
 
 export default function Add() {
   const [phoneNo, setPhoneNo] = useState();
@@ -34,6 +36,7 @@ export default function Add() {
   const adminId = localStorage.getItem("userId");
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const socketData = useSocket();
 
   let distanceInfo = useSelector((state) => state.distance);
   // Dispatching actions
@@ -118,6 +121,7 @@ export default function Add() {
 
   const onFinishForm = async () => {
     try {
+      console.log(socketData);
       if (distanceInfo != null) {
         let responseCusData;
         if (cusId === 0) {
@@ -150,12 +154,14 @@ export default function Add() {
           customerId: cusId === 0 ? responseCusData?.customer?.id : cusId,
           adminId: adminId,
           note: form.getFieldValue("Note"),
-          service: distanceInfo.CarService.toString(),
+          serviceId: distanceInfo.CarService.toString(),
           carType: distanceInfo.CarType.toString(),
           paymentStatus: 1,
-          paymentType: 1
+          paymentType: 1,
+          socketid: socketData.id,
         };
 
+        console.log("inputData", inputData);
         // Submit booking form without waiting
         const submitBookingPromise = submitBookingForm(
           { data: inputData, bookingId: null },
@@ -170,7 +176,6 @@ export default function Add() {
         submitBookingPromise
           .then((response) => {
             console.log("Response from submitBookingForm:", response);
-            debugger;
             if (response !== undefined) {
               const notification = `Tài xế ${formatPeopleId(
                 response.data.driver_accepted.id,
@@ -204,7 +209,7 @@ export default function Add() {
           })
           .catch((error) => {
             console.error("Error submitting booking form:", error);
-            message.error(t("errorMess"));
+            // message.error(t("errorMess"));
           });
       }
     } catch (error) {
@@ -329,21 +334,23 @@ export default function Add() {
                   <div>
                     {t("carType")}:{" "}
                     <b className="float-end me-5 pe-2">
-                      {distanceInfo?.CarType === 1? t("motorcycle"): distanceInfo?.CarType === 3? t("car-4") : t("car-7")}
+                      {distanceInfo?.CarType === 1
+                        ? t("motorcycle")
+                        : distanceInfo?.CarType === 3
+                        ? t("car-4")
+                        : t("car-7")}
                     </b>
                   </div>
                   <div>
                     {t("carService")}:{" "}
                     <b className="float-end me-5 pe-2">
-                      {distanceInfo?.CarService === 1? "Standard": "Plus"}
+                      {distanceInfo?.CarService === 1 ? "Standard" : "Plus"}
                     </b>
                   </div>
                   <div>
                     {t("vip")}:{" "}
                     <b className="float-end me-5 pe-2">
-                      {distanceInfo?.PickupTime === null
-                        ? t("none")
-                        : t("yes")}
+                      {distanceInfo?.PickupTime === null ? t("none") : t("yes")}
                     </b>
                   </div>
                   <hr />

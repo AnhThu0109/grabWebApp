@@ -59,8 +59,8 @@ export default function PeopleDetail(props) {
     }
     const history = bookings.filter(
       (item) =>
-        item.BookingStatusId.status_description === "Complete" ||
-        item.BookingStatusId.status_description === "Canceled"
+        item.BookingStatusId.id === 7 ||
+        item.BookingStatusId.id === 8
     );
     const sortHistory = history.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
     setBookingData(sortHistory);
@@ -207,14 +207,14 @@ export default function PeopleDetail(props) {
                     <div className="fs-11 textGrey1 mb-3">
                       {" "}
                       {item?.BookingStatusId?.status_description}
-                      {item?.BookingStatusId?.status_description === "Complete"
+                      {/* {item?.BookingStatusId?.id === 7
                         ? " at "
-                        : " on "}
+                        : " on "} */} {" - "}
                       {item?.bookingTime === null
                         ? formatDateOnly(item.createdAt)
                         : formatDateOnly(item.bookingTime)}
-                      {item?.BookingStatusId?.status_description ===
-                        "Complete" && ", " + formatTime(item.Trip_End_Time)}
+                      {item?.BookingStatusId?.id ===
+                        7 && ", " + formatTime(item.Trip_End_Time)}
                     </div>
                     <Link
                       className="textBlue5 fs-14 fw-bolder text-decoration-none"

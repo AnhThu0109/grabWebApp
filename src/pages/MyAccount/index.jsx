@@ -26,6 +26,7 @@ import { CheckCircleFilled, CloseCircleFilled } from "@ant-design/icons";
 import formatPeopleId from "../../utils/formatPeopleID";
 import { withTranslation } from "react-i18next";
 import getById from "../../utils/getById";
+import updateInformation from "../../utils/updateAdminInfo";
 
 const AvatarCarousel = ({ images }) => {
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -111,15 +112,15 @@ const MyAccount = ({ t }) => {
     setItemChange(updatedItemChange);
   };
 
-  const updateInformation = async (input, userId) => {
-    const response = await axios.put(`${ADMIN}/${userId}`, input, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token,
-      },
-    });
-    return response;
-  };
+  // const updateInformation = async (input, userId) => {
+  //   const response = await axios.put(`${ADMIN}/${userId}`, input, {
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: token,
+  //     },
+  //   });
+  //   return response;
+  // };
 
   const onFinish = async (values) => {
     const data = {
@@ -130,7 +131,7 @@ const MyAccount = ({ t }) => {
       avatarPath: avatar,
     };
     console.log("Form values:", data);
-    const result = await updateInformation(data, id);
+    const result = await updateInformation(data, id, token, ADMIN);
     if (result.status === 200) {
       message.success(t("updateInfoSuccessMess"));
       setIsDataChange(true);
