@@ -9,7 +9,7 @@ import axios from "axios";
 import { BOOKING_FORM, GET_CUSTOMER, GET_DRIVER } from "../../utils/API";
 import getAll from "../../utils/getAll";
 import formatTime from "../../utils/formatTime";
-import { formatDateOnly } from "../../utils/formatDate";
+import { formatDateBooking, formatDateOnly } from "../../utils/formatDate";
 import { useTranslation } from "react-i18next";
 import getShortLocationName from "../../utils/getShortLocationName";
 import capitalizeFirstLetter from "../../utils/capitalFirstLeter";
@@ -210,11 +210,12 @@ export default function PeopleDetail(props) {
                       {/* {item?.BookingStatusId?.id === 7
                         ? " at "
                         : " on "} */} {" - "}
-                      {item?.bookingTime === null
+                      {/* {item?.bookingTime === null
                         ? formatDateOnly(item.createdAt)
                         : formatDateOnly(item.bookingTime)}
                       {item?.BookingStatusId?.id ===
-                        7 && ", " + formatTime(item.Trip_End_Time)}
+                        7 && ", " + formatTime(item.Trip_End_Time)} */}
+                        {item?.Trip_End_Time !== null ? formatDateBooking(item?.Trip_End_Time) : formatDateOnly(item.createdAt)}
                     </div>
                     <Link
                       className="textBlue5 fs-14 fw-bolder text-decoration-none"

@@ -519,7 +519,7 @@ function Booking() {
     
     const intervalId = setInterval(() => {
       initData();
-    }, 20000); // 20 seconds in milliseconds
+    }, 15000); // 15 seconds in milliseconds
 
     // Clear the interval when the component unmounts
     return () => clearInterval(intervalId);

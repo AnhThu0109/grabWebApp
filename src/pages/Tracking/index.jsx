@@ -15,9 +15,9 @@ import { useEffect, useState } from "react";
 import getById from "../../utils/getById";
 import formatPeopleId from "../../utils/formatPeopleID";
 import getShortLocationName from "../../utils/getShortLocationName";
-import formatTime from "../../utils/formatTime";
 import changeFareFormat from "../../utils/formatFare";
 import { useTranslation } from "react-i18next";
+import { formatDateBooking } from "../../utils/formatDate";
 
 export default function Tracking() {
   const { id } = useParams();
@@ -142,7 +142,7 @@ export default function Tracking() {
                       <div className="text-black-50 fs-11">
                         {bookingForm?.BookingStatusId?.id === 6 || bookingForm?.BookingStatusId?.id === 5 ||
                         bookingForm?.BookingStatusId?.id === 7 
-                          ? formatTime(bookingForm?.Trip_Start_Time)
+                          ? formatDateBooking(bookingForm?.Trip_Start_Time)
                           : bookingForm?.BookingStatusId?.id === 8
                           ? "None"
                           : "On Progress"}
@@ -155,7 +155,7 @@ export default function Tracking() {
                       )}
                       <div className="text-black-50 fs-11">
                         {bookingForm?.BookingStatusId?.id === 7
-                          ? formatTime(bookingForm?.Trip_End_Time)
+                          ? formatDateBooking(bookingForm?.Trip_End_Time)
                           : (bookingForm?.BookingStatusId?.id === 5)
                           ? "Ongoing"
                           : bookingForm?.BookingStatusId?.id === 8
