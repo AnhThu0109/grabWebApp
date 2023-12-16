@@ -33,10 +33,12 @@ export default function Add() {
   const [predictions, setPredictions] = useState([]);
   const [form] = Form.useForm();
   const [hasFeedback, setHasFeedback] = useState(null);
+  const [loading, setLoading] = useState(false);
   const adminId = localStorage.getItem("userId");
   const navigate = useNavigate();
   const { t } = useTranslation();
   const socketData = useSocket();
+  let loadingTimeout;
 
   let distanceInfo = useSelector((state) => state.distance);
   // Dispatching actions
@@ -169,12 +171,18 @@ export default function Add() {
           token,
           dispatch
         );
-
-        message.success("Đơn đặt xe đã được gửi đi!");
-        navigate("/booking");
+        
+        setLoading(true);
+        loadingTimeout = setTimeout(() => {
+          setLoading(false);
+          message.success("Đơn đặt xe đã được gửi đi!");
+          navigate("/booking");
+        }, 8000); //8s
+        
         // Now, if you need the response from submitBookingForm, you can use .then()
         submitBookingPromise
           .then((response) => {
+            clearTimeout(loadingTimeout);
             console.log("Response from submitBookingForm:", response);
             if (response !== undefined) {
               const notification = `Tài xế ${formatPeopleId(
@@ -213,6 +221,7 @@ export default function Add() {
           });
       }
     } catch (error) {
+      clearTimeout(loadingTimeout);
       console.error("Error fetching distance data:", error);
       throw error;
     }
@@ -374,6 +383,7 @@ export default function Add() {
             >
               {() => (
                 <Button
+                  loading={loading}
                   htmlType="submit"
                   className="border-0 rounded-3 px-5 mt-4 w-70 text-black-60 fw-bolder bookingBtn"
                   disabled={

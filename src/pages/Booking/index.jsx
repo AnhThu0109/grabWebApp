@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEllipsis,
@@ -22,7 +22,7 @@ import Highlighter from "react-highlight-words";
 import "./style.css";
 import "./../style.css";
 import getAll from "../../utils/getAll";
-import { BOOKING_FORM, SERVER_URL } from "../../utils/API";
+import { BOOKING_FORM } from "../../utils/API";
 import { Skeleton } from "@mui/material";
 import { formatDateBooking } from "../../utils/formatDate";
 import formatPeopleId from "../../utils/formatPeopleID";
@@ -48,8 +48,6 @@ function Booking() {
   const { t } = useTranslation();
   const socketData = useSocket();
   const [isChangeBookingData, setChangeBookingData] = useState(false);
-  const [completeBookingId, setCompleteBookingId] = useState(-1);
-  const bookingIdChangeStatus = useRef(-1);
 
   //Get id of chosen booking for showing modal see detail
   const bookingChosen = (id) => {

@@ -6,7 +6,7 @@ import carTypeReducer from "./carTypeSlide";
 import carServiceReducer from "./carServiceSlide";
 import bookingFormReducer from "./bookingFormSlide";
 import notificationReducer from "./notificationSlide";
-import socketReducer from "./socketSlide";
+import bookingReducer from "./bookingSlide";
 
 export default configureStore({
 	reducer: {
@@ -17,6 +17,6 @@ export default configureStore({
         carService: carServiceReducer,
         bookingForm: bookingFormReducer,
         notification: notificationReducer,
-        socket: socketReducer,
+        booking: bookingReducer,
     },
 });
