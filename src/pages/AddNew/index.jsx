@@ -20,12 +20,10 @@ import getLocationByName from "../../utils/getLocation";
 import { useNavigate } from "react-router-dom";
 import { submitBookingForm } from "../../utils/bookingFormAction";
 import { useTranslation } from "react-i18next";
-import socketIO from "socket.io-client";
 import { useSocket } from "../../utils/socketContext";
 import formatPeopleId from "../../utils/formatPeopleID";
 import { createNotification } from "../../utils/notificationAction";
 import { addNotification } from "../../redux/notificationSlide";
-import { setBookingData } from "../../redux/bookingSlide";
 
 export default function Add() {
   const [phoneNo, setPhoneNo] = useState();

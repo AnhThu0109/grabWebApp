@@ -1,12 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEllipsis,
-  faPlus,
-  faFilter,
-  faChevronDown,
-} from "@fortawesome/free-solid-svg-icons";
+import { faEllipsis, faPlus } from "@fortawesome/free-solid-svg-icons";
 import {
   Dropdown,
   Button,
@@ -31,7 +26,7 @@ import {
   submitBookingForm,
 } from "../../utils/bookingFormAction";
 import getById from "../../utils/getById";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { createNotification } from "../../utils/notificationAction";
 import { addNotification } from "../../redux/notificationSlide";
 import { useTranslation } from "react-i18next";
@@ -239,7 +234,7 @@ function Booking() {
         })
         .catch((error) => {
           console.error("Error submitting booking form:", error);
-          message.error(t("errorMess"));
+          //message.error(t("errorMess"));
         });
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -610,7 +605,22 @@ function Booking() {
         return;
       }
 
-      message.error(data.message);
+      if (bookingId !== undefined) {
+        const notification = `Không tìm thấy tài xế cho đơn đặt xe ${formatPeopleId(
+          bookingId,
+          "BK"
+        )}`;
+        message.error(notification);
+        const input = {
+          text: notification,
+          adminId: Number(adminId),
+          isErrorNoti: true,
+        };
+        const resNoti = await createNotification(input, token);
+        if (resNoti.status === 200) {
+          dispatch(addNotification(resNoti.data));
+        }
+      }
       setChangeBookingData(true);
     });
 
