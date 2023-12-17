@@ -20,7 +20,7 @@ const submitBookingForm = async (input, id, token, dispatch) => {
       const notification =
         error.response.data.message.split("!")[0] +
         ` cho đơn đặt xe ${formatPeopleId(error.response.data.data.id, "BK")}`;
-      message.error(notification);
+      message.info(notification);
       const input = {
         text: notification,
         adminId: id,

@@ -285,6 +285,15 @@ function Booking() {
         <Link
           rel="noopener noreferrer"
           className="nav-link"
+          to={`/booking/tracking/${bookingId}`}
+        >
+          {t("seeDetail")}
+        </Link>
+      </Menu.Item>
+      <Menu.Item key="3">
+        <Link
+          rel="noopener noreferrer"
+          className="nav-link"
           onClick={handleCancelBookingForm}
         >
           {t("cancel")}
@@ -485,69 +494,6 @@ function Booking() {
     setFilter(filterItem);
     await initData(); // Call initData directly with the filterItem argument
   };
-  //   debugger;
-  //   console.log("bookingId", bookingId);
-  //   console.log("bookingId", status);
-  //   if (bookingId && status) {
-  //     let index = -1;
-
-  //     //Find booking and check it belong to web admin or not
-  //     const booking = await getById(bookingId, BOOKING_FORM, token);
-  //     if(booking?.bookingWay === 1){
-  //       bookingData.map(item => {
-  //         if(item.id === bookingId && item.status !== status?.id){
-  //           index = item.id;
-  //         }
-  //       });
-
-  //       if(booking?.adminId === Number(adminId) && status?.id === 7){
-  //         const noti = `Đơn đặt xe ${formatPeopleId(bookingId,"BK")} đã hoàn thành!`;
-  //         message.success(noti);
-  //         const input = {
-  //           text: noti,
-  //           adminId,
-  //           isErrorNoti: false,
-  //         };
-
-  //         //Create notification
-  //         createNotification(input, token)
-  //           .then((createNotificationResponse) => {
-  //             console.log(
-  //               "createNotificationResponse",
-  //               createNotificationResponse
-  //             );
-  //             dispatch(
-  //               addNotification({
-  //                 text: createNotificationResponse.data.text,
-  //                 isRead: false,
-  //               })
-  //             );
-  //           })
-  //           .catch((createNotificationError) => {
-  //             console.error(
-  //               "Error creating notification:",
-  //               createNotificationError
-  //             );
-  //           });
-  //       }
-  //     }
-
-  //     if(index !== -1){
-  //       let newListBooking = [...bookingData]
-  //       newListBooking[index].status = status?.id;
-
-  //       //Find booking Id belong to admin or not
-
-  //       // setBookingData((prevData) => {
-  //       //   return prevData.map((item) =>
-  //       //     item.id === bookingId && item.status === status? item : { ...item, status: status }
-  //       //   );
-  //       // });
-  //       setBookingData(newListBooking);
-  //       // bookingDataRef.current =  newListBooking;
-  //     }
-  //   }
-  // });
 
   const updateBookingData = (index, newStatusId) => {
     const updatedBookingData = [...bookingData];
@@ -572,13 +518,13 @@ function Booking() {
         // Find booking and check if it belongs to web admin or not
         const booking = await getById(bookingId, BOOKING_FORM, token);
         if (booking?.bookingWay === 1) {
-          let updatedBookingIndex = -1;
-          bookingData.map((item) => {
-            if (item.id === bookingId && item.status !== status?.id) {
-              updatedBookingIndex = item.id;
-            }
-          });
-
+          // let updatedBookingIndex = -1;
+          // bookingData.map((item) => {
+          //   if (item.id === bookingId && item.status !== status?.id) {
+          //     updatedBookingIndex = item.id;
+          //   }
+          // });
+          setChangeBookingData(true);
           if (booking?.adminId === Number(adminId)) {
             message.info(
               `Trạng thái đơn đặt xe ${formatPeopleId(bookingId, "BK")}: ${
@@ -593,9 +539,9 @@ function Booking() {
             }
           }
 
-          if (updatedBookingIndex !== -1) {
-            updateBookingData(updatedBookingIndex, status?.id);
-          }
+          // if (updatedBookingIndex !== -1) {
+          //   updateBookingData(updatedBookingIndex, status?.id);
+          // }
         }
       });
 
@@ -605,22 +551,22 @@ function Booking() {
         return;
       }
 
-      if (bookingId !== undefined) {
-        const notification = `Không tìm thấy tài xế cho đơn đặt xe ${formatPeopleId(
-          bookingId,
-          "BK"
-        )}`;
-        message.error(notification);
-        const input = {
-          text: notification,
-          adminId: Number(adminId),
-          isErrorNoti: true,
-        };
-        const resNoti = await createNotification(input, token);
-        if (resNoti.status === 200) {
-          dispatch(addNotification(resNoti.data));
-        }
-      }
+      // if (bookingId !== undefined) {
+      //   const notification = `Chưa tìm thấy tài xế cho đơn đặt xe ${formatPeopleId(
+      //     bookingId,
+      //     "BK"
+      //   )}`;
+      //   message.info(notification);
+      //   const input = {
+      //     text: notification,
+      //     adminId: Number(adminId),
+      //     isErrorNoti: true,
+      //   };
+      //   const resNoti = await createNotification(input, token);
+      //   if (resNoti.status === 200) {
+      //     dispatch(addNotification(resNoti.data));
+      //   }
+      // }
       setChangeBookingData(true);
     });
 

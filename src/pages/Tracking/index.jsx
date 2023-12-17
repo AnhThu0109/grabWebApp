@@ -31,7 +31,7 @@ export default function Tracking() {
   const [destination, setDestination] = useState();
   const [driverLocation, setDriverLocation] = useState(null);
   const [bookingForm, setBookingForm] = useState(null);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const icons = Array.from({ length: 9 }, (_, index) => (
     <FontAwesomeIcon
@@ -47,7 +47,12 @@ export default function Tracking() {
     console.log(bookingFormInfo);
     if (bookingFormInfo !== "") {
       const bookingId = bookingFormInfo.BookingStatusId.id;
-      if (bookingId !== 3 && bookingId !== 4 && bookingId !== 5 && bookingId !== 6) {
+      if (
+        bookingId !== 3 &&
+        bookingId !== 4 &&
+        bookingId !== 5 &&
+        bookingId !== 6
+      ) {
         setDriverLocation(null);
       } else {
         //Status running => Có driverId => lấy thông tin driver để lấy location
@@ -55,7 +60,7 @@ export default function Tracking() {
           bookingFormInfo.driverId,
           GET_DRIVER,
           token
-        );  
+        );
         if (driverLocation !== null) {
           if (
             driver.location.coordinates[1] !== driverLocation.lat ||
@@ -140,8 +145,9 @@ export default function Tracking() {
                         bookingForm?.pickupLocation?.locationName
                       )}
                       <div className="text-black-50 fs-11">
-                        {bookingForm?.BookingStatusId?.id === 6 || bookingForm?.BookingStatusId?.id === 5 ||
-                        bookingForm?.BookingStatusId?.id === 7 
+                        {bookingForm?.BookingStatusId?.id === 6 ||
+                        bookingForm?.BookingStatusId?.id === 5 ||
+                        bookingForm?.BookingStatusId?.id === 7
                           ? formatDateBooking(bookingForm?.Trip_Start_Time)
                           : bookingForm?.BookingStatusId?.id === 8
                           ? "None"
@@ -156,7 +162,7 @@ export default function Tracking() {
                       <div className="text-black-50 fs-11">
                         {bookingForm?.BookingStatusId?.id === 7
                           ? formatDateBooking(bookingForm?.Trip_End_Time)
-                          : (bookingForm?.BookingStatusId?.id === 5)
+                          : bookingForm?.BookingStatusId?.id === 5
                           ? "Ongoing"
                           : bookingForm?.BookingStatusId?.id === 8
                           ? "None"
@@ -188,9 +194,16 @@ export default function Tracking() {
                 <div className="d-flex justify-content-between">
                   <div>{t("driver")}</div>
                   <div className="fw-bolder">
-                    {bookingForm?.driverId === null && bookingForm?.status !== 5
-                      ? t("finding") : bookingForm?.driverId === null && bookingForm?.status === 5? t("none")
-                      : formatPeopleId(bookingForm?.driverId, "DR")}
+                    {bookingForm?.driverId === null &&
+                    bookingForm?.BookingStatusId?.id === 10
+                      ? t("noDrivers")
+                      : bookingForm?.driverId === null &&
+                        bookingForm?.BookingStatusId?.id === 2
+                      ? t("finding")
+                      : bookingForm?.driverId === null &&
+                        bookingForm?.BookingStatusId?.id === 8
+                      ? t("none")
+                      : formatPeopleId(bookingForm?.driverId, "DR")} 
                   </div>
                 </div>
                 <div className="d-flex justify-content-between">

@@ -397,9 +397,8 @@ export default function FormGetInfo() {
 
   const getInitInformation = async () => {
     const type = await getAll(GET_CARTYPE, token);
-    const typeFilter = type.filter((item) => item.car_type !== "Xe tay ga");
-    dispatch(setCarTypeData(typeFilter));
-    setCarTypeList(typeFilter);
+    dispatch(setCarTypeData(type));
+    setCarTypeList(type);
     const service = await getAll(GET_SERVICE, token);
     dispatch(setCarServiceData(service));
   };

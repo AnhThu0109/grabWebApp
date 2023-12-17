@@ -212,7 +212,12 @@ export default function Add() {
                   );
                 });
             } else {
-              // dispatch(setBookingData(true));
+              setTimeout(() => {
+                setLoading(false);
+                navigate("/booking");
+              }, 3000); //3s
+              // clearTimeout(loadingTimeoutAgain);
+              // setLoading(false);
             }
           })
           .catch((error) => {
@@ -345,7 +350,7 @@ export default function Add() {
                     <b className="float-end me-5 pe-2">
                       {distanceInfo?.CarType === 1
                         ? t("motorcycle")
-                        : distanceInfo?.CarType === 3
+                        : distanceInfo?.CarType === 2
                         ? t("car-4")
                         : t("car-7")}
                     </b>
