@@ -354,9 +354,9 @@ export default function FormGetInfo() {
             : null,
         };
         let response;
-        // response = await getDistance(pickUp, destination);
+        response = await getDistance(pickUp, destination);
         console.log("distance", response);
-        // if(response.status === false){
+        if(response.status === false){
           response = {
             "status": true,
             "data": {
@@ -378,7 +378,7 @@ export default function FormGetInfo() {
                     "car-plus": 36420,
                     "car-7seat": 36532
                 }
-            // }
+            }
         }
         }
         const dataTranfer = { ...allFieldValues, ...response.data };
