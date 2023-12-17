@@ -361,21 +361,21 @@ export default function FormGetInfo() {
             "data": {
                 "distance": {
                     "distance": {
-                        "text": "0.85 km",
-                        "value": 850
+                        "text": "0.9 km",
+                        "value": 871
                     },
                     "duration": {
-                        "text": "5 mins",
-                        "value": 1340
+                        "text": "4 mins",
+                        "value": 264
                     },
                     "status": "OK"
                 },
                 "fare": {
-                    "bike": 20500,
-                    "bike-plus": 24890,
-                    "car": 48667,
-                    "car-plus": 55980,
-                    "car-7seat": 63465
+                    "bike": 14040,
+                    "bike-plus": 17628,
+                    "car": 30980,
+                    "car-plus": 36420,
+                    "car-7seat": 36532
                 }
             }
         }
