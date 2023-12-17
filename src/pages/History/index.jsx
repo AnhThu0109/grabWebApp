@@ -229,7 +229,7 @@ function History() {
     if (filterItem === "All") {
       const data = await getAll(BOOKING_FORM, token);
       filterData = data.rows.filter(
-        (item) => item.status === 7 || item.status === 8
+        (item) => (item.status === 7 || item.status === 8) && item.bookingWay === 1
       );
       filterData = filterData.map((item, index) => ({
         ...item,

@@ -353,9 +353,10 @@ export default function FormGetInfo() {
             ? allFieldValues?.PickupTime.format("YYYY-MM-DD HH:mm:ss.SSSZ")
             : null,
         };
-        let response = await getDistance(pickUp, destination);
+        let response;
+        // response = await getDistance(pickUp, destination);
         console.log("distance", response);
-        if(response.status === false){
+        // if(response.status === false){
           response = {
             "status": true,
             "data": {
@@ -377,7 +378,7 @@ export default function FormGetInfo() {
                     "car-plus": 36420,
                     "car-7seat": 36532
                 }
-            }
+            // }
         }
         }
         const dataTranfer = { ...allFieldValues, ...response.data };

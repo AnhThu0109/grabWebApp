@@ -31,7 +31,7 @@ import {
   submitBookingForm,
 } from "../../utils/bookingFormAction";
 import getById from "../../utils/getById";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createNotification } from "../../utils/notificationAction";
 import { addNotification } from "../../redux/notificationSlide";
 import { useTranslation } from "react-i18next";
@@ -191,7 +191,6 @@ function Booking() {
 
   const handleReSendBookingForm = async () => {
     try {
-      debugger;
       const bookingFormById = await getById(bookingId, BOOKING_FORM, token);
       const inputData = {
         pickupLocationId: bookingFormById.pickupLocation.id,
@@ -439,20 +438,20 @@ function Booking() {
     //   }));
     // }
     const data = await getAll(`${BOOKING_FORM}/admin/${adminId}`, token);
-      filterData = data.filter(
-        (item) =>
-          item.status === 1 ||
-          item.status === 2 ||
-          item.status === 3 ||
-          item.status === 4 ||
-          item.status === 5 ||
-          item.status === 10
-      );
-      filterData = filterData.map((item, index) => ({
-        ...item,
-        bookingId: formatPeopleId(item.id, "BK"),
-        createdAt: formatDateBooking(item.createdAt),
-      }));
+    filterData = data.filter(
+      (item) =>
+        item.status === 1 ||
+        item.status === 2 ||
+        item.status === 3 ||
+        item.status === 4 ||
+        item.status === 5 ||
+        item.status === 10
+    );
+    filterData = filterData.map((item, index) => ({
+      ...item,
+      bookingId: formatPeopleId(item.id, "BK"),
+      createdAt: formatDateBooking(item.createdAt),
+    }));
     filterData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     filterData = filterData.map((item, index) => ({
       ...item,
@@ -557,52 +556,71 @@ function Booking() {
 
   const updateBookingData = (index, newStatusId) => {
     const updatedBookingData = [...bookingData];
-    updatedBookingData.map(item => {
-      if(item.id === index){
+    updatedBookingData.map((item) => {
+      if (item.id === index) {
         item.status = newStatusId;
       }
-    })
-    const filter = updatedBookingData.filter(item => item.id !== index);
+    });
+    const filter = updatedBookingData.filter((item) => item.id !== index);
     setBookingData(filter);
   };
 
   socketData &&
-    socketData.on("admin_check_status", async ({ bookingId, status }) => {
-      if (!bookingId || !status) {
+    socketData
+      .off("admin_check_status")
+      .on("admin_check_status", async ({ bookingId, status }) => {
+        // debugger;
+        if (!bookingId || !status) {
+          return;
+        }
+
+        // Find booking and check if it belongs to web admin or not
+        const booking = await getById(bookingId, BOOKING_FORM, token);
+        if (booking?.bookingWay === 1) {
+          let updatedBookingIndex = -1;
+          bookingData.map((item) => {
+            if (item.id === bookingId && item.status !== status?.id) {
+              updatedBookingIndex = item.id;
+            }
+          });
+
+          if (booking?.adminId === Number(adminId)) {
+            message.info(
+              `Trạng thái đơn đặt xe ${formatPeopleId(bookingId, "BK")}: ${
+                booking?.BookingStatusId?.status_description
+              }`
+            );
+
+            if (status?.id === 7) {
+              displayAndCreateNotification(
+                `Đơn đặt xe ${formatPeopleId(bookingId, "BK")} đã hoàn thành!`
+              );
+            }
+          }
+
+          if (updatedBookingIndex !== -1) {
+            updateBookingData(updatedBookingIndex, status?.id);
+          }
+        }
+      });
+
+  socketData &&
+    socketData.off("bookingReject").on("bookingReject", async (data) => {
+      if (!data) {
         return;
       }
-      
-      // Find booking and check if it belongs to web admin or not
-      const booking = await getById(bookingId, BOOKING_FORM, token);
-      if (booking?.bookingWay === 1) {
-        let updatedBookingIndex = -1;
-        bookingData.map(item => {
-          if(item.id === bookingId && item.status !== status?.id){
-            updatedBookingIndex = item.id;
-          }
-        });     
 
-        if (booking?.adminId === Number(adminId) && status?.id === 7) {
-          displayAndCreateNotification(
-            `Đơn đặt xe ${formatPeopleId(bookingId, "BK")} đã hoàn thành!`
-          );        
-        }
-
-        if (updatedBookingIndex !== -1) {
-          updateBookingData(updatedBookingIndex, status?.id);
-        }
-      }
+      message.error(data.message);
+      setChangeBookingData(true);
     });
-  
 
   useEffect(() => {
     // Initial data load
     initData();
     setChangeBookingData(false);
-
     // const intervalId = setInterval(() => {
     //   initData();
-    // }, 15000); // 15 seconds in milliseconds
+    // }, 10000); // 10 seconds in milliseconds
 
     // // Clear the interval when the component unmounts
     // return () => clearInterval(intervalId);

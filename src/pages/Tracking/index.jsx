@@ -92,7 +92,7 @@ export default function Tracking() {
     initInformation();
     const intervalId = setInterval(() => {
       initInformation();
-    }, 20000); // 30 seconds in milliseconds
+    }, 5000); // 5 seconds in milliseconds
 
     // Clear the interval when the component unmounts
     return () => clearInterval(intervalId);

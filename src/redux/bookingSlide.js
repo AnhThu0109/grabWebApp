@@ -1,9 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialState = {
-  bookingData: [],
-  bookingHistory: [],
-};
+const initialState = false;
 
 export const bookingSlice = createSlice({
   name: 'booking',
@@ -11,13 +8,10 @@ export const bookingSlice = createSlice({
   reducers: {
     setBookingData: (state, action) => {
       state.bookingData = action.payload;
-    },
-    setBookingHistory: (state, action) => {
-      state.bookingHistory = action.payload;
-    },
+    }
   },
 });
 
-export const { setBookingData, setBookingHistory } = bookingSlice.actions;
+export const { setBookingData } = bookingSlice.actions;
 
 export default bookingSlice.reducer;

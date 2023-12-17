@@ -92,7 +92,10 @@ const Home = ({ t }) => {
   //Get data booking of month
   const getBookingNumberMonth = async (statusId) => {
     const data = await getAll(BOOKING_FORM, token);
-    const dataFilter = data.rows.filter(
+    const dataAdmin = data.rows.filter(
+      (item) => item.bookingWay === 1
+    );
+    const dataFilter = dataAdmin.filter(
       (item) => item.BookingStatusId.id === statusId
     );
     let dataChart = [];
@@ -125,10 +128,11 @@ const Home = ({ t }) => {
 
   const getBookingsData = async () => {
     const data = await getAll(BOOKING_FORM, token);
-    setAllBooking(data);
-    const complete = data?.rows?.filter((item) => item.status === 7);
+    const filterData = data.rows.filter(item => item?.bookingWay === 1);
+    setAllBooking(filterData);
+    const complete = filterData?.filter((item) => item.status === 7);
     setCompleteBooking(complete);
-    const ongoing = data?.rows?.filter((item) => item.status === 5);
+    const ongoing = filterData?.filter((item) => item.status === 3 || item.status === 4 || item.status === 5);
     setOngoingBooking(ongoing);
   };
 
@@ -298,7 +302,7 @@ const Home = ({ t }) => {
                 <h5 className="fw-bolder fs-16">{t("total")}</h5>
               </div>
               <Divider />
-              <h5 className="textBlue2 fw-bolder fs-16">{allBooking?.count}</h5>
+              <h5 className="textBlue2 fw-bolder fs-16">{allBooking?.length}</h5>
               <small className="textGrey1">{t("bookingTrips")}</small>
             </div>
 

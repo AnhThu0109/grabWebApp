@@ -136,7 +136,7 @@ export default function Layout() {
   };
 
   const socketConnect = async () => {
-    const newSocket = socketIO.connect(SERVER_URL);
+    const newSocket = socketIO.connect("http://35.220.201.164");
     newSocket.connect();
 
     // Wait for the connection to be established

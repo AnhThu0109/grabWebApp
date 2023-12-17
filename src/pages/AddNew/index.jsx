@@ -25,6 +25,7 @@ import { useSocket } from "../../utils/socketContext";
 import formatPeopleId from "../../utils/formatPeopleID";
 import { createNotification } from "../../utils/notificationAction";
 import { addNotification } from "../../redux/notificationSlide";
+import { setBookingData } from "../../redux/bookingSlide";
 
 export default function Add() {
   const [phoneNo, setPhoneNo] = useState();
@@ -123,7 +124,6 @@ export default function Add() {
 
   const onFinishForm = async () => {
     try {
-      console.log(socketData);
       if (distanceInfo != null) {
         let responseCusData;
         if (cusId === 0) {
@@ -213,6 +213,8 @@ export default function Add() {
                     createNotificationError
                   );
                 });
+            } else {
+              // dispatch(setBookingData(true));
             }
           })
           .catch((error) => {
